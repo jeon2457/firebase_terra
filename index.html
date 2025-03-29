@@ -20,107 +20,59 @@
     <!-- 아이폰에서는 전화번호형식 010-1234-5678과 같은 형식이면 자동링크라 바로 전화가 걸린다. 이를 막기위한 메타태그는 -->
     <meta name="format-detection" content="telephone=no" />
 
-    <!-- 화면크기 반응형으로 작동시킬수있다.
-      @media ( max-width: 640px ) {
-      body { color: red; }
-      }
-    -->
-
     <!-- 파비콘 아이콘들 -->
+    <link rel="icon" href="/favicon.ico?v=2" />
+
     <link
       rel="icon"
       type="image/png"
       sizes="36x36"
-      href="image/android-icon-36x36.png"
+      href="/favicons/android-icon-36x36.png"
     />
     <link
       rel="icon"
       type="image/png"
       sizes="48x48"
-      href="image/android-icon-48x48.png"
+      href="/favicons/android-icon-48x48.png"
     />
     <link
       rel="icon"
       type="image/png"
       sizes="72x72"
-      href="image/android-icon-72x72.png"
+      href="/favicons/android-icon-72x72.png"
     />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="96x96"
-      href="image/android-icon-96x96.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="144x144"
-      href="image/android-icon-144x144.png"
-    />
-
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="192x192"
-      href="image/android-icon-192x192.png"
-    />
-
-    <link rel="icon" href="image/favicon.ico?v=2" />
-
-    <!-- 애플 터치 아이콘 -->
 
     <link
       rel="apple-touch-icon"
+      sizes="32x32"
+      href="/favicons/apple-icon-32x32.png"
+    />
+    <link
+      rel="apple-touch-icon"
       sizes="57x57"
-      href="image/apple-icon-57x57.png"
+      href="/favicons/apple-icon-57x57.png"
     />
     <link
       rel="apple-touch-icon"
       sizes="60x60"
-      href="image/apple-icon-60x60.png"
+      href="/favicons/apple-icon-60x60.png"
     />
     <link
       rel="apple-touch-icon"
       sizes="72x72"
-      href="image/apple-icon-72x72.png"
+      href="/favicons/apple-icon-72x72.png"
     />
     <link
       rel="apple-touch-icon"
       sizes="76x76"
-      href="image/apple-icon-76x76.png"
-    />
-    <link
-      rel="apple-touch-icon"
-      sizes="114x114"
-      href="image/apple-icon-114x114.png"
-    />
-    <link
-      rel="apple-touch-icon"
-      sizes="120x120"
-      href="image/apple-icon-120x120.png"
-    />
-    <link
-      rel="apple-touch-icon"
-      sizes="144x144"
-      href="image/apple-icon-144x144.png"
-    />
-    <link
-      rel="apple-touch-icon"
-      sizes="152x152"
-      href="image/apple-icon-152x152.png"
-    />
-    <link
-      rel="apple-touch-icon"
-      sizes="180x180"
-      href="image/apple-icon-180x180.png"
+      href="/favicons/apple-icon-76x76.png"
     />
 
     <!-- 웹사이트 매니페스트 -->
     <link rel="manifest" href="/manifest.json" />
 
     <!-- Ms브라우저 설정 파일 -->
-    <link rel="browserconfig" href="/browserconfig.xml" />
-
+    <meta name="msapplication-config" content="/browserconfig.xml" />
     <meta name="msapplication-TileColor" content="#ffffff" />
     <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
     <meta name="theme-color" content="#ffffff" />
@@ -237,84 +189,84 @@
   </head>
 
   <body>
-  <div class="container">  
-    <!-- 로그인 박스 -->
-    <!-- id="logo-image"는 로고이미지를 움직이게 할려고 사용 -->
-    <div id="login-box">
-      <img src="image/logo.png" alt="로고" class="logo" id="logo-image" />
-      <!-- ✅ 중앙 정렬된 로고 -->
-      <h2>PASSWORD</h2>
-      <input type="password" id="password" placeholder="비밀번호 입력" />
-      <br />
-      <button onclick="checkPassword()">로그인</button>
-    </div>
+    <div class="container">
+      <!-- 로그인 박스 -->
+      <!-- id="logo-image"는 로고이미지를 움직이게 할려고 사용 -->
+      <div id="login-box">
+        <img src="image/logo.png" alt="로고" class="logo" id="logo-image" />
+        <!-- ✅ 중앙 정렬된 로고 -->
+        <h2>PASSWORD</h2>
+        <input type="password" id="password" placeholder="비밀번호 입력" />
+        <br />
+        <button onclick="checkPassword()">로그인</button>
+      </div>
 
-    <!-- ✅ <head>부분에서 스크립트 "DOMContentLoaded", function() 대신에 defer을 사용하면 스크립트가 <body>어느 위치에와도 상관없지만 생략했기때문에 여기서는 <body> 제일 하단에 코드를 삽입해야한다.  -->
-    <script>
-      function checkPassword() {
-        const correctPassword = '77777'; // 설정된 비밀번호
-        const passwordInput = document.getElementById('password'); // 입력창 가져오기
-        const userInput = passwordInput.value.trim(); // 🔥 공백 제거
+      <!-- ✅ <head>부분에서 스크립트 "DOMContentLoaded", function() 대신에 defer을 사용하면 스크립트가 <body>어느 위치에와도 상관없지만 생략했기때문에 여기서는 <body> 제일 하단에 코드를 삽입해야한다.  -->
+      <script>
+        function checkPassword() {
+          const correctPassword = '77777'; // 설정된 비밀번호
+          const passwordInput = document.getElementById('password'); // 입력창 가져오기
+          const userInput = passwordInput.value.trim(); // 🔥 공백 제거
 
-        if (userInput === '') {
-          alert('비밀번호를 입력하십시오.'); // 공백일 때 메시지
-          passwordInput.focus(); // 입력창에 포커스
-        } else if (userInput === correctPassword) {
-          <!-- alert('로그인 성공!'); -->
-          window.location.href = 'index-1.html'; // ✅ 로그인 성공 시 이동
-        } else {
-          alert('비밀번호가 틀렸습니다. 다시 시도하세요.');
-          passwordInput.value = ''; // 입력 필드 비우기
-          passwordInput.focus(); // 입력창에 포커스 자동 이동
+          if (userInput === '') {
+            alert('비밀번호를 입력하십시오.'); // 공백일 때 메시지
+            passwordInput.focus(); // 입력창에 포커스
+          } else if (userInput === correctPassword) {
+            <!-- alert('로그인 성공!'); -->
+            window.location.href = 'index-1.html'; // ✅ 로그인 성공 시 이동
+          } else {
+            alert('비밀번호가 틀렸습니다. 다시 시도하세요.');
+            passwordInput.value = ''; // 입력 필드 비우기
+            passwordInput.focus(); // 입력창에 포커스 자동 이동
+          }
         }
-      }
 
-      // 페이지 로드 시 자동으로 입력창에 포커스
-      window.onload = () => {
-        document.getElementById('password').focus();
-      };
+        // 페이지 로드 시 자동으로 입력창에 포커스
+        window.onload = () => {
+          document.getElementById('password').focus();
+        };
 
-      // ✅ 마우스 우클릭 방지
-      document.addEventListener('contextmenu', (event) =>
-        event.preventDefault()
-      );
+        // ✅ 마우스 우클릭 방지
+        document.addEventListener('contextmenu', (event) =>
+          event.preventDefault()
+        );
 
-      // ✅ 개발자 도구(F12, Ctrl+Shift+I 등) 방지
-      document.addEventListener('keydown', (event) => {
-        if (
-          event.key === 'F12' ||
-          (event.ctrlKey && event.shiftKey && event.key === 'I') ||
-          (event.ctrlKey && event.key === 'u')
-        ) {
-          event.preventDefault();
-          alert('개발자 도구 접근이 차단되었습니다.');
+        // ✅ 개발자 도구(F12, Ctrl+Shift+I 등) 방지
+        document.addEventListener('keydown', (event) => {
+          if (
+            event.key === 'F12' ||
+            (event.ctrlKey && event.shiftKey && event.key === 'I') ||
+            (event.ctrlKey && event.key === 'u')
+          ) {
+            event.preventDefault();
+            alert('개발자 도구 접근이 차단되었습니다.');
+          }
+        });
+
+        function startShakeAnimation() {
+          const logoImage = document.getElementById('logo-image');
+          logoImage.classList.add('shake-animation');
+
+          // 🥰흔들림 애니메이션이 끝난 후 회전 애니메이션 시작
+          setTimeout(() => {
+            logoImage.classList.remove('shake-animation'); // 흔들림 애니메이션 제거
+            startRotateAnimation(); // 회전 애니메이션 시작
+          }, 3000); // 3초 (흔들림 지속 시간)
         }
-      });
 
-      function startShakeAnimation() {
-        const logoImage = document.getElementById('logo-image');
-        logoImage.classList.add('shake-animation');
+        function startRotateAnimation() {
+          const logoImage = document.getElementById('logo-image');
+          logoImage.classList.add('rotate-animation');
 
-        // 🥰흔들림 애니메이션이 끝난 후 회전 애니메이션 시작
-        setTimeout(() => {
-          logoImage.classList.remove('shake-animation'); // 흔들림 애니메이션 제거
-          startRotateAnimation(); // 회전 애니메이션 시작
-        }, 3000); // 3초 (흔들림 지속 시간)
-      }
+          // 🥰회전 애니메이션이 끝난 후 스타일 제거 (선택 사항)
+          setTimeout(() => {
+            logoImage.classList.remove('rotate-animation'); // 회전 애니메이션 제거
+          }, 3000); // 3초 (회전 지속 시간)
+        }
 
-      function startRotateAnimation() {
-        const logoImage = document.getElementById('logo-image');
-        logoImage.classList.add('rotate-animation');
-
-        // 🥰회전 애니메이션이 끝난 후 스타일 제거 (선택 사항)
-        setTimeout(() => {
-          logoImage.classList.remove('rotate-animation'); // 회전 애니메이션 제거
-        }, 3000); // 3초 (회전 지속 시간)
-      }
-
-      // 페이지 로드 시 흔들림 애니메이션 시작
-      window.onload = startShakeAnimation;
-    </script>
+        // 페이지 로드 시 흔들림 애니메이션 시작
+        window.onload = startShakeAnimation;
+      </script>
     </div>
   </body>
 </html>
