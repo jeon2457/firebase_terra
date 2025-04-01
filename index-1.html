@@ -8,7 +8,7 @@
 <html lang="ko">
   <!-- 위1번항을 추가하면 떨어지는 크로바이미지 스크립트가 차단됨  -->
   <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta charset="UTF-8">
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
@@ -23,24 +23,26 @@
     <!-- 스크립트 DOMContentLoaded", function() 대신에 defer을 사용해도 상관없음! -->
 
     <link rel="stylesheet" href="style.css" />
-		
-		<!-- 부트스트랩 CDN 링크 -->
+	
+			
+	<!-- 부트스트랩 CDN 링크 -->
+<!--  ※ [중요] 현재 파비콘 생성이 안되는 이유인거 같아서 주석처리한 상태이다.
     <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
     rel="stylesheet"
     integrity="sha384-YvpCrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
     crossorigin="anonymous"
     />
+-->
 
+    <!-- 깃허브에서는 favicon.ico?v=2" 를 사용하면 안된다.(파비콘 생성불가!) -->
+    <link rel="icon" href="./favicon.ico" />
 
     <!-- 웹사이트 매니페스트 -->
     <link rel="manifest" href="/manifest.json" />
     
     <!-- 파비콘 아이콘들 -->
-    <!-- 깃허브에서는 favicon.ico?v=2" 를 사용하면 안된다.(파비콘 생성불가!) -->
-    <link rel="icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
-     
     <link rel="icon" type="image/png" sizes="36x36" href="/favicons/android-icon-36x36.png" />
     <link rel="icon" type="image/png" sizes="48x48" href="/favicons/android-icon-48x48.png" />
     <link rel="icon" type="image/png" sizes="72x72" href="/favicons/android-icon-72x72.png" />
@@ -59,12 +61,7 @@
     
     
 
-    <!-- 마우스 우클릭 방지/드래그 방지하는 스크립트를 head안에 삽입! -->
-    <script type="text/javascript">
-      document.oncontextmenu = function () {
-        return false;
-      };
-		</script>
+    
 		
 
     <script type="text/javascript">
@@ -690,11 +687,20 @@
 			</div>
         </div>
 
-		<!-- ✅ Bootstrap JS (번들) -->
+    <!-- 마우스 우클릭 방지/드래그 방지하는 스크립트를 head안에 삽입! -->
+    <script type="text/javascript">
+      document.oncontextmenu = function () {
+        return false;
+      };
+	</script>
+	<!-- ✅ Bootstrap JS (번들) -->
+<!--
+    ※ [중요] 현재 파비콘 생성이 안되는 이유인거 같아서 주석처리한 상태이다.
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-YyTVwdjK1uNfKCrEwI96OqzjyjLMfnT9jykTN2m0wvYI5e0fPJOXyIhmvc1Ju9wh"
       crossorigin="anonymous"
     ></script>
+-->
   </body>
 </html>
