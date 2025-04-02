@@ -1,0 +1,333 @@
+body {
+  background-color: #3b3d3f;
+  color: white;
+  margin: 0;
+  padding: 0;
+  }
+
+table { /* 번호,이름,전화번호,거주지,비고,SMS 전체구역 */
+  border-collapse: collapse;
+  width: 100%;
+  background-color: #3b3d3f;
+}
+
+th, td { /* 소제목,소제목 입력구역 */
+  border: 1px solid white;
+  text-align: center;
+  padding: 8px;
+}
+
+th { /* 소제목 색상 */
+  background-color: #212121;
+  color: white;
+}
+
+			
+
+
+
+
+
+
+
+/* 전체 넓이 지정 */
+.container {
+/*  border: 3px solid red;*/
+  width: 600px;
+  margin: 0 auto;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+
+
+section {  /* 첫번째(날짜,시간) / 두번째칸(큐브,전광판 구역) */  
+  margin: 0;
+  padding: 0;
+}
+
+
+/*CSS : 시계를 꾸미는 부분*/
+.header{ /* 날짜,시간 구역 */
+    position: fixed;
+    width: 600px;
+    height: 88px;
+    margin: 0;
+    text-align: center;
+    color: #f4f4f4;
+    background-color: black;
+    padding: 0; 
+    box-sizing: border-box;
+}
+  
+  #Clockday{ /* 날짜표시 */
+  ;
+      color: #F0C420;
+      font-size: 1.25rem;
+  }
+      color: #F0C420;
+      padding-top: 10px;
+  }
+  #Clock{ /* 시간표시 */
+  ;
+      color: #F0C420;
+      font-size: 1.25rem;
+  }
+
+
+
+
+
+/* body */
+
+
+.wrap1 {   /* 큐브회전이미지부분 */
+    position: fixed;    
+	color: aliceblue;
+	width: 1.25rem;   /* 아래position설정으로 잠겨서 가로세로폭이안먹히는거같음! */
+	height: 1.18rem;
+	margin-left: 5px;
+    margin-top: -33px;
+	padding: 15px 1px 15px 1px;
+    z-index: 10;
+    
+}
+
+  .wrap1 > .cube{
+      width: 1.43rem; /* 23px */
+      height: 1.43rem;
+      margin-top: 94px;
+      padding: 1px 0 0 0;
+      transform-style: preserve-3d;
+      transform: rotateX(0);  /* rotatex()값을 변경하면 튜브가 각도만큼 회전한다.  */
+      transition: all 2s;
+  }
+
+  .wrap1 > .cube img{
+      position: absolute; /* 큐브 이미지 위치지정 */
+      top: 0;
+      left: 2px;
+  }
+
+  .wrap1 > .cube img:nth-child(1){ /* 1번째 이미지 */
+      transform: translateZ(11px);
+  }
+
+  .wrap1 > .cube img:nth-child(2){ /* 2번째 이미지 */
+      transform: rotateX(90deg) translateZ(11px);
+  }
+
+  .wrap1 > .cube img:nth-child(3){ /* 3번째 이미지 */
+      transform: rotateX(180deg) translateZ(11px);
+  }
+
+  .wrap1 > .cube img:nth-child(4){ /* 4번째 이미지 */
+      transform: rotateX(270deg) translateZ(11px);
+  }
+
+a {
+  text-decoration-line: none;  /* 링크 밑줄쳐진것들 제거  */
+  color: #ffffff;
+}
+
+
+
+.wrap2 {   /* 전광판 LED창 */
+    position: fixed;
+    top: 61px;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+	color: aliceblue;
+    margin: 0 auto;
+	width: 469px; /* LED 글자창 너비 */
+	height: 30px;
+    line-height: 20px;
+	padding: 0 66px; /* LED창 길이변 */
+	background-image: url("image/bg.gif");
+	border-radius: 2px 2px 0px 0px;
+}
+  
+
+#billboard-container { /* 전광판 LED창 */
+  width: 100%;  /* LED창 텍스트보여주는 면적공간 */
+  height: 100%;
+/*  border: 1px solid red;*/
+  margin: 0 center;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap; /* 텍스트 자동줄바꿈 못하게처리한다 */
+  }
+  
+  #billboard {
+    display: inline-block;
+    padding-left: 100%;
+    animation: billboard 20s linear infinite;  /* 1주기 타이밍 */
+    position: relative;
+    animation-fill-mode: forwards;
+  }
+
+  #billboard > img{ /* 전광판 이미지 */
+    box-sizing: border-box;
+    padding-top: 7px;
+  }
+
+  #billboard span {  /* (텍스트)직지초35회 */
+    display: inline-block;
+    height: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    padding-bottom: 5px;
+    font-size: 17px;
+    line-height: 17px;
+  }
+
+
+  @keyframes billboard {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+
+
+
+			
+			
+	/* 직지35 전화번호부  시작  */		
+			
+	 /* 테이블 목록(소제목/회원 목록) */
+.container > table { 
+  width: 100%;
+  margin-top: 92px; /* 테이블 가려진것을 밑으로 내린다 */
+  padding: 0;
+}
+
+.container > table tbody {
+/*  position: relative;*/
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+
+thead > tr th { /* 제목: NO, 이름, 전화번호, 거주지, 기타, SMS */
+  font-size: 14px;
+}
+
+tbody tr td { /* 개인정보 입력구간 */
+  font-size: 12px;
+}
+
+tbody tr td:nth-child(1) { /* 소제목(NO 입력) */
+
+}
+
+tbody tr td:nth-child(2) { /* 소제목(이름 입력) */
+
+}
+
+tbody tr td:nth-child(2) { /* 소제목(전화번호 입력) */
+
+}
+
+tbody tr td:nth-child(4) { /* 소제목(거주지 입력) */
+
+}
+
+tbody tr td:nth-child(5) { /* 소제목(비고 입력)- 모바일용일때는 사라짐! */
+
+}
+
+tbody tr td:nth-child(6) > a > span > img {  /* SMS 아이콘 */
+  width: 21px;  /* 이미지크기 (가로폭) */
+  height: 21px;  /* 이미지크기 (세로폭) */
+}
+
+
+
+
+/* 하단부 화살표, 외부링크 */
+.foot{
+	display: block;
+	color: antiquewhite;
+	font-size: 0.8em;
+	height: 1.87rem;  
+	margin-top: 1.87rem;  
+	text-align: center
+}
+
+.gototop{    /* 우측제일하단 화살표를 누르면 제일위로 이동하게한다. */
+
+    position: fixed;
+    left:18.5rem; 
+    bottom: 1.56rem; 
+}
+
+.gototop .fa{    /* 우측제일하단 화살표를 누르면 제일위로 이동하게한다. */
+    background-color: #fff;
+    border: 1px solid lightgray;
+    width: 1.1em; 
+    height: 1.1em;  
+    border-radius: 50%;
+    line-height: 2.5rem; 
+    font-size: 1.5rem; 
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.gototop .fa:hover{   /* 우측제일하단 화살표를 누르면 제일위로 이동하게한다.*/
+    background-color: #838180;
+    color:#FFFFFF;
+}
+	
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+
+  @media (max-width: 580px) {
+    .hidden {
+      display: none;
+    }
+    
+    /* 전체 넓이 지정 */
+    .container {
+      width: 360px;
+
+    } 
+
+    .header{
+      width: 360px;
+  }  
+    
+    .wrap2 {   /* 전광판 LED창 */
+      width: 360px; /* LED 글자창 너비 */
+    }
+
+    #billboard-container { /* 전광판 LED창 */
+      width: 80%;  /* LED창 텍스트보여주는 면적공간 */
+
+      }
+    
+    
+  }
+
+
+
+
+
+
+
+
