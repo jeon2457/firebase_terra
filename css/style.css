@@ -113,7 +113,7 @@ body {
   background-position: center;
   background-repeat: repeat-x;
   background-size: contain;
-  height: 30px;
+  height: 40px;
   display: flex;
   align-items: center;
   padding: 0 103px 0 58px; /* 왼쪽 오른쪽 패딩 줄임 */
@@ -144,7 +144,8 @@ body {
   top: -51px;
   left: -48px;
   transform-style: preserve-3d;
-  animation: rotateCube 8s infinite linear;
+  /* 👇 트랜지션 추가: transform 속성이 변경될 때 0.8초 동안 부드럽게 전환 */
+  transition: transform 0.5s ease-in-out;
 }
 
 .cube img {
@@ -153,9 +154,11 @@ body {
   left: 0;
   width: 25px;
   height: 25px;
-  backface-visibility: visible;
+/*  backface-visibility: visible;*/
+  backface-visibility: hidden; /* 추천: 흔들림 완화 및 성능 개선 */
   border: none; /* 혹시 모를 테두리 제거 */
   display: block;
+  transform-origin: center center; /* 추가:회전 중심 명시 */
 }
 
 @keyframes rotateCube {
@@ -169,7 +172,7 @@ body {
 /* 테이블 헤드 고정 */
 thead {
   position: sticky;
-  top: calc(3.25rem + 30px); /* header 높이 + wrap2 높이 */
+  top: calc(4.1rem + 30px); /* header 높이 + wrap2 높이 */
   z-index: 998; /* wrap2보다 낮은 z-index */
   background: linear-gradient(to right, #232526, #414345); /* 배경과 동일하게 설정 */
 }
@@ -282,7 +285,7 @@ tfoot td {
   height: 1.1em;
   border-radius: 50%;
   cursor: pointer;
-  transition: 0.3s;
+  transition: 0.5s;
 }
 
 .gototop .fa:hover {
@@ -411,7 +414,7 @@ tfoot td {
   
   
   thead {
-    top: calc(3rem + 30px); /* 모바일에서의 header 높이 + wrap2 높이 */
+    top: calc(3.6rem + 30px); /* 모바일에서의 header 높이 + wrap2 높이 */
   }
     
   .marquee {
@@ -443,20 +446,25 @@ tfoot td {
   }
   
   .cube {
-    width: 23px;
-    height: 23px;
+    width: 22px;
+    height: 22px;
     position: relative;
-    top: -58px;
-    left: -56px;
+    top: -50px;
+    left: -33px;
+    /* 👇 트랜지션 추가 (모바일에서도 동일하게 적용되도록): */
+    transition: transform 0.5s ease-in-out;
 
   }
   .cube img {
-    left: 22px;
     width: 22px;
     height: 22px;
-  }
+  }  
+  .cube img:nth-child(1) { transform: translateZ(11px); } /* 23px / 2 = 11.5px */  
+  .cube img:nth-child(2) { transform: rotateX(90deg) translateZ(11px); }
+  .cube img:nth-child(3) { transform: rotateX(180deg) translateZ(11px); }
+  .cube img:nth-child(4) { transform: rotateX(270deg) translateZ(11px); }
   
-
+    
   /* 행 높이 조정 - 이전 수정 유지 */
   th, td {
     padding: 0.6rem 0;
