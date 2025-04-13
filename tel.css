@@ -97,7 +97,7 @@ section {  /* 첫번째(날짜,시간) / 두번째칸(큐브,전광판 구역) *
   .wrap1 > .cube{
       width: 1.43rem; /* 23px */
       height: 1.43rem;
-      margin-top: 94px;
+      margin-top: 81px;
       padding: 1px 0 0 0;
       transform-style: preserve-3d;
       transform: rotateX(0);  /* rotatex()값을 변경하면 튜브가 각도만큼 회전한다.  */
