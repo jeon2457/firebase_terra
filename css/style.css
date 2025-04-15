@@ -223,7 +223,7 @@ table {
   max-width: 700px;
   width: 100%;
   table-layout: fixed;
-  margin-top: 0;
+  margin-top: 6px;
 }
 
 th, td {
