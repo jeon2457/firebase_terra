@@ -7,7 +7,7 @@ body {
   font-family: 'Noto Sans KR', sans-serif;
 }
 
-#loading-screen {
+#loading-screen {  /* 본 페이지가 열리기전에 먼저뜨는 아이콘  */
   position: fixed;
   width: 100%;
   height: 100%;
@@ -19,7 +19,7 @@ body {
   z-index: 9999;
 }
 
-#loading-screen img {
+#loading-screen img {  /* 아이콘 이미지  */
   width: 250px;
 }
 
@@ -28,12 +28,12 @@ body {
 }
 
 .container {
-  max-width: 700px;
+  max-width: 700px;  /* 페이지 전체크기  */
   margin: 0 auto;
   padding: 0;
 }
 
-.header {
+.header {  /* 헤드 날짜,요일,시간이 나타나는 부분  */
   width: 100%;
   max-width: 700px;
   height: 3.25rem;
@@ -42,7 +42,7 @@ body {
   color: #f4f4f4;
   background-color: rgba(0, 0, 0);
   padding: 0;
-  position: fixed;
+  position: fixed; /* 헤드 시간부분 틀고정 시키기  */
   top: 0;
   left: 0;
   right: 0;
@@ -77,7 +77,7 @@ body {
 }
 
 .cube-container {
-  position: fixed;
+  position: fixed; /* 3D큐브 아이콘 틀고정 시키기  */
   top: calc(3.25rem + 2px); /* header 높이 + 약간의 조정값 */
   left: 10px; /* 왼쪽 여백 조정 */
   z-index: 2000; /* 다른 요소들보다 위에 표시 */
@@ -99,7 +99,7 @@ body {
 
 /* 전광판 고정 */
 .wrap2 {
-  position: fixed;
+  position: fixed;  /* 전광판부분 틀고정 시키기  */
   top: 3.25rem; /* header 높이와 동일하게 설정 */
   left: 0;
   right: 0;
@@ -128,7 +128,7 @@ body {
   z-index: 2000;
 }
 
-.wrap1 {
+.wrap1 {  /* cube 회전아이콘을 감싸는 부모요소  */
   width: 25px;
   height: 25px;
   perspective: 500px; /* 원근감 값 낮추기 */
@@ -148,7 +148,7 @@ body {
   transition: transform 0.5s ease-in-out;
 }
 
-.cube img {
+.cube img {  /* 3D 회전아이콘 이미지  */
   position: absolute;
   top: 0;
   left: 0;
@@ -169,10 +169,10 @@ body {
   100% { transform: rotateX(360deg); }
 }
 
-/* 테이블 헤드 고정 */
+/* 테이블 헤드(제목부분) 고정 */
 thead {
-  position: sticky;
-  top: calc(4.1rem + 30px); /* header 높이 + wrap2 높이 */
+  position: sticky;  /* 테이블 제목부분 임계점 틀고정 시키기  */
+  top: calc(3.9rem + 30px); /* header 높이 + wrap2 높이 */
   z-index: 998; /* wrap2보다 낮은 z-index */
   background: linear-gradient(to right, #232526, #414345); /* 배경과 동일하게 설정 */
 }
@@ -214,7 +214,7 @@ thead {
   vertical-align: middle; /* 세로 중앙 정렬 보장 */
 }
 
-/* 황악회 연락망  */
+/* 황악회 연락망 내용입력 구간(필드)  */
 table {
   border-spacing: 0;
   border-style: none;
@@ -237,12 +237,12 @@ th {
   color: #c49c19d0;
 }
 
-.no { width: 1.56rem; }
-.name { width: 4.8rem; font-size: 1.2em; }
-.tel { width: 9.2rem; font-size: 1.2em; }
-.address { width: 3.75rem; }
-.remark { width: 3.75rem; }
-.sms { width: 3.75rem; font-size: 1.1em; }
+.no { width: 1.56rem; } /* 번호 메기기 */
+.name { width: 4.8rem; font-size: 1.2em; } /* 이름 */
+.tel { width: 9.2rem; font-size: 1.2em; } /* 전화번호 */
+.address { width: 3.75rem; } /* 거주지 */
+.remark { width: 3.75rem; } /* 비고 */
+.sms { width: 3.75rem; font-size: 1.1em; }  /* SMS문자메시지 */
 
 .no_1 { font-size: 0.8em; color: #ffffff; }
 .name_1 { font-size: 1.1em; color: #ffffff; }
@@ -272,8 +272,8 @@ tfoot td {
   padding: 0;
 }
 
-.gototop {
-  position: fixed;
+.gototop { /* 화살표(하단) */
+  position: fixed;  /* 화살표 틀고정 */
   right: 1.5rem;
   bottom: 0.5rem;
 }
@@ -298,7 +298,7 @@ tfoot td {
 
 
 
-/* 반응형 테블릿 사이트  */
+/* 반응형 테블릿 사이트(670PX 이하적용)  */
 @media (max-width: 670px) {
   .container, .header, .wrap2, table {
     max-width: 100%;
@@ -378,7 +378,7 @@ tfoot td {
       overflow-x: hidden;
     }
   
-  .container, .header, table {
+  .container, .header, table { /* 공통 */
     max-width: 100%;
     width: 100vw;
     margin: 0;
@@ -459,7 +459,7 @@ tfoot td {
     width: 22px;
     height: 22px;
   }  
-  .cube img:nth-child(1) { transform: translateZ(11px); } /* 23px / 2 = 11.5px */  
+  .cube img:nth-child(1) { transform: translateZ(11px); } /* 22px / 2 = 11px */  
   .cube img:nth-child(2) { transform: rotateX(90deg) translateZ(11px); }
   .cube img:nth-child(3) { transform: rotateX(180deg) translateZ(11px); }
   .cube img:nth-child(4) { transform: rotateX(270deg) translateZ(11px); }
@@ -499,7 +499,7 @@ tfoot td {
     height: 1rem;
   }
   
-  .foot {
+  .foot { /* 페이지 하단 */
     padding: 7px;
   }
   .gototop {
