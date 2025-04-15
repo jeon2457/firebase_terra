@@ -378,7 +378,7 @@ tfoot td {
       overflow-x: hidden;
     }
   
-  .container, .header, table { /* 공통 */
+  .container, .header { /* 공통 */
     max-width: 100%;
     width: 100vw;
     margin: 0;
