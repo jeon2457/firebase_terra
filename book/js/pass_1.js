@@ -1,7 +1,4 @@
-
-
-
-function checkPassword() {
+function checkPassword_2() {
   const correctPassword = '77777'; // 설정된 비밀번호
   let userInput = '';
 
@@ -19,13 +16,8 @@ function checkPassword() {
 
   // 비밀번호 맞으면 새 창으로 열기
   window.open(
-    'https://docs.google.com/spreadsheets/d/e/2PACX-1vSGfU7cZiYmJe_kHfmsdUu5EFlOJCF5BL5BcAsI0c8Xq8ei5gWxXLsWY6SB8qGBys3ve3pK4mmpXS7a/pubhtml',
+    'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVIpkKhIc8WElIpSb-IGb6FbZEK8I5vkwjRiKULeji-Eb9MddB8eX_J8ZE7LczW17BFL5rn1HF7aju/pubhtml',
     '_blank'
   );
   return false; // a태그 기본 동작 방지
 }
-
-
-
-
-

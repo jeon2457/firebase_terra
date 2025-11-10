@@ -24,6 +24,7 @@
       <!-- ✅스크립트 위치가 어디에와도 상관없게끔하는 코드 ~ <head>태그 안에 삽입한다. -->
       <!-- ✅스크립트 "DOMContentLoaded", function() 대신에 defer을 사용해도 상관없음! -->
       <script src="js/pass.js" defer></script> 
+      <script src="js/pass_1.js" defer></script>
 
       <link
       rel="apple-touch-icon"
@@ -270,24 +271,35 @@
 
           <tr>
           <!--  황악회 입출금내역서 (style.css도 포함)-->
-          <!--  구글스프레드시트에서 gagebu.xlsx파일과 동기화 시켜서 구글시트 파일에서 수정하면 웹페이지에서도 수정된다. 만약에 파일명이 바뀐다면 구글
-          스프레드시트에서 웹게시를 해서 코드를 다시 받아야만 연동시킬수있다.  -->
-          <!-- 비밀번호 검증 관문(js/pass.js)을 통과하면 이곳으로 이동   -->
+          <!--  구글스프레드시트에서 drive에 저장된 "gagebu" 파일과 동기화 시켜서 구글시트 파일에서 수정하면 웹페이지에서도 수정된다. 
+            만약에 "gagebu" 파일이 변경된다면 구글 스프레드시트에서 웹게시를 해서 코드번호(주소)를 다시 받아야만 연동시킬수있다.
+            데이타변경시 서버에서 바로 변경되는게 아니라 몇분간 지연될 수도 있다.  -->
+          <!--  js/pass.js 파일과 연동된다. <script src="js/pass.js" defer></script>
+          <script src="js/pass_1.js" defer></script> 상단 <head>안에 스크립트 삽입할것! -->
               <td>
-                  <a class="btn btn-secondary d-block" href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGfU7cZiYmJe_kHfmsdUu5EFlOJCF5BL5BcAsI0c8Xq8ei5gWxXLsWY6SB8qGBys3ve3pK4mmpXS7a/pubhtml" target="_blank" onclick="return checkPassword()">입출금내역서(test)</a>
-
-                  <!-- <a class="btn btn-secondary d-block" href="https://docs.google.com/spreadsheets/d/e/2PACX-1vTGhqELrLq35IHnMsXOk5QiEB3j9vQc7mJCSycngGTSYzZbQJ4M9RkMupUPUaTzS8ut2HsdC3IjEhhx/pubhtml" target="_blank" onclick="return checkPassword()">입출금내역서(test)</a> -->
+                  <a class="btn btn-secondary d-block"
+                    href="#"
+                    onclick="return checkPassword()">
+                    입출금내역서
+                  </a>
 
               </td>
           </tr>
           <tr>
-            <!--  황악회 입출금내역서 (style.css도 포함)-->
-          <!--  구글스프레드시트에서 황악회원 입금현황.xlsx파일과 동기화 시켜서 구글시트 파일에서 수정하면 웹페이지에서도 수정된다. 만약에 파일명이 바뀐다면 구글
-          스프레드시트에서 웹게시를 해서 코드를 다시 받아야만 연동시킬수있다.  -->
-          <!-- 비밀번호 검증 관문(js/pass.js)을 통과하면 이곳으로 이동   -->
+          <!--  황악회 입출금내역서 (style.css도 포함)-->
+          <!--  구글스프레드시트에서 drive에 저장된 "황악회원 입금현황" 파일과 동기화 시켜서 구글시트 파일에서 수정하면 웹페이지에서도 수정된다. 
+            만약에 "황악회원 입금현황" 파일이 변경된다면 구글 스프레드시트에서 웹게시를 해서 코드번호(주소)를 다시 받아야만 연동시킬수있다.
+            데이타변경시 서버에서 바로 변경되는게 아니라 몇분간 지연될 수도 있다.  -->
+          <!--  js/pass.js 파일과 연동된다. <script src="js/pass.js" defer></script>
+          <script src="js/pass_1.js" defer></script> 상단 <head>안에 스크립트 삽입할것! -->
+
               <td>
-                  <a class="btn btn-secondary d-block" href="https://docs.google.com/spreadsheets/d/e/2PACX-1vT_siRAwNp9PlsyQR2oLPwdvwbXLN5wX2YW0ZL8aBEz0WnhBNlnssZ0E3gztRxopw/pubhtml" target="_blank" onclick="return checkPassword()">납입금현황(test)</a>
-              </td>
+                  <a class="btn btn-secondary d-block"
+                    href="#"
+                    onclick="return checkPassword_2()">
+                    납입금현황
+                  </a>
+                </td>
           </tr>
       </tbody>
   </table>
