@@ -1,0 +1,109 @@
+<!-- 부트스트랩 5.3.3로 제작되었다. css나 js 를 버전에 다른걸 설치하면 작동이 제대로 안될수있으니 주의바람!
+부트스트랩 link는 <head>에 삽입하고 script는 body부분의 끝부분에 삽입한다.
+-->
+
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./book/jikji35.css" />
+    <title>황악회칙</title>
+		<!-- 스와이프 기능: 모바일화면 터치후 옆으로 밀면 페이지 이동하게한다.  -->
+		
+	
+  	<!-- CSS 모아둔곳(중요!) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" integrity="sha512-yHknP1/AwR+yx26cB1y0cjvQUMvEa2PFzt1c9LlS4pRQ5NOTZFWbhBig+X9G9eYW/8m0/4OXNx8pxJ6z57x0dw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" integrity="sha512-17EgCFERpgZKcm0j0fEq1YCJuyAWdz9KUtv1EjVuaOz8pDnh/0nZxmU6BBXwaaxqoi9PQXnRWqlcDB027hgv9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+		<!-- 마우스 우클릭 방지/드래그 방지하는 스크립트를 head안에 삽입! -->
+		<script type="text/javascript">
+				document.oncontextmenu = function () {
+					return false;
+				};
+			</script>
+		</head>
+
+		<!-- 마우스 우클릭방지/드래그방지하는 스크립트를 body에 같이 삽입한다.  -->
+		<body
+			oncontextmenu="return false"
+			onselectstart="return false"
+			ondragstart="return false"
+			onkeydown="return false"
+		>
+	
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12</div>
+				
+					<div id="wrap">
+		<header>
+			<h1>직지초 35회 동기회칙</h1>
+		</header>
+		<section>
+			<div>
+			<audio src="../book/music/1 page.wav" controls="controls"></audio>
+					</div>
+					<h2>동기 회칙 (6-1페이지)</h2>
+					<p></p>
+					<h2>제1장 총 칙</h2><br>
+					<h3>제1조【명 칭】</h3>
+					본회의 명칭은 직지초등학교 제35회 동기회라 칭한다.(이하본회라 칭한다)
+					<br /><br />
+					<h3>제2조 【목 적】</h3>
+					본회는 모교의 발전과 회원 간의 친목을 도모하며 회원 상호간의 단결과
+					우정을 최우선으로 하고 직지인의 긍지와 자부심을 갖도록 하는데 
+					그 목적을 둔다. <br /><br />
+					<h3>제3조 【소재지】</h3>
+					본회의 근원은 김천시에 있고 총회는 회장의 지역권역을 기준으로 하며
+					지부별 소모임을 한다.<br /><br />
+					<h2>제2장 회원 및 자격</h2>
+					<h3>제4조 【회 원】</h3>
+					본회의 회원은 직지초등학교 35회졸업생 및 1974년에 직지초학교에 입학
+					(전학자도 졸업생과 동등한 자격) 한자.<br /><br />
+					<h3>제 5조 【정회원】</h3>
+					<br />
+					1. 제4조에 해당하는 회원 중 각지부에 회비를 납부한 회원에 한 한다.
+					<br />
+					2. 정회원들의 요청이 있을 시에는 임원회의를 거쳐 회원의 자격을 
+					제한할수있다. <br />
+					3. 직지 초등학교 35회 졸업을 한사람으로써 해당년도 연회비를 납부한
+					회원으로 한다.<br />
+					4. 불참시도 회비는 납부 한다. <br /><br />
+  		</section>
+				</div>
+			</div>
+		</div>
+
+	
+		<hr>
+	
+		<nav aria-label="Page navigation example">
+			<ul class="pagination justify-content-center">
+				<li class="page-item disabled">
+		<a class="page-link">Prev</a>
+				</li>
+				<li class="page-item disabled"><a class="page-link" href="./book/index1.html">1</a></li>
+				<li class="page-item"><a class="page-link" href="./book/index2.html">2</a></li>
+				<li class="page-item"><a class="page-link" href="./book/index3.html">3</a></li>
+				<li class="page-item">
+		<a class="page-link" href="./book/index4.html">Next</a>
+				</li>
+			</ul>
+		</nav>
+
+	
+	<!--  자바스크립트(body 태그 제일 아랫부분에 삽입할것!)  -->
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+	<!-- 스와이프 기능: 모바일화면 터치후 옆으로 밀면 페이지 이동하게한다.  -->
+	<script src="./js/swipe.js" defer></script>
+  
+</body>
+</html>
