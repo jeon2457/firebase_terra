@@ -1,358 +1,305 @@
-<!-- 부트스트랩 5.2.2로 제작되었다. css나 js 를 버전에 다른걸 설치하면 작동이 제대로 안될수있으니 주의바람!
-부트스트랩 link는 <head>에 삽입하고, <script>는 <body>부분의 끝부분에 삽입해야하나 <script> "DOMContentLoaded" 또는 defer를 <head>안에 삽입하면 그 다음부터 스크립트 태그를 <body> 어느 위치에 있어도 정상적으로 작동한다.한다.
-✅메인 이 페이지는 초기화면,엑셀 스프레드시트 접속연결시 보안검증 절차없이 코딩되어있다.  ✅ [[무검증 코딩 페이지]] 
--->
-<!-- [이모지 모음] 🥰🥵 💥🖐 ⌚ 📱 📲 💻 📞 ⏰ ⌛ 📌🚩🧡❌ ❗ ❓
-🔔🔕 ✅ ❎ 💯 📢 📣 -->
+<!DOCTYPE html>
+<html lang="ko-KR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="description" content="직지35" />
+    <title>직지35</title>
 
+    <link rel="stylesheet" href="text-animation.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap" rel="stylesheet" />
 
+    <!-- 스타일시트 -->
+    <link rel="stylesheet" href="style.css" />
 
-<!doctype html>
-<html lang="ko-KR"> 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <meta name="description" content="직지35회">
-        <title>☏ 직지35</title>
-      
+    <!-- 비밀번호 검증 관문 -->
+    <script src="js/pass.js" defer></script>
+    <script src="js/pass_1.js" defer></script>
 
+    <!-- 파비콘 -->
+    <link rel="icon" href="image/favicon.ico?v=2" />
 
-      <!-- 비밀번호 검증 관문   -->
-      <!-- pass.js파일에서 비밀번호 관리!! -->
-      <!-- 아래 255라인, 268라인 부근에 "입출금내역서(test)", "납입금현황(test)" 해당 링크가 걸려있다. -->
-      <!-- ✅스크립트 위치가 어디에와도 상관없게끔하는 코드 ~ <head>태그 안에 삽입한다. -->
-      <!-- ✅스크립트 "DOMContentLoaded", function() 대신에 defer을 사용해도 상관없음! -->
-      <script src="js/pass.js" defer></script> 
-      <script src="js/pass_1.js" defer></script>
+    <!-- 매니페스트 -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="msapplication-TileColor" content="#ffffff" />
+    <meta name="theme-color" content="#ffffff" />
 
-      <link
-      rel="apple-touch-icon"
-      sizes="32x32"
-      href="image/apple-icon-32x32.png"
-    />
-      <link
-        rel="apple-touch-icon"
-        sizes="57x57"
-        href="image/apple-icon-57x57.png"
-      />
-      <link
-        rel="apple-touch-icon"
-        sizes="60x60"
-        href="image/apple-icon-60x60.png"
-      />
-      <link
-        rel="apple-touch-icon"
-        sizes="72x72"
-        href="image/apple-icon-72x72.png"
-      />
-      <link
-        rel="apple-touch-icon"
-        sizes="76x76"
-        href="image/apple-icon-76x76.png"
-      />
-      <link
-        rel="apple-touch-icon"
-        sizes="114x114"
-        href="image/apple-icon-114x114.png"
-      />
-      <link
-        rel="apple-touch-icon"
-        sizes="120x120"
-        href="image/apple-icon-120x120.png"
-      />
-      <link
-        rel="apple-touch-icon"
-        sizes="144x144"
-        href="image/apple-icon-144x144.png"
-      />
-      <link
-        rel="apple-touch-icon"
-        sizes="152x152"
-        href="image/apple-icon-152x152.png"
-      />
-      <link
-        rel="apple-touch-icon"
-        sizes="180x180"
-        href="image/apple-icon-180x180.png"
-      />
+    <!-- 부트스트랩 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-      <link
-        rel="icon"
-        type="image/png"
-        sizes="36x36"
-        href="image/android-icon-36x36.png"
-      />
-      <link
-        rel="icon"
-        type="image/png"
-        sizes="48x48"
-        href="image/android-icon-48x48.png"
-      />
-      <link
-        rel="icon"
-        type="image/png"
-        sizes="72x72"
-        href="image/android-icon-72x72.png"
-      />
-      <link
-        rel="icon"
-        type="image/png"
-        sizes="96x96"
-        href="image/android-icon-96x96.png"
-      />
-      <link
-        rel="icon"
-        type="image/png"
-        sizes="144x144"
-        href="image/android-icon-144x144.png"
-      />
+    <!-- 머터리얼 아이콘 -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
-      <link
-        rel="icon"
-        type="image/png"
-        sizes="192x192"
-        href="image/android-icon-192x192.png"
-      />
+    <style>
+        /* 추가적인 CSS 수정: 모바일 레이아웃 보정 */
+        body, html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden; /* 스크롤바 생성 방지 (필요시 제거) */
+        }
 
-      <link
-        rel="icon"
-        type="image/png"
-        sizes="512x512"
-        href="image/android-icon-512x512.png"
-      />
+        /* 텍스트 애니메이션 위치 조정 */
+        svg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: auto;
+            max-height: 300px;
+            z-index: 10;
+            pointer-events: none; /* 클릭 통과 */
+        }
 
-      <link rel="icon" href="image/favicon.ico?" />
+        /* 배경 이미지 스타일 수정 */
+        .mountain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
 
+        .background-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 화면을 꽉 채우도록 설정 */
+            object-position: center;
+        }
 
-      <!-- ✅매니페스트(manifest)는 파비콘의 정보를 모두 담고있다. -->
-      <link rel="manifest" href="/manifest.json" />
+        /* 네비게이션 바 수정 */
+        .navbar {
+            padding: 0.5rem 1rem; /* 패딩 조정 */
+        }
 
-      <!-- Ms브라우저 설정 파일 -->
-      <link rel="browserconfig" href="/browserconfig.xml" />
+        .navbar-brand {
+            font-size: 1.2rem; /* 브랜드 폰트 크기 조정 */
+        }
 
-      <meta name="msapplication-TileColor" content="#ffffff" />
-      <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
-      <meta name="theme-color" content="#ffffff" />
-       
-       
+        /* 오프캔버스 메뉴 스타일 */
+        .offcanvas {
+            max-width: 80%; /* 모바일에서 너무 넓지 않게 */
+        }
+
+        /* 스피너 및 텍스트 정렬 */
+        .jikji35 {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
         
-        <!-- 자바스크립트(중요!) -->
-        <link rel="stylesheet" media="screen and (max-width: 580px)" href="style.css">
+        .number_35 {
+            color: #ffc107; /* 예시 색상 */
+            font-weight: bold;
+        }
 
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+        /* 테이블 및 버튼 스타일 */
+        .custom-margin {
+            margin-top: 10px;
+        }
 
-	
-      <!-- 구글 머터리얼 아이콘을 사용할수있다.(공통으로 전부 적용됨!)  -->
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-		
+        .btn-custom-width {
+            width: 100%;
+        }
 
-        <!-- 마우스 우클릭 방지/드래그 방지하는 스크립트를 head안에 삽입! -->
-        <script type="text/javascript">
-          document.oncontextmenu = function () {
-            return false;
-          };
-        </script>
+        .table td {
+            vertical-align: middle;
+            padding: 10px;
+        }
 
-    </head>
+        /* 카카오톡 버튼 위치 고정 */
+        .kakao-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            z-index: 1000;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+        .kakao-btn:active {
+            transform: scale(0.9);
+        }
 
-
-
-
-      <!-- 마우스 우클릭 방지/드래그 방지하는 스크립트를 head안에 삽입! -->
-        <!-- ✅이 코드 하나로 해당 페이지를 작동시킬수있다. -->
-        <script type="text/javascript">
-          document.oncontextmenu = function () {
-            return false;
-          };
-        </script>
-      </head>
-
-
-      <body>
-
-
-
-
-		<!-- <헤드부분 네비바   -->
-		<nav class="navbar navbar-dark bg-dark fixed-top">
-			<div class="container-fluid">
-				<a class="navbar-brand" href="../index.html">Home navbar</a>
-				
-				
-
-				
-				<!-- <햄버거 버튼  -->
-				<button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar">
-				<span class="navbar-toggler-icon"></span>
-				</button>
-				
-				<!-- <햄버거 버튼을 클릭하면 우측에서 열리는 메뉴창  -->
-				<div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
-					<div class="offcanvas-header">
-						
-						<button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-					</div>
-					
-					<!-- <햄버거 버튼을 클릭으로 열린 페이지  -->
-					<div class="offcanvas-body">
-						<ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-							<li class="nav-item">
-							<!--  Home버튼 ==> 클릭하면 메인페이지로 이동한다. -->
-							<a class="btn btn-primary" href="../index.html" role="button">Home</a>
-							
-							
-						
-					<!-- 스피너 원형으로 회전시키기! ==> 직지35황악회 문자도 같이 회전한다.  -->
-                    <!-- ✅CSS에서 #offcanvasDarkNavbarLabel에서 "직지35 황악회" 글자색상 바꾸기   -->
-					<br><br>
-					<div class="d-flex justify-content-center jikji35">
-						<div class="spinner-border spinner-border-sm text-success" role="status">
-							<span class="visually-hidden">Loading...</span>
-                    <!-- ✅글자색상, 35숫자 사이즈 구현 -->
-							<h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">직지<span class="number_35">35</span> 황악회</h5>
-						</div>
-					</div>
-						
+        /* 아주 작은 화면 (최대 480px) */
+        @media screen and (max-width: 480px) {
+         /* 카카오톡 버튼 위치 고정 */
+        .kakao-btn {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 25px;
+            height: 25px;
+          }
+        }
 
 
-          
-<!-- 테이블 추가 -->
-<!-- CSS에서 .custom-margin 메뉴판위치 상하조정 -->
-<!-- ✅ 테이블 테두리를 점선 또는 숨기기를 하려면 CSS style.css의 table-bordered 클래스에서 수정한다. -->
+    </style>
 
-<div class="container custom-margin">
-  <table class="table table-bordered text-center">
-      <tbody>
-          <!-- 황악회칙보기 Dropdown -->
-          <tr>
-              <td>
-                  <div class="btn-group d-block">
-                    <!-- .btn-custom-width 버튼너비에 사용 -->
-                    <!-- btn-success ~ 녹색계통의 버튼색상 -->
-                    <!-- btn-warning ~ 주황색계통의 버튼색상 -->
-                      <button type="button" class="btn btn-success dropdown-toggle btn-custom-width" data-bs-toggle="dropdown" aria-expanded="false">
+    <!-- 마우스 우클릭 방지 -->
+    <script type="text/javascript">
+      document.oncontextmenu = function () {
+        return false;
+      };
+    </script>
+</head>
+
+<body>
+    <!-- 배경 이미지 -->
+    <div class="mountain">
+      <img src="image/good.jpg" class="background-image" alt="배경 이미지" />
+    </div>
+
+    <!-- 텍스트 애니메이션 -->
+    <svg viewBox="0 0 1320 300">
+      <text x="50%" y="50%" dy=".35em" text-anchor="middle">직지황악회</text>
+    </svg>
+
+    <!-- 헤드부분 네비바 -->
+    <nav class="navbar navbar-dark bg-dark fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">직지35</a>
+
+        <!-- 햄버거 버튼 -->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasDarkNavbar"
+          aria-controls="offcanvasDarkNavbar"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- 햄버거 버튼을 클릭하면 우측에서 열리는 메뉴창 -->
+        <div
+          class="offcanvas offcanvas-end text-bg-dark"
+          tabindex="-1"
+          id="offcanvasDarkNavbar"
+          aria-labelledby="offcanvasDarkNavbarLabel"
+        >
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">메뉴</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="offcanvas"
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <!-- 메뉴 내용 -->
+          <div class="offcanvas-body">
+            
+            <!-- Home 버튼 -->
+            <div class="d-grid gap-2 mb-4">
+                <a class="btn btn-primary" href="index.html" role="button">Home</a>
+            </div>
+
+            <!-- 스피너 및 타이틀 -->
+            <!-- <div class="d-flex justify-content-center align-items-center jikji35">
+              <div class="spinner-border spinner-border-sm text-success me-2" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <h5 class="mb-0">
+                  직지<span class="number_35">35</span> 황악회
+              </h5>
+            </div> -->
+
+            <!-- 메뉴 테이블 -->
+            <div class="container custom-margin px-0">
+              <table class="table table-dark table-bordered text-center mb-0">
+                <tbody>
+                  <!-- 황악회칙보기 Dropdown -->
+                  <tr>
+                    <td>
+                      <div class="dropdown">
+                        <button
+                          class="btn btn-success dropdown-toggle w-100"
+                          type="button"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
                           황악회칙보기
-                      </button>
-                      <!-- dropdown-menu-dark 황악회칙보기 버튼을 클릭하면 열리면서 나타나는 배경색 dark바탕색에 흰색계통의 글자 -->
-                      <ul class="dropdown-menu dropdown-menu-dark">
-                          <li><a class="dropdown-item" href="../book/index1.html" target="_blank">1페이지</a></li>
-                          <li><a class="dropdown-item" href="../book/index2.html" target="_blank">2페이지</a></li>
-                          <li><a class="dropdown-item" href="../book/index3.html" target="_blank">3페이지</a></li>
-                          <li><a class="dropdown-item" href="../book/index4.html" target="_blank">4페이지</a></li>
-                          <li><a class="dropdown-item" href="../book/index5.html" target="_blank">5페이지</a></li>
-                          <li><a class="dropdown-item" href="../book/index6.html" target="_blank">6페이지</a></li>
-                      </ul>
-                  </div>
-              </td>
-          </tr>
-          
-          <!-- 기타 Dropdown 메뉴 -->
-          <tr>
-              <td>
-                  <div class="btn-group d-block">
-                    <!-- .btn-custom-width 버튼너비에 사용 -->
-                    <!-- btn-success ~ 녹색계통의 버튼색상 -->
-                      <button type="button" class="btn btn-success dropdown-toggle btn-custom-width" data-bs-toggle="dropdown" aria-expanded="false">
-                          Dropdown
-                      </button>
-                      <!-- dropdown-menu-dark Dropdown버튼을 클릭하면 열리면서 나타나는 배경색 dark바탕색에 흰색계통의 글자 -->
-                      <ul class="dropdown-menu dropdown-menu-dark">
-                          <li><a class="dropdown-item" href="https://drive.google.com/drive/folders/0B7PdKqLOAoVfNE15SjZiSmQyYlk" target="_blank">공유</a></li>
-                          <li><hr class="dropdown-divider"></li>
-                          <li><a class="dropdown-item" href="intro/Forest-2.mp4" target="_blank">Movie</a></li>
-                          <li><hr class="dropdown-divider"></li>
-                          <li><a class="dropdown-item" href="http://naver.me/GrqSOiaT" target="_blank">Music Video</a></li>
-                      </ul>
-                  </div>
-              </td>
-          </tr>
-          
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-dark w-100 text-center">
+                          <li><a class="dropdown-item" href="index1.html" target="_blank">1페이지</a></li>
+                          <li><a class="dropdown-item" href="index2.html" target="_blank">2페이지</a></li>
+                          <li><a class="dropdown-item" href="index3.html" target="_blank">3페이지</a></li>
+                          <li><a class="dropdown-item" href="index4.html" target="_blank">4페이지</a></li>
+                          <li><a class="dropdown-item" href="index5.html" target="_blank">5페이지</a></li>
+                          <li><a class="dropdown-item" href="index6.html" target="_blank">6페이지</a></li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
 
-          <tr>
-          <!--  황악회 입출금내역서 (style.css도 포함)-->
-          <!--  구글스프레드시트에서 drive에 저장된 "gagebu" 파일과 동기화 시켜서 구글시트 파일에서 수정하면 웹페이지에서도 수정된다. 
-            만약에 "gagebu" 파일이 변경된다면 구글 스프레드시트에서 웹게시를 해서 코드번호(주소)를 다시 받아야만 연동시킬수있다.
-            데이타변경시 서버에서 바로 변경되는게 아니라 몇분간 지연될 수도 있다.  -->
-          <!--  js/pass.js 파일과 연동된다. <script src="js/pass.js" defer></script>
-          <script src="js/pass_1.js" defer></script> 상단 <head>안에 스크립트 삽입할것! -->
-              <td>
-                  <a class="btn btn-secondary d-block"
-                    href="#"
-                    onclick="return checkPassword()">
-                    입출금내역서
-                  </a>
+                  <!-- 기타 Dropdown 메뉴 -->
+                  <tr>
+                    <td>
+                      <div class="dropdown">
+                        <button
+                          class="btn btn-success dropdown-toggle w-100"
+                          type="button"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          자료실 / 영상
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-dark w-100 text-center">
+                          <li><a class="dropdown-item" href="https://drive.google.com/drive/folders/0B7PdKqLOAoVfNE15SjZiSmQyYlk" target="_blank">구글 드라이브 공유</a></li>
+                          <li><hr class="dropdown-divider" /></li>
+                          <li><a class="dropdown-item" href="intro/Forest-2.mp4" target="_blank">동영상 보기</a></li>
+                          <li><hr class="dropdown-divider" /></li>
+                          <li><a class="dropdown-item" href="http://naver.me/GrqSOiaT" target="_blank">뮤직 비디오</a></li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
 
-              </td>
-          </tr>
-          <tr>
-          <!--  납입금현황 (style.css도 포함)-->
-          <!--  구글스프레드시트에서 drive에 저장된 "황악회원 입금현황" 파일과 동기화 시켜서 구글시트 파일에서 수정하면 웹페이지에서도 수정된다. 
-            만약에 "황악회원 입금현황" 파일이 변경된다면 구글 스프레드시트에서 웹게시를 해서 코드번호(주소)를 다시 받아야만 연동시킬수있다.
-            데이타변경시 서버에서 바로 변경되는게 아니라 몇분간 지연될 수도 있다.  -->
-          <!--  js/pass.js 파일과 연동된다. <script src="js/pass.js" defer></script>
-          <script src="js/pass_1.js" defer></script> 상단 <head>안에 스크립트 삽입할것! -->
+                  <!-- 찾아오는길 -->
+                  <tr>
+                     <td>
+                          <a class="btn btn-secondary w-100" href="map.html">찾아오는길 만들기</a>
+                      </td>
+                  </tr>
 
-              <td>
-                  <a class="btn btn-secondary d-block"
-                    href="#"
-                    onclick="return checkPassword_2()">
-                    납입금현황
-                  </a>
-                </td>
-          </tr>
-      </tbody>
-  </table>
-</div>
+                  <!-- 재정 관련 링크함수(js코드로 연결됨!) -->
+                  <tr>
+                      <td>
+                          <a class="btn btn-secondary w-100" href="#" onclick="return checkPassword()">입출금내역서</a>
+                      </td>
+                  </tr>
+                  <tr>
+                      <td>
+                          <a class="btn btn-secondary w-100" href="#" onclick="return checkPassword_2()">납입금현황</a>
+                      </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
+            
+            <div class="mt-5 text-center text-muted" style="font-size: 0.8rem;">
+                &copy; 2026 직지황악회
+            </div>
 
-						
-  				</div>
-			</div>
-		</nav> 
+          </div>
+        </div>
+      </div>
+    </nav>
 
+    <!-- 카카오톡 오픈채팅방 링크 -->
+    <a href="https://open.kakao.com/o/gWWWIK5h" target="_blank">
+      <img src="image/kakaotalk-2.jpg" alt="카톡오픈채팅" class="kakao-btn" />
+    </a>
 
-
-        
-
-		<!-- 동영상 만들기  -->
-
-        <div class="hero">
-
-			<div class="heading">
-				<br>
-
-				<!-- 동영상안에 글자넣기/CSS에서  -->
-<!--
-				<h1><span>with CodingWorks</span> HTML+CSS+JS Publishing (J.S.J)</h1> 
-
-			</div>
--->
-
-
-			<!-- 동영상안에 글자넣기/CSS에서  -->
-			<video src="intro/Forest.mp4" autoplay muted loop></video>
-		</div>
-
-        <!-- 부트스트랩 자바스크립트(body 끝단에 삽입하기!) -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
-
-
-				
-				<!-- 카카오톡 오픈채팅방 링크걸기 -->
-
-        <!-- 우측 하단에 카카오톡 이미지 배너 -->
-    <a href="https://open.kakao.com/o/sVTqWDdh" target="_blank">
-    <img src="image/kakaotalk-2.png" alt="카톡채팅" 
-         style="position: fixed; bottom: 70px; right: 20px; width: 30px; height: 30px; z-index: 1000;">
-</a>
-
-
-    </body>
-
+    <!-- 부트스트랩 자바스크립트 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>
-
-
-
-
-

@@ -1,11 +1,11 @@
-/* ✅ 반응형 웹페이지를 만드는것이기 때문에 여기 CSS에서는 아래 구간에
+/* ✅반응형 웹페이지를 만드는것이기 때문에 여기 CSS에서는 아래 구간에
    @media (max-width:580px) { } 를 만들었으니 채워넣어야한다.
 */
 
 @charset "utf-8";
 
 * {
-  box-sizing: border-box;
+  box-sizing: border-box;correctPassword
 } /* 박스틀이 깨지지않게 */
 
 body {
@@ -78,7 +78,6 @@ div.spinner-border.spinner-border-sm {
 }
 
 
-
 /* ✅테이블 보더 테두리 숨기기(선택일)  */
 /* ✅테이블 보더 테두리 숨기기와 아래 점선모두 주석처리하면 디폴트로 index.html 코드로만 실선 테두리가 기본으로 보여준다.  */
 /* .table-bordered {
@@ -100,7 +99,6 @@ div.spinner-border.spinner-border-sm {
 .table-bordered th {
   border: 1px dashed black !important;
 }
-
 
 
 /* 황악회칙 텍스트  */
@@ -194,7 +192,8 @@ body > div > nav {
   width: 90%;
 }
 
-/* ✅직지35회 황악회 글자 *//* ✅아래 706라인 근처에 같은 코드가 있다. (현재 아래코드가 적용됨!!) */
+/* ✅직지35회 황악회 글자 */
+/* ✅아래 701라인 근처에 같은 코드가 있다. (현재 아래코드가 적용됨!!) */
 #offcanvasDarkNavbarLabel {
   color: rgba(223, 114, 64, 0.897);
   /* color: rgba(94, 240, 167, 0.815);  */
@@ -205,7 +204,7 @@ body > div > nav {
 }
 
   /* ✅ 숫자 35 */
-/* ✅아래 718라인 근처에 같은 코드가 있다. (현재 아래코드가 적용됨!!) */
+  /* ✅아래 712라인 근처에 같은 코드가 있다. (현재 아래코드가 적용됨!!) */
 .number_35 {
  /* color: rgb(122, 141, 248); */
  color: rgb(255, 255, 255);
@@ -363,13 +362,6 @@ body > div > div.hero {
 .hero .heading span {
   display: block;
   color: crimson;
-}
-
-video {
-  width: 100%;
-  height: auto;
-  max-height: 100vh; /* 필요에 따라 조정 */
-  object-fit: cover; /* 비율 유지하며 채우기 */
 }
 
 /* @media 는 반응형으로 변할수있게 설정하는 부분이다. 768px너비이상이 되면
@@ -557,25 +549,15 @@ video {
   }
 
   /* 동영상 화면 */
-  /* .hero video {
-    position: absolute;
-    width: 100%;
-    min-height: 30vh;
-    z-index: -1;
-    display: block;
-  } */
-
   .hero video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* 비율 유지하며 화면 채우기 */
     position: absolute;
-    top: 0;
-    left: 0;
+    width: 100%;
+    /*min-width: 100%;*/
+    min-height: 30vh;
     z-index: -1; /*heading 텍스트문자가 동영상위로 나타나게 한다.  */
+    display: block;
   }
 
- 
   /* 동영상 화면 공간 */
   .hero .heading {
     width: 100%;
@@ -716,10 +698,6 @@ video {
     width: 90%;
   }
 
-  
-  
-  
-  
   /* ✅직지35회 황악회 글자 */
   #offcanvasDarkNavbarLabel {
     color: rgba(223, 114, 64, 0.897);
@@ -730,7 +708,6 @@ video {
     margin-left: 1.5rem;
   }
   
-
   
   /* ✅ 숫자 35 */
 .number_35 {
@@ -739,7 +716,6 @@ video {
   font-size: 16px;
 /*  margin-left: 1.8rem;*/
 }
-
 
   /* Home 글자 */
   a.btn.btn-primary {

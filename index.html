@@ -3,166 +3,173 @@
 
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8">
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
-    <meta name="description" content="직지황악회" />
-    <title>&#x260E; 직지35</title>
 
-    <!-- 아이폰에서는 전화번호형식 010-1234-5678과 같은 형식이면 자동링크라 바로 전화가 걸린다. 이를 막기위한 메타태그는 -->
-    <meta name="format-detection" content="telephone=no" />
-    
-    <!--  href="./favicon.ico" ==> 깃허브에서는 상대경로(./)를 사용해야 파비콘을 불러올수있다.-->
-    <link rel="icon" href="./favicon.ico?v=2" />
-    
-    <!-- 웹사이트 매니페스트 상대경로(./)사용 -->
-    <link rel="manifest" href="./manifest.json" />
-    
-    <!-- 파비콘 아이콘들 상대경로(./)사용 -->
-    <link rel="icon" type="image/png" sizes="32x32" href="./favicon.png" />
-    <link rel="icon" type="image/png" sizes="36x36" href="./favicons/android-icon-36x36.png" />
-    <link rel="icon" type="image/png" sizes="48x48" href="./favicons/android-icon-48x48.png" />
-    <link rel="icon" type="image/png" sizes="72x72" href="./favicons/android-icon-72x72.png" />
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="직지황악회" />
+  <title>직지35연락망</title>
 
-    <link rel="apple-touch-icon" sizes="32x32" href="./favicons/apple-icon-32x32.png">
-    <link rel="apple-touch-icon" sizes="57x57" href="./favicons/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="./favicons/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="./favicons/apple-icon-72x72.png">
+  <!-- 아이폰에서는 전화번호형식 010-1234-5678과 같은 형식이면 자동링크라 바로 전화가 걸린다. 이를 막기위한 메타태그는 -->
+  <meta name="format-detection" content="telephone=no" />
 
-    <!-- Ms브라우저 설정 파일 상대경로(./)사용 -->
-    <meta name="msapplication-config" content="./browserconfig.xml">
-    <meta name="msapplication-TileColor" content="#ffffff" />
-    <meta name="msapplication-TileImage" content="./favicons/ms-icon-150x150.png" />
-    <meta name="theme-color" content="#ffffff" />
-    
-    <!-- 부트스트랩 CDN 링크 -->
-    <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-    integrity="sha384-YvpCrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous"
-    />
+  <!--  href="./favicon.ico" ==> 깃허브에서는 상대경로(./)를 사용해야 파비콘을 불러올수있다.-->
+  <link rel="icon" href="./favicon.ico?v=2" />
 
-    
-    
+  <!-- 웹사이트 매니페스트 상대경로(./)사용 -->
+  <link rel="manifest" href="./manifest.json" />
 
+  <!-- 파비콘 아이콘들 상대경로(./)사용 -->
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon.png" />
+  <link rel="icon" type="image/png" sizes="36x36" href="./favicons/android-icon-36x36.png" />
+  <link rel="icon" type="image/png" sizes="48x48" href="./favicons/android-icon-48x48.png" />
+  <link rel="icon" type="image/png" sizes="72x72" href="./favicons/android-icon-72x72.png" />
 
-    <!-- 마우스 우클릭 방지/드래그 방지하는 스크립트를 head안에 삽입! -->
-    <script type="text/javascript">
-      document.oncontextmenu = function () {
-        return false;
-      };
-    </script>
+  <link rel="apple-touch-icon" sizes="32x32" href="./favicons/apple-icon-32x32.png">
+  <link rel="apple-touch-icon" sizes="57x57" href="./favicons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="./favicons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="./favicons/apple-icon-72x72.png">
 
-    <!-- ✅첫페이지 검증확인 페이지로 <style>과 <script>는 간단히 내부에서 처리했다. -->
-    <style>
-      /* 페이지 기본 스타일 */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+  <!-- Ms브라우저 설정 파일 상대경로(./)사용 -->
+  <meta name="msapplication-config" content="./browserconfig.xml">
+  <meta name="msapplication-TileColor" content="#ffffff" />
+  <meta name="msapplication-TileImage" content="./favicons/ms-icon-150x150.png" />
+  <meta name="theme-color" content="#ffffff" />
+
+  <!-- 부트스트랩 CDN 링크 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+
+  <!-- 마우스 우클릭 방지/드래그 방지하는 스크립트를 head안에 삽입! -->
+  <script type="text/javascript">
+    document.oncontextmenu = function () {
+      return false;
+    };
+  </script>
+
+  <!-- ✅첫페이지 검증확인 페이지로 <style>과 <script>는 간단히 내부에서 처리했다. -->
+  <style>
+    /* 페이지 기본 스타일 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* 전체 백그라운드 배경화면 지정 */
+    body {
+      font-family: Arial, sans-serif;
+      background: url('picture/tree-1-1.png') no-repeat center center/cover;
+      /* 배경화면 */
+      height: 100vh;
+      display: flex !important;
+      /* Bootstrap 덮어쓰기 */
+      justify-content: center !important;
+      align-items: center !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    /* Bootstrap container 클래스 무력화 */
+    body>.container {
+      max-width: none !important;
+      width: auto !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
+    /* 로그인 창 스타일 */
+    #login-box {
+      /* ✅ 투명도: 0.6 으로 백그라운드 희미하게 보이게 함! */
+      background: rgba(255, 255, 255, 0.6);
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      width: 300px;
+    }
+
+    /* 로고 이미지 스타일 */
+    .logo {
+      width: 75px;
+      /* 로고 크기 설정 */
+      height: auto;
+      margin-bottom: 15px;
+      /* 입력창과 간격 조정 */
+    }
+
+    /* 🥰로고(logo) 흔들림 애니메이션 */
+
+    @keyframes shake {
+      0% {
+        transform: rotate(-5deg);
       }
 
-      /* 전체 백그라운드 배경화면 지정 */
-      body {
-        font-family: Arial, sans-serif;
-        background: url('picture/tree-1-1.png') no-repeat center center/cover; /* 배경화면 */
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      50% {
+        transform: rotate(5deg);
       }
 
-      /* 로그인 창 스타일 */
-      #login-box {
-        /* ✅ 투명도: 0.6 으로 백그라운드 희미하게 보이게 함! */
-        background: rgba(255, 255, 255, 0.6);
-        padding: 20px;
-        border-radius: 10px;
-        text-align: center;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-        width: 300px;
+      100% {
+        transform: rotate(-5deg);
+      }
+    }
+
+    .shake-animation {
+      animation: shake 0.5s infinite;
+    }
+
+    /* 🥰회전 애니메이션 */
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
       }
 
-      /* 로고 이미지 스타일 */
-      .logo {
-        width: 75px; /* 로고 크기 설정 */
-        height: auto;
-        margin-bottom: 15px; /* 입력창과 간격 조정 */
+      to {
+        transform: rotate(360deg);
       }
+    }
 
-      /* 🥰로고(logo) 흔들림 애니메이션 */
+    .rotate-animation {
+      animation: rotate 3s linear;
+    }
 
-      @keyframes shake {
-        0% {
-          transform: rotate(-5deg);
-        }
-        50% {
-          transform: rotate(5deg);
-        }
-        100% {
-          transform: rotate(-5deg);
-        }
-      }
+    /* 입력 필드 */
+    input {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
 
-      .shake-animation {
-        animation: shake 0.5s infinite;
-      }
+    /* 로그인 버튼 */
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
 
-      /* 🥰회전 애니메이션 */
-      @keyframes rotate {
-        from {
-          transform: rotate(0deg);
-        }
-        to {
-          transform: rotate(360deg);
-        }
-      }
+    button:hover {
+      background: #0056b3;
+    }
 
-      .rotate-animation {
-        animation: rotate 3s linear;
-      }
+    /* 메인 콘텐츠 숨김 */
+    #main-content {
+      display: none;
+      text-align: center;
+      color: white;
+      font-size: 24px;
+    }
+  </style>
+</head>
 
-      /* 입력 필드 */
-      input {
-        width: 80%;
-        padding: 10px;
-        margin: 10px 0;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        font-size: 16px;
-      }
-
-      /* 로그인 버튼 */
-      button {
-        background: #007bff;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-      }
-
-      button:hover {
-        background: #0056b3;
-      }
-
-      /* 메인 콘텐츠 숨김 */
-      #main-content {
-        display: none;
-        text-align: center;
-        color: white;
-        font-size: 24px;
-      }
-    </style>
-  </head>
-
-  <body>
-  <div class="container">  
+<body>
+  <div class="container">
     <!-- 로그인 박스 -->
     <!-- id="logo-image"는 로고이미지를 움직이게 할려고 사용 -->
     <div id="login-box">
@@ -240,12 +247,11 @@
       // 페이지 로드 시 흔들림 애니메이션 시작
       window.onload = startShakeAnimation;
     </script>
-    </div>
-    <!-- ✅ Bootstrap JS (번들) -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-YyTVwdjK1uNfKCrEwI96OqzjyjLMfnT9jykTN2m0wvYI5e0fPJOXyIhmvc1Ju9wh"
-      crossorigin="anonymous"
-    ></script>
-  </body>
+  </div>
+  <!-- ✅ Bootstrap JS (번들) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+</body>
+
 </html>
