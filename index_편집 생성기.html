@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>연락망 데이터 관리 도구</title>
+  <link rel="icon" href="./favicons/favicon-32x32.png?v=2" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #f0f2f5; padding: 40px 15px; font-family: 'Noto Sans KR', sans-serif; }
+    .container { max-width: 900px; background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .form-section { background: #f8f9fa; padding: 20px; border-radius: 15px; margin-bottom: 30px; border: 1px solid #dee2e6; }
+    .member-item { border-bottom: 1px solid #eee; padding: 12px; display: flex; align-items: center; justify-content: space-between; background: #fff; transition: 0.2s; }
+    .member-item:hover { background: #f1f3f5; }
+    .btn-gen { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; font-weight: 700; }
+    .btn-gen:hover { opacity: 0.9; color: white; }
+    .status-badge { font-size: 0.8rem; padding: 4px 10px; border-radius: 20px; background: #eef2ff; color: #667eea; font-weight: 700; }
+    .filename-input { max-width: 200px; display: inline-block; font-weight: bold; border: 2px solid #667eea; }
+    .import-section { border: 2px dashed #667eea; padding: 15px; border-radius: 12px; margin-bottom: 20px; background: #fdfdff; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h3 class="text-center mb-4">📱 오프라인 연락망 교체 관리시스템</h3>
+
+  <!-- 1. 파일 불러오기 섹션 -->
+  <div class="import-section text-center">
+    <h6 class="fw-bold mb-2">📂 기존 index.html 파일 불러오기</h6>
+    <p class="text-muted small">컴퓨터에 있는 파일을 선택하면 저장된 명단을 가져옵니다.</p>
+    <input type="file" id="importFile" class="form-control mb-2" accept=".html">
+    <button class="btn btn-sm btn-outline-primary" onclick="loadMemberFile()">파일에서 데이터 추출하기</button>
+  </div>
+  
+  <!-- 2. 입력 폼 -->
+  <div class="form-section">
+    <h5 class="mb-3">➕ 새 회원 정보 입력</h5>
+    <div class="row g-2">
+      <div class="col-md-3"><input type="text" id="newName" class="form-control" placeholder="이름 (필수)"></div>
+      <div class="col-md-3"><input type="text" id="newTel" class="form-control" placeholder="전화번호 (필수)"></div>
+      <div class="col-md-2"><input type="text" id="newAddr" class="form-control" placeholder="거주지"></div>
+      <div class="col-md-2"><input type="text" id="newRemark" class="form-control" placeholder="비고 (회장/총무)"></div>
+      <div class="col-md-2"><button class="btn btn-primary w-100 fw-bold" onclick="addMember()">명단 추가</button></div>
+    </div>
+  </div>
+
+  <!-- 3. 명단 출력 -->
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h5>📄 현재 명단 확인 (가나다순 자동정렬) <span id="totalCount" class="status-badge"></span></h5>
+    <button class="btn btn-sm btn-outline-danger" onclick="resetToOriginal()">목록 비우기</button>
+  </div>
+  
+  <div id="memberList" class="mb-4" style="max-height: 400px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px;">
+    <!-- 리스트 자동 생성 -->
+  </div>
+
+  <!-- 4. 파일명 선택 및 파일 생성 -->
+  <div class="card p-3 shadow-sm">
+    <div class="d-flex align-items-center justify-content-center gap-3 flex-wrap">
+        <div class="fw-bold">저장할 파일 이름:</div>
+        <input type="text" id="fileName" class="form-control filename-input" value="index.html">
+        <button class="btn btn-gen btn-lg px-4" onclick="generateIndexFile()">🚀 파일 생성 및 다운로드</button>
+    </div>
+  </div>
+  
+  <div class="alert alert-info mt-4 small">
+    <strong>💡 안내사항:</strong><br>
+    - [파일 선택] 후 [데이터 추출]을 누르면 기존 파일의 명단이 리스트에 나타납니다.<br>
+    - 비고란에 <strong>'회장'</strong> 또는 <strong>'총무'</strong>를 입력하면 거주지 클릭 시 단체문자 링크가 자동 생성됩니다.<br>
+    - 📌 생성된 파일(다운로드)은 기존 index.html 파일과 교체(덮어쓰기) 해주세요.
+  </div>
+</div>
+
+<script>
+  let members = [];
+
+  // 📂 파일 불러오기 및 데이터 파싱
+  function loadMemberFile() {
+    const fileInput = document.getElementById('importFile');
+    if (!fileInput.files[0]) { alert('파일을 선택해주세요.'); return; }
+
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+      const htmlContent = e.target.result;
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlContent, 'text/html');
+      const rows = doc.querySelectorAll('tbody tr');
+
+      if (rows.length === 0) {
+        alert('데이터를 찾을 수 없습니다. 올바른 연락망 파일인지 확인하세요.');
+        return;
+      }
+
+      const extractedMembers = [];
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 5) {
+          extractedMembers.push({
+            name: cells[1].innerText.trim(),
+            tel: cells[2].innerText.trim(),
+            addr: cells[3].innerText.trim(),
+            remark: cells[4].innerText.trim().replace(/\u00a0/g, '') // 비어있는 &nbsp; 제거
+          });
+        }
+      });
+
+      members = extractedMembers;
+      renderList();
+      alert(members.length + '명의 데이터를 성공적으로 불러왔습니다.');
+    };
+
+    reader.readAsText(file, 'utf-8');
+  }
+
+  function renderList() {
+    members.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+    const listArea = document.getElementById('memberList');
+    const countArea = document.getElementById('totalCount');
+    listArea.innerHTML = '';
+    countArea.innerText = `총 ${members.length}명`;
+
+    members.forEach((m, index) => {
+      const div = document.createElement('div');
+      div.className = 'member-item';
+      div.innerHTML = `
+        <div><strong>${index + 1}. ${m.name}</strong> <span class="text-muted">(${m.tel})</span></div>
+        <div>
+          <span class="badge bg-light text-dark me-2">${m.addr} / ${m.remark || '-'}</span>
+          <button class="btn btn-sm btn-outline-danger" onclick="deleteMember(${index})">삭제</button>
+        </div>`;
+      listArea.appendChild(div);
+    });
+  }
+
+  function addMember() {
+    const name = document.getElementById('newName').value.trim();
+    const tel = document.getElementById('newTel').value.trim();
+    const addr = document.getElementById('newAddr').value.trim();
+    const remark = document.getElementById('newRemark').value.trim();
+    if (!name || !tel) { alert('이름과 전화번호를 입력하세요.'); return; }
+    members.push({ name, tel, addr, remark });
+    renderList();
+    document.getElementById('newName').value = ''; document.getElementById('newTel').value = '';
+    document.getElementById('newAddr').value = ''; document.getElementById('newRemark').value = '';
+  }
+
+  function deleteMember(index) { if(confirm('제외할까요?')) { members.splice(index, 1); renderList(); } }
+  function resetToOriginal() { if(confirm('목록을 모두 비울까요?')) { members = []; renderList(); } }
+
+  // 🚀 파일 생성
+  function generateIndexFile() {
+    const saveName = document.getElementById('fileName').value.trim() || 'index.html';
+    members.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+
+    let rowsHTML = '';
+    members.forEach((m, i) => {
+      const isLeader = m.remark.includes('회장') || m.remark.includes('총무');
+      let addressContent = `<span>${m.addr}</span>`;
+
+      if (isLeader) {
+        const othersTel = members
+          .filter(other => other.tel !== m.tel)
+          .map(other => other.tel.replace(/[^0-9]/g, ''))
+          .join(',');
+        addressContent = `<a href="sms:${othersTel}" onclick="sendSMS(event,'${othersTel}')"><span>${m.addr}</span></a>`;
+      }
+
+      rowsHTML += `
+            <tr>
+              <td class="no_1">${i + 1}</td>
+              <td class="name_1">
+                <a href="tel:${m.tel}"><span>${m.name}</span></a>
+              </td>
+              <td class="tel_1">
+                <a href="tel:${m.tel}"><span>${m.tel}</span></a>
+              </td>
+              <td class="address_1">${addressContent}</td>
+              <td class="remark_1"><span>${m.remark || '&nbsp;'}</span></td>
+              <td class="sms_1">
+                <a href="sms:${m.tel}" onclick="sendSMS(event,'${m.tel}')"><span><img class="max-small" src="image/sms-4.png" /></span></a>
+              </td>
+            </tr>`;
+    });
+
+    const finalHTML = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="직지황악회35" />
+  <title>직지35연락망</title>
+  <meta name="format-detection" content="telephone=no" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="./favicons/favicon-32x32.png?v=2" />
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#ffffff" />
+  <script type="text/javascript">
+    document.oncontextmenu = function () { return false; };
+    window.onload = () => {
+      let deg = 0;
+      const cube = document.querySelector('.cube');
+      if (cube) { setInterval(() => { deg -= 90; cube.style.transform = "rotateX(" + deg + "deg)"; }, 1000); }
+      let lastTimeString = '';
+      function updateClock() {
+        var date = new Date();
+        var YYYY = String(date.getFullYear());
+        var MM = String(date.getMonth() + 1).padStart(2, '0');
+        var DD = String(date.getDate()).padStart(2, '0');
+        var hh = String(date.getHours()).padStart(2, '0');
+        var mm = String(date.getMinutes()).padStart(2, '0');
+        var week = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
+        const currentTimeString = YYYY + "/" + MM + "/" + DD + "(" + week + ") " + hh + ":" + mm;
+        if (currentTimeString !== lastTimeString) {
+          var Clockday = document.getElementById('Clockday');
+          var Clock = document.getElementById('Clock');
+          if (Clockday) Clockday.innerText = YYYY + "/" + MM + "/" + DD + "(" + week + ")";
+          if (Clock) Clock.innerText = hh + ":" + mm;
+          lastTimeString = currentTimeString;
+        }
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
+      setTimeout(() => {
+        document.getElementById('loading-screen').style.opacity = '0';
+        setTimeout(() => {
+          document.getElementById('loading-screen').style.display = 'none';
+          document.getElementById('main-content').style.display = 'block';
+        }, 700);
+      }, 800);
+    };
+    function sendSMS(e, n) { return true; }
+  <\/script>
+</head>
+<body>
+  <div id="loading-screen"><img src="image/jikji35-1.jpg" alt="직지황악회" /></div>
+  <div id="main-content">
+    <div class="container">
+      <div class="header">
+        <div id="Clockday">00:00</div>
+        <div id="Clock">00/00/00</div>
+      </div>
+      <div class="main-body">
+        <div class="content-wrapper">
+          <div class="wrap2">
+            <div class="cube-container">
+              <div class="wrap1">
+                <div class="cube">
+                  <img src="./image/mail_1.png" /><img src="./image/chat_1.png" />
+                  <img src="./image/phone_1.png" /><img src="./image/sms_1.png" />
+                </div>
+              </div>
+            </div>
+            <div class="marquee-container">
+              <div class="marquee">
+                <img src="image/aa.gif" width="25px" height="25px" border="0" />
+                <img src="image/dd.gif" width="25px" height="25px" border="0" />
+                <span class="custom-span">직지초35회 김천지부 동기연락망</span>
+                <img src="image/dd.gif" width="25px" height="25px" border="0" />
+                <img src="image/aa.gif" width="25px" height="25px" border="0" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr><th class="no"><span>NO</span></th><th class="name"><span>이름</span></th><th class="tel"><span>전화번호</span></th><th class="address"><span>거주지</span></th><th class="remark"><span>비고</span></th><th class="sms"><span>SMS</span></th></tr>
+          </thead>
+          <tbody>
+            ${rowsHTML}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="6">
+                <div class="gototop">
+                  <button id="goTopBtn" type="button" aria-label="TOP" style="background:none; border:none; cursor:pointer;">
+                    <img class="fa" src="image/arrow.png" alt="TOP" />
+                  </button>
+                </div>
+                <div class="foot">
+                  <img src="image/anicircle03_green.gif" />&nbsp;&nbsp;
+                  <span class="jik"><a href="./book/index.html" target="_blank">https://terraone-d0318.web.app/login.html</a></span>&nbsp;
+                  <img src="image/anicircle03_green.gif" />
+                </div>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.getElementById("goTopBtn").addEventListener("click", function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+  <\/script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"><\/script>
+</body>
+</html>`;
+
+    const blob = new Blob([finalHTML], { type: 'text/html' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = saveName;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+</script>
+</body>
+</html>
