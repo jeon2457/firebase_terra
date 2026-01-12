@@ -34,13 +34,15 @@
   
   <!-- 2. 입력 폼 -->
   <div class="form-section">
-    <h5 class="mb-3">➕ 새 회원 정보 입력</h5>
+    <h5 class="mb-3" id="formTitle">➕ 새 회원 정보 입력</h5>
     <div class="row g-2">
       <div class="col-md-3"><input type="text" id="newName" class="form-control" placeholder="이름 (필수)"></div>
       <div class="col-md-3"><input type="text" id="newTel" class="form-control" placeholder="전화번호 (필수)"></div>
       <div class="col-md-2"><input type="text" id="newAddr" class="form-control" placeholder="거주지"></div>
       <div class="col-md-2"><input type="text" id="newRemark" class="form-control" placeholder="비고 (회장/총무)"></div>
-      <div class="col-md-2"><button class="btn btn-primary w-100 fw-bold" onclick="addMember()">명단 추가</button></div>
+      <div class="col-md-2">
+        <button class="btn btn-primary w-100 fw-bold" id="addBtn" onclick="addMember()">명단 추가</button>
+      </div>
     </div>
   </div>
 
@@ -65,18 +67,17 @@
   
   <div class="alert alert-info mt-4 small">
     <strong>💡 안내사항:</strong><br>
-    - 이 코드는 오프라인 연락망 파일(index.html 또는 index-1.html)에서 회원정보에
-    변동(탈퇴,신규,자격부여)이 생겼을때 간편하고 쉽게 파일을 교체하기 위한 코드 프로그램 입니다.<br>
-    - 기존 연락망 파일을 불러와 명단을 수정하거나 새로 추가할 수 있습니다.<br>
     - [파일 선택] 후 [데이터 추출]을 누르면 기존 파일의 명단이 리스트에 나타납니다.<br>
+    - 리스트에서 <strong>수정</strong>을 누르면 상단 폼에서 내용을 변경할 수 있습니다.<br>
     - 비고란에 <strong>'회장'</strong> 또는 <strong>'총무'</strong>를 입력하면 거주지 클릭 시 단체문자 링크가 자동 생성됩니다.<br>
-    - 📌 생성된 파일(다운로드)은 기존 index.html 또는 index-1.html 파일과 교체(덮어쓰기) 해주세요.
+    - 📌 생성된 파일(다운로드)은 기존 index.html 또는 index-1.html 파일과 교체(덮어쓰기) 해주세요.<br>
     - 📌 테이블 제목부분 백그라운드 이미지변경은 ./css/style.css(178행)에서 수정
   </div>
 </div>
 
 <script>
   let members = [];
+  let editIndex = -1; // 수정 중인 인덱스 추적
 
   // 📂 파일 불러오기 및 데이터 파싱
   function loadMemberFile() {
@@ -111,6 +112,7 @@
       });
 
       members = extractedMembers;
+      editIndex = -1; // 추출 시 수정 모드 초기화
       renderList();
       alert(members.length + '명의 데이터를 성공적으로 불러왔습니다.');
     };
@@ -119,7 +121,11 @@
   }
 
   function renderList() {
-    members.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+    // 수정 중이 아닐 때만 정렬 (수정 중 정렬하면 인덱스 꼬임 방지)
+    if (editIndex === -1) {
+      members.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+    }
+    
     const listArea = document.getElementById('memberList');
     const countArea = document.getElementById('totalCount');
     listArea.innerHTML = '';
@@ -132,10 +138,27 @@
         <div><strong>${index + 1}. ${m.name}</strong> <span class="text-muted">(${m.tel})</span></div>
         <div>
           <span class="badge bg-light text-dark me-2">${m.addr} / ${m.remark || '-'}</span>
+          <button class="btn btn-sm btn-outline-primary me-1" onclick="prepareEdit(${index})">수정</button>
           <button class="btn btn-sm btn-outline-danger" onclick="deleteMember(${index})">삭제</button>
         </div>`;
       listArea.appendChild(div);
     });
+  }
+
+  // ✏️ 수정을 위해 입력 폼에 데이터 로드
+  function prepareEdit(index) {
+    const m = members[index];
+    document.getElementById('newName').value = m.name;
+    document.getElementById('newTel').value = m.tel;
+    document.getElementById('newAddr').value = m.addr;
+    document.getElementById('newRemark').value = m.remark;
+    
+    editIndex = index;
+    document.getElementById('formTitle').innerText = "📝 회원 정보 수정";
+    document.getElementById('addBtn').innerText = "수정 완료";
+    document.getElementById('addBtn').classList.replace('btn-primary', 'btn-success');
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function addMember() {
@@ -143,15 +166,35 @@
     const tel = document.getElementById('newTel').value.trim();
     const addr = document.getElementById('newAddr').value.trim();
     const remark = document.getElementById('newRemark').value.trim();
+    
     if (!name || !tel) { alert('이름과 전화번호를 입력하세요.'); return; }
-    members.push({ name, tel, addr, remark });
+
+    if (editIndex > -1) {
+      // 수정 처리
+      members[editIndex] = { name, tel, addr, remark };
+      editIndex = -1;
+      document.getElementById('formTitle').innerText = "➕ 새 회원 정보 입력";
+      document.getElementById('addBtn').innerText = "명단 추가";
+      document.getElementById('addBtn').classList.replace('btn-success', 'btn-primary');
+    } else {
+      // 신규 추가
+      members.push({ name, tel, addr, remark });
+    }
+
     renderList();
     document.getElementById('newName').value = ''; document.getElementById('newTel').value = '';
     document.getElementById('newAddr').value = ''; document.getElementById('newRemark').value = '';
   }
 
-  function deleteMember(index) { if(confirm('제외할까요?')) { members.splice(index, 1); renderList(); } }
-  function resetToOriginal() { if(confirm('목록을 모두 비울까요?')) { members = []; renderList(); } }
+  function deleteMember(index) { 
+    if(confirm('제외할까요?')) { 
+      members.splice(index, 1); 
+      editIndex = -1; // 삭제 시 수정 모드 해제
+      renderList(); 
+    } 
+  }
+  
+  function resetToOriginal() { if(confirm('목록을 모두 비울까요?')) { members = []; editIndex = -1; renderList(); } }
 
   // 🚀 파일 생성
   function generateIndexFile() {

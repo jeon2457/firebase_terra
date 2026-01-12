@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="description" content="2026사용내역서" />
+  <link rel="icon" href="https://terraone-d0318.web.app/favicon.png" />
+  
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <style>
+    :root {
+      --bg: #e0e5ec;
+      --shadow: #a3b1c6;
+      --light: #ffffff;
+      --primary: #4A90E2;
+    }
+
+    body {
+      background-color: var(--bg);
+      font-family: 'Pretendard', sans-serif;
+      margin: 0; padding: 20px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    .container { width: 100%; max-width: 450px; }
+    h2 { font-size: 28px; text-align: center; color: #444; margin-bottom: 20px; }
+
+    /* 뉴모피즘 탭 스타일 */
+    .tabs {
+      display: flex; justify-content: space-around; margin-bottom: 20px;
+      padding: 10px; border-radius: 20px;
+      background: var(--bg);
+      box-shadow: 8px 8px 15px var(--shadow), -8px -8px 15px var(--light);
+    }
+    .tab-btn {
+      border: none; background: none; font-size: 18px; font-weight: bold;
+      padding: 12px 20px; color: #666; cursor: pointer; border-radius: 12px;
+    }
+    .tab-btn.active {
+      box-shadow: inset 6px 6px 10px var(--shadow), inset -6px -6px 10px var(--light);
+      color: var(--primary);
+    }
+
+    /* 카드 섹션 */
+    .card {
+      background: var(--bg); padding: 25px; border-radius: 30px;
+      box-shadow: 10px 10px 20px var(--shadow), -10px -10px 20px var(--light);
+      margin-bottom: 20px;
+    }
+
+    label { display: block; margin: 12px 0 8px 10px; font-size: 18px; font-weight: bold; color: #555; }
+
+    /* 입력창 및 선택창 */
+    input, select {
+      width: 100%; border: none; padding: 18px; font-size: 20px; border-radius: 15px;
+      background: var(--bg); box-sizing: border-box;
+      box-shadow: 5px 5px 10px var(--shadow), -5px -5px 10px var(--light);
+      outline: none; color: #333; margin-bottom: 5px;
+    }
+    input:focus, select:focus {
+      box-shadow: inset 5px 5px 10px var(--shadow), inset -5px -5px 10px var(--light);
+    }
+
+    .btn-main {
+      width: 100%; padding: 20px; border: none; border-radius: 20px;
+      font-size: 24px; font-weight: bold; color: white; 
+      background: var(--primary);
+      box-shadow: 6px 6px 15px var(--shadow), -6px -6px 15px var(--light);
+      cursor: pointer; margin-top: 20px;
+    }
+
+    /* 통계 화면용 */
+    .stats-card { display: none; text-align: center; }
+    .date-selector { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; }
+    .date-selector select { width: auto; padding: 10px 15px; font-size: 16px; }
+    .stat-item { 
+      margin-bottom: 15px; padding: 15px; border-radius: 15px; 
+      box-shadow: 6px 6px 12px var(--shadow), -6px -6px 12px var(--light);
+    }
+    .stat-value { font-size: 28px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>💎 2026년 사용내역서 💎</h2>
+
+  <div class="tabs">
+    <button id="btn-input" class="tab-btn active" onclick="showTab('input')">기록하기</button>
+    <button id="btn-stats" class="tab-btn" onclick="showTab('stats')">통계보기</button>
+  </div>
+
+  <div id="input-tab" class="card">
+    <label>날짜</label>
+    <input type="date" id="date">
+
+    <label>유형</label>
+    <select id="type" onchange="updateCategories()">
+      <option value="지출">💸 지출</option>
+      <option value="소득">💰 소득(월회비)</option>
+    </select>
+
+    <label>항목</label>
+    <select id="category"></select>
+
+    <label>결제 수단</label>
+    <select id="asset">
+      <option value="카드">💳 카드</option>
+      <option value="이체">🏦 이체</option>
+      <option value="현금">💵 현금</option>
+    </select>
+
+    <label>내용</label>
+    <input type="text" id="item" placeholder="상세 내용 입력">
+
+    <label>금액 (원)</label>
+    <input type="text" id="amount" placeholder="0" inputmode="numeric" onkeyup="formatMoney(this)">
+
+    <label>첨부파일 (선택)</label>
+    <input type="file" id="receipt" accept="image/*">
+
+    <button class="btn-main" onclick="save()" id="saveBtn">저장하기</button>
+  </div>
+
+  <div id="stats-tab" class="card stats-card">
+    <div class="date-selector">
+      <select id="stat-year" onchange="loadStats()"></select>
+      <select id="stat-month" onchange="loadStats()"></select>
+    </div>
+
+    <div id="chart_div" style="width: 100%; height: 250px;"></div>
+
+    <div class="stat-item"><div style="color:#777;">선택 달 소득</div><div id="m-income" class="stat-value" style="color:#2ecc71;">0원</div></div>
+    <div class="stat-item"><div style="color:#777;">선택 달 지출</div><div id="m-expense" class="stat-value" style="color:#e74c3c;">0원</div></div>
+    <div class="stat-item"><div style="color:#777;">해당 월 잔액</div><div id="m-total" class="stat-value">0원</div></div>
+  </div>
+</div>
+
+<script>
+  google.charts.load('current', {'packages':['corechart']});
+
+  const categoryMap = {
+    "지출": ["외식/배달", "교통/차량", "주거/통신", "생활/마트", "패션/미용", "건강/의료", "교육/여가", "경조사/회비", "용돈/기타"],
+    "소득": ["월회비", "찬조금", "용돈", "금융소득", "기타소득"]
+  };
+
+  window.onload = function() {
+    document.getElementById('date').value = new Date().toISOString().split('T')[0];
+    updateCategories();
+    initDateSelectors(); // 통계 날짜 메뉴 생성
+  };
+
+  // 연도와 월 선택 메뉴 생성 (작은 숫자부터 큰 숫자 순서로)
+  function initDateSelectors() {
+    const yearSelect = document.getElementById('stat-year');
+    const monthSelect = document.getElementById('stat-month');
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    
+    // 2026년부터 시작하여 50년 후까지 오름차순으로 생성
+    // i++ 를 사용하여 숫자가 점점 커지게 만듭니다.
+    for (let i = 2026; i <= currentYear + 50; i++) {
+      const opt = document.createElement('option');
+      opt.value = i; 
+      opt.innerText = i + "년";
+      
+      // 현재 연도(오늘)를 기본 선택값으로 지정
+      if (i === currentYear) opt.selected = true;
+      yearSelect.appendChild(opt);
+    }
+    
+    // 1월~12월 생성
+    for (let i = 0; i < 12; i++) {
+      const opt = document.createElement('option');
+      opt.value = i; 
+      opt.innerText = (i + 1) + "월";
+      if (i === now.getMonth()) opt.selected = true; 
+      monthSelect.appendChild(opt);
+    }
+  }
+
+  function updateCategories() {
+    const type = document.getElementById('type').value;
+    const cat = document.getElementById('category');
+    cat.innerHTML = "";
+    categoryMap[type].forEach(i => {
+      const o = document.createElement('option'); o.value = i; o.innerText = i; cat.appendChild(o);
+    });
+  }
+
+  function formatMoney(obj) {
+    let v = obj.value.replace(/[^0-9]/g, "");
+    obj.value = v.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+  function showTab(name) {
+    const isInput = name === 'input';
+    document.getElementById('input-tab').style.display = isInput ? 'block' : 'none';
+    document.getElementById('stats-tab').style.display = isInput ? 'none' : 'block';
+    document.getElementById('btn-input').classList.toggle('active', isInput);
+    document.getElementById('btn-stats').classList.toggle('active', !isInput);
+    if(!isInput) loadStats();
+  }
+
+  function save() {
+    const btn = document.getElementById('saveBtn');
+    const fileInput = document.getElementById('receipt');
+    const data = {
+      date: document.getElementById('date').value,
+      type: document.getElementById('type').value,
+      category: document.getElementById('category').value,
+      asset: document.getElementById('asset').value,
+      item: document.getElementById('item').value,
+      amount: document.getElementById('amount').value
+    };
+
+    if(!data.item || !data.amount) return alert('내용과 금액을 입력해 주세요!');
+    btn.disabled = true; btn.innerText = "저장 중...";
+
+    if (fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        sendToServer(data, { data: e.target.result.split(',')[1], mimeType: file.type, fileName: file.name });
+      };
+      reader.readAsDataURL(file);
+    } else {
+      sendToServer(data, null);
+    }
+  }
+
+  function sendToServer(data, fileData) {
+    google.script.run.withSuccessHandler(() => {
+      alert('✅ 저장되었습니다!'); 
+      document.getElementById('saveBtn').disabled = false;
+      document.getElementById('saveBtn').innerText = "저장하기";
+      document.getElementById('item').value = ""; 
+      document.getElementById('amount').value = "";
+      document.getElementById('receipt').value = "";
+    }).addData(data, fileData);
+  }
+
+  function loadStats() {
+    const year = document.getElementById('stat-year').value;
+    const month = document.getElementById('stat-month').value;
+    
+    google.script.run.withSuccessHandler(res => {
+      document.getElementById('m-income').innerText = res.income.toLocaleString() + "원";
+      document.getElementById('m-expense').innerText = res.expense.toLocaleString() + "원";
+      document.getElementById('m-total').innerText = (res.income - res.expense).toLocaleString() + "원";
+      drawChart(res.chartData);
+    }).getMonthlyStats(year, month); // 서버에 선택한 날짜 전달
+  }
+
+  function drawChart(chartData) {
+    if (!chartData || chartData.length === 0) {
+      document.getElementById('chart_div').innerHTML = "<p style='padding-top:100px; color:#999;'>데이터가 없습니다.</p>";
+      return;
+    }
+    const data = google.visualization.arrayToDataTable([['Category', 'Amount'], ...chartData]);
+    const options = {
+      pieHole: 0.4,
+      backgroundColor: 'transparent',
+      chartArea: {width:'90%', height:'80%'},
+      legend: {position: 'bottom'},
+      colors: ['#e74c3c', '#f1c40f', '#e67e22', '#3498db', '#9b59b6', '#1abc9c']
+    };
+    new google.visualization.PieChart(document.getElementById('chart_div')).draw(data, options);
+  }
+</script>
+</body>
+</html>
+
+
+<!-- 
+
+나의 사용내역서 구글 스프레드시트 아이디:  
+https://docs.google.com/spreadsheets/d/1deOxChVeue7Vo7lQJF5oeG9fo83H6r9Q3GI-33IHgV4/edit?gid=0#gid=0
+===>> 1deOxChVeue7Vo7lQJF5oeG9fo83H6r9Q3GI-33IHgV4
+
+나의 구글드라이브 영수증 폴더 아이디:
+https://drive.google.com/drive/folders/1M0PArcUowA-Jtw9CWytLBP36WvFJvmQJ 
+===>> 1M0PArcUowA-Jtw9CWytLBP36WvFJvmQJ
+
+나의 2026년 사용내역서 배포 ID :  AKfycby0_rY97gQZrhMBM3XVjP1FIpRJohGMAwI73GOFySxjhR5AMB0wRSi9bm5vyjAYRIQ
+
+웹앱 URL 주소:   https://script.google.com/macros/s/AKfycby0_rY97gQZrhMBM3XVjP1FIpRJohGMAwI73GOFySxjhR5AMB0wRSi9bm5vyjAYRIQ/exec
+
+유튜브 출처: 광고없는 평생 무료 앱 내가 직접 만든다! AI초보자도 OK! 구글시트와 앱스스크립트로 자동화 앱 만들기
+
+ https://youtu.be/_V6VZ0VGGCY?si=cogJA-l9rWNOGJ_w 
+ 
+-->
