@@ -26,7 +26,7 @@
 
   <!-- 1. 파일 불러오기 섹션 -->
   <div class="import-section text-center">
-    <h6 class="fw-bold mb-2">📂 기존 index.html 파일 불러오기</h6>
+    <h6 class="fw-bold mb-2">📂 기존 index.html 또는 index-1.html 파일 불러오기</h6>
     <p class="text-muted small">컴퓨터에 있는 파일을 선택하면 저장된 명단을 가져옵니다.</p>
     <input type="file" id="importFile" class="form-control mb-2" accept=".html">
     <button class="btn btn-sm btn-outline-primary" onclick="loadMemberFile()">파일에서 데이터 추출하기</button>
@@ -34,13 +34,13 @@
   
   <!-- 2. 입력 폼 -->
   <div class="form-section">
-    <h5 class="mb-3" id="formTitle">➕ 새 회원 정보 입력</h5>
+    <h5 class="mb-3">➕ 새 회원 정보 입력</h5>
     <div class="row g-2">
       <div class="col-md-3"><input type="text" id="newName" class="form-control" placeholder="이름 (필수)"></div>
       <div class="col-md-3"><input type="text" id="newTel" class="form-control" placeholder="전화번호 (필수)"></div>
       <div class="col-md-2"><input type="text" id="newAddr" class="form-control" placeholder="거주지"></div>
       <div class="col-md-2"><input type="text" id="newRemark" class="form-control" placeholder="비고 (회장/총무)"></div>
-      <div class="col-md-2"><button class="btn btn-primary w-100 fw-bold" id="submitBtn" onclick="addMember()">명단 추가</button></div>
+      <div class="col-md-2"><button class="btn btn-primary w-100 fw-bold" onclick="addMember()">명단 추가</button></div>
     </div>
   </div>
 
@@ -65,16 +65,18 @@
   
   <div class="alert alert-info mt-4 small">
     <strong>💡 안내사항:</strong><br>
+    - 이 코드는 오프라인 연락망 파일(index.html 또는 index-1.html)에서 회원정보에
+    변동(탈퇴,신규,자격부여)이 생겼을때 간편하고 쉽게 파일을 교체하기 위한 코드 프로그램 입니다.<br>
+    - 기존 연락망 파일을 불러와 명단을 수정하거나 새로 추가할 수 있습니다.<br>
     - [파일 선택] 후 [데이터 추출]을 누르면 기존 파일의 명단이 리스트에 나타납니다.<br>
-    - 리스트의 <strong>수정</strong> 버튼을 누르면 위쪽 입력폼에서 내용을 고칠 수 있습니다.<br>
     - 비고란에 <strong>'회장'</strong> 또는 <strong>'총무'</strong>를 입력하면 거주지 클릭 시 단체문자 링크가 자동 생성됩니다.<br>
-    - 📌 생성된 파일(다운로드)은 기존 index.html 파일과 교체(덮어쓰기) 해주세요.
+    - 📌 생성된 파일(다운로드)은 기존 index.html 또는 index-1.html 파일과 교체(덮어쓰기) 해주세요.
+    - 📌 테이블 제목부분 백그라운드 이미지변경은 ./css/style.css(178행)에서 수정
   </div>
 </div>
 
 <script>
   let members = [];
-  let editIndex = -1; // 수정을 위한 인덱스 저장
 
   // 📂 파일 불러오기 및 데이터 파싱
   function loadMemberFile() {
@@ -117,10 +119,7 @@
   }
 
   function renderList() {
-    // 수정 중이 아닐 때만 정렬
-    if (editIndex === -1) {
-        members.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
-    }
+    members.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
     const listArea = document.getElementById('memberList');
     const countArea = document.getElementById('totalCount');
     listArea.innerHTML = '';
@@ -133,27 +132,10 @@
         <div><strong>${index + 1}. ${m.name}</strong> <span class="text-muted">(${m.tel})</span></div>
         <div>
           <span class="badge bg-light text-dark me-2">${m.addr} / ${m.remark || '-'}</span>
-          <button class="btn btn-sm btn-outline-primary me-1" onclick="editMember(${index})">수정</button>
           <button class="btn btn-sm btn-outline-danger" onclick="deleteMember(${index})">삭제</button>
         </div>`;
       listArea.appendChild(div);
     });
-  }
-
-  // ✏️ 회원 수정 모드 진입
-  function editMember(index) {
-    const m = members[index];
-    document.getElementById('newName').value = m.name;
-    document.getElementById('newTel').value = m.tel;
-    document.getElementById('newAddr').value = m.addr;
-    document.getElementById('newRemark').value = m.remark;
-    
-    editIndex = index;
-    document.getElementById('formTitle').innerText = "📝 회원 정보 수정";
-    document.getElementById('submitBtn').innerText = "수정 완료";
-    document.getElementById('submitBtn').classList.replace('btn-primary', 'btn-success');
-    
-    window.scrollTo({ top: document.querySelector('.form-section').offsetTop - 20, behavior: 'smooth' });
   }
 
   function addMember() {
@@ -161,42 +143,15 @@
     const tel = document.getElementById('newTel').value.trim();
     const addr = document.getElementById('newAddr').value.trim();
     const remark = document.getElementById('newRemark').value.trim();
-    
     if (!name || !tel) { alert('이름과 전화번호를 입력하세요.'); return; }
-
-    if (editIndex > -1) {
-        // 수정 모드
-        members[editIndex] = { name, tel, addr, remark };
-        editIndex = -1;
-        document.getElementById('formTitle').innerText = "➕ 새 회원 정보 입력";
-        document.getElementById('submitBtn').innerText = "명단 추가";
-        document.getElementById('submitBtn').classList.replace('btn-success', 'btn-primary');
-    } else {
-        // 추가 모드
-        members.push({ name, tel, addr, remark });
-    }
-    
+    members.push({ name, tel, addr, remark });
     renderList();
-    document.getElementById('newName').value = ''; 
-    document.getElementById('newTel').value = '';
-    document.getElementById('newAddr').value = ''; 
-    document.getElementById('newRemark').value = '';
+    document.getElementById('newName').value = ''; document.getElementById('newTel').value = '';
+    document.getElementById('newAddr').value = ''; document.getElementById('newRemark').value = '';
   }
 
-  function deleteMember(index) { 
-    if(confirm('제외할까요?')) { 
-        if(editIndex === index) {
-            editIndex = -1;
-            document.getElementById('formTitle').innerText = "➕ 새 회원 정보 입력";
-            document.getElementById('submitBtn').innerText = "명단 추가";
-            document.getElementById('submitBtn').classList.replace('btn-success', 'btn-primary');
-        }
-        members.splice(index, 1); 
-        renderList(); 
-    } 
-  }
-  
-  function resetToOriginal() { if(confirm('목록을 모두 비울까요?')) { members = []; editIndex = -1; renderList(); } }
+  function deleteMember(index) { if(confirm('제외할까요?')) { members.splice(index, 1); renderList(); } }
+  function resetToOriginal() { if(confirm('목록을 모두 비울까요?')) { members = []; renderList(); } }
 
   // 🚀 파일 생성
   function generateIndexFile() {
@@ -330,7 +285,7 @@
                 </div>
                 <div class="foot">
                   <img src="image/anicircle03_green.gif" />&nbsp;&nbsp;
-                  <span class="jik"><a href="./book/index.html" target="_blank">https://terraone-d0318.web.app/login.html</a></span>&nbsp;
+                  <span class="jik"><a href="./book/index.html" target="_blank">https://terraone-d0318.web.app/</a></span>&nbsp;
                   <img src="image/anicircle03_green.gif" />
                 </div>
               </td>
