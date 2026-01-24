@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="description" content="직지35황악회" />
+  <meta name="description" content="직지황악회35" />
   <title>직지35연락망</title>
   <meta name="format-detection" content="telephone=no" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -11,9 +11,85 @@
   <link rel="icon" href="./favicons/favicon-32x32.png?v=2" />
   <link rel="manifest" href="./manifest.json" />
   <meta name="theme-color" content="#ffffff" />
+  
+  <style>
+    /* 
+       [링크 비활성화 스타일]
+       OFF 상태일 때: 클릭 방지 + 색상을 회색으로 죽여서 비활성임을 표시 
+    */
+    .sms-disabled {
+      pointer-events: none !important; /* 클릭 아예 안되게 막음 */
+      color: #fff !important;          /* 비활성 상태일 때는 회색 */
+      text-decoration: none !important;
+      cursor: default !important;
+    }
+    
+    /* 거주지 제목 마우스 커서 설정 */
+    th.address {
+      cursor: pointer;
+      user-select: none; /* 드래그 방지 */
+    }
+  </style>
+
   <script type="text/javascript">
     document.oncontextmenu = function () { return false; };
+    
+    /* ==========================================
+       [기능 로직] 
+       1. 거주지 클릭 시 -> 제목 색상 변경 (흰색 <-> 원래색)
+       2. 링크 활성화/비활성화 토글
+       3. 3분 타이머
+       ========================================== */
+    let isSmsActive = false; // 시작은 무조건 OFF (잠금)
+    let autoOffTimer = null; // 타이머 변수
+
+    // 1. 토글 실행 함수 (거주지 클릭 시 실행)
+    function toggleSmsLinks() {
+      isSmsActive = !isSmsActive; // 상태 반전 (ON <-> OFF)
+      applyState();
+    }
+
+    // 2. 상태 적용 함수
+    function applyState() {
+      // 거주지 텍스트가 들어있는 span 태그 선택
+      const titleSpan = document.querySelector('th.address span');
+      // 본문의 모든 주소 링크 선택
+      const links = document.querySelectorAll('.address_1 a');
+
+      if (isSmsActive) {
+        // [ON 상태]
+        // 제목 색상을 하얀색으로 변경
+        if(titleSpan) titleSpan.style.color = '#ffffff';
+        
+        // 링크들의 비활성 클래스 제거 (원래 하얀색 링크로 돌아오고 클릭 가능해짐)
+        links.forEach(link => link.classList.remove('sms-disabled'));
+
+        // 기존 타이머가 있다면 취소하고 새로 3분 설정
+        if (autoOffTimer) clearTimeout(autoOffTimer);
+        autoOffTimer = setTimeout(() => {
+          // 3분이 지나면 자동으로 끔
+          isSmsActive = false;
+          applyState(); 
+        }, 3 * 60 * 1000); // 3분 (1000ms * 60 * 3)
+
+      } else {
+        // [OFF 상태]
+        // 제목 색상을 원래대로 (CSS에서 지정한 색상으로) 복구
+        if(titleSpan) titleSpan.style.color = ''; 
+        
+        // 링크들에 비활성 클래스 추가 (회색으로 변하고 클릭 안됨)
+        links.forEach(link => link.classList.add('sms-disabled'));
+
+        // 타이머 해제
+        if (autoOffTimer) clearTimeout(autoOffTimer);
+      }
+    }
+
     window.onload = () => {
+      // [중요] 페이지 로딩 시 일단 OFF 상태(잠금)로 시작
+      applyState();
+
+      // --- 기존 기능 (큐브, 시계, 로딩) ---
       let deg = 0;
       const cube = document.querySelector('.cube');
       if (cube) { setInterval(() => { deg -= 90; cube.style.transform = "rotateX(" + deg + "deg)"; }, 1000); }
@@ -80,7 +156,17 @@
         </div>
         <table>
           <thead>
-            <tr><th class="no"><span>NO</span></th><th class="name"><span>이름</span></th><th class="tel"><span>전화번호</span></th><th class="address"><span>거주지</span></th><th class="remark"><span>비고</span></th><th class="sms"><span>SMS</span></th></tr>
+            <tr>
+              <th class="no"><span>NO</span></th>
+              <th class="name"><span>이름</span></th>
+              <th class="tel"><span>전화번호</span></th>
+              <!-- 수정됨: onclick 이벤트 추가 -->
+              <th class="address" onclick="toggleSmsLinks()" title="클릭하여 문자 기능 ON/OFF">
+                <span>거주지</span>
+              </th>
+              <th class="remark"><span>비고</span></th>
+              <th class="sms"><span>SMS</span></th>
+            </tr>
           </thead>
           <tbody>
             
