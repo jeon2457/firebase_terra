@@ -84,7 +84,7 @@ export default function MemberEditListPage() {
                 <table className="table table-bordered table-hover text-center align-middle mb-0">
                     <thead className="table-light">
                         <tr>
-                            <th width="50">선택</th>
+                            <th style={{ width: "50px" }}>선택</th>
                             <th>이름</th>
                             <th>전화번호</th>
                             <th>주소</th>
