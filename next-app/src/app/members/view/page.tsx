@@ -340,8 +340,8 @@ export default function MembersViewPage() {
                             <th className="col-no">NO</th>
                             <th className="col-name">이름</th>
                             <th className="col-tel">전화번호</th>
-                            <th className="col-addr address-header" onClick={handleToggleSecurity}>
-                                <span className="addr-visible">거주지</span>
+                            <th className="col-addr address-header" onClick={handleToggleSecurity} style={{ color: '#cea71b' }}>
+                                <span className="addr-visible" style={{ color: '#cea71b' }}>거주지</span>
                             </th>
                             <th className="col-remark hide-mobile">비고</th>
                             <th className="col-sms">SMS</th>
@@ -352,12 +352,12 @@ export default function MembersViewPage() {
                             <tr key={member._id}>
                                 <td>{index + 1}</td>
                                 <td>
-                                    <Link href={`tel:${member.tel}`} className="name-link">
+                                    <Link href={`tel:${member.tel}`} className="name-link" style={{ color: '#ffffff', textDecoration: 'none' }}>
                                         {member.name}
                                     </Link>
                                 </td>
                                 <td>
-                                    <Link href={`tel:${member.tel}`} className="name-link">
+                                    <Link href={`tel:${member.tel}`} className="name-link" style={{ color: '#ffffff', textDecoration: 'none' }}>
                                         {member.tel}
                                     </Link>
                                 </td>
