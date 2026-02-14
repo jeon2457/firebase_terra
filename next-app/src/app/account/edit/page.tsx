@@ -23,6 +23,11 @@ function AccountEditContent() {
     const [loading, setLoading] = useState(true);
     const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
     const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         if (status === "unauthenticated") {
@@ -71,6 +76,7 @@ function AccountEditContent() {
     const years = [0, 1, 2, 3].map(i => new Date().getFullYear() - i);
     const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
+    if (!mounted) return <div className="text-center mt-5">Loading...</div>;
     if (status === "loading") return <div className="text-center mt-5">Loading...</div>;
 
     const [modalData, setModalData] = useState<any | null>(null);
