@@ -247,7 +247,7 @@ export default function MembersViewPage() {
         .name-link {
              font-size: 1.1rem; font-weight: 600; color: #ffffff; text-decoration: none;
         }
-        .name-link:hover { color: #ffd700; text-decoration: underline; }
+        .name-link:hover { color: #ffffff; text-decoration: none; }
         
         .sms-icon { color: #4A9EFF; font-size: 24px; cursor: pointer; transition: transform 0.2s; }
         .sms-icon:hover { transform: scale(1.2); }
@@ -342,7 +342,7 @@ export default function MembersViewPage() {
                             <th className="col-name">이름</th>
                             <th className="col-tel">전화번호</th>
                             <th className="col-addr address-header" onClick={handleToggleSecurity}>
-                                {isSecured ? <span className="addr-hidden">거주지(잠김)</span> : <span className="addr-visible">거주지(해제)</span>}
+                                <span className="addr-visible">거주지</span>
                             </th>
                             <th className="col-remark hide-mobile">비고</th>
                             <th className="col-sms">SMS</th>
@@ -363,11 +363,7 @@ export default function MembersViewPage() {
                                     </Link>
                                 </td>
                                 <td>
-                                    {isSecured ? (
-                                        <span style={{ color: "yellow", fontWeight: "bold" }}>****</span>
-                                    ) : (
-                                        member.addr
-                                    )}
+                                    {member.addr}
                                 </td>
                                 <td className="hide-mobile">{member.remark}</td>
                                 <td>
