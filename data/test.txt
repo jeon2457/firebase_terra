@@ -1,0 +1,291 @@
+
+
+
+[2022-05-13 10:30] (Dispatcher_UnhandledException)
+System.AggregateException: 하나 이상의 오류가 발생했습니다. ---> System.InvalidOperationException: 컬렉션이 수정되었습니다. 열거 작업이 실행되지 않을 수도 있습니다.
+   위치: System.ThrowHelper.ThrowInvalidOperationException(ExceptionResource resource)
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNextRare()
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNext()
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk_Buffered(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerator.GrabNextChunk(Int32 requestedChunkSize)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionEnumerator_Abstract`2.MoveNext()
+   위치: System.Threading.Tasks.Parallel.<>c__DisplayClass42_0`2.<PartitionerForEachWorker>b__1()
+   위치: System.Threading.Tasks.Task.InnerInvoke()
+   위치: System.Threading.Tasks.Task.InnerInvokeWithArg(Task childTask)
+   위치: System.Threading.Tasks.Task.<>c__DisplayClass176_0.<ExecuteSelfReplicating>b__0(Object <p0>)
+   --- 내부 예외 스택 추적의 끝 ---
+   위치: System.Threading.Tasks.Task.ThrowIfExceptional(Boolean includeTaskCanceledExceptions)
+   위치: System.Threading.Tasks.Task.Wait(Int32 millisecondsTimeout, CancellationToken cancellationToken)
+   위치: System.Threading.Tasks.Task.Wait()
+   위치: System.Threading.Tasks.Parallel.PartitionerForEachWorker[TSource,TLocal](Partitioner`1 source, ParallelOptions parallelOptions, Action`1 simpleBody, Action`2 bodyWithState, Action`3 bodyWithStateAndIndex, Func`4 bodyWithStateAndLocal, Func`5 bodyWithEverything, Func`1 localInit, Action`1 localFinally)
+   위치: System.Threading.Tasks.Parallel.ForEachWorker[TSource,TLocal](IEnumerable`1 source, ParallelOptions parallelOptions, Action`1 body, Action`2 bodyWithState, Action`3 bodyWithStateAndIndex, Func`4 bodyWithStateAndLocal, Func`5 bodyWithEverything, Func`1 localInit, Action`1 localFinally)
+   위치: System.Threading.Tasks.Parallel.ForEach[TSource](IEnumerable`1 source, ParallelOptions parallelOptions, Action`1 body)
+   위치: MoDaDamRenewal.ViewModels.ModadamListsPageViewModel.<>c__DisplayClass39_0.<get_DownloadAllCommand>b__3() 파일 C:\Users\jayeo\Desktop\MoDaDamRenewal\MoDaDamRenewal\Pages\4.ModadamLists\ModadamListsPageViewModel.cs:줄 215
+   위치: System.Threading.Tasks.Task.InnerInvoke()
+   위치: System.Threading.Tasks.Task.Execute()
+--- 예외가 throw된 이전 위치의 스택 추적 끝 ---!
+   위치: System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   위치: System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   위치: MoDaDamRenewal.ViewModels.ModadamListsPageViewModel.<<get_DownloadAllCommand>b__39_0>d.MoveNext() 파일 C:\Users\jayeo\Desktop\MoDaDamRenewal\MoDaDamRenewal\Pages\4.ModadamLists\ModadamListsPageViewModel.cs:줄 213
+--- 예외가 throw된 이전 위치의 스택 추적 끝 ---
+   위치: System.Runtime.CompilerServices.AsyncMethodBuilderCore.<>c.<ThrowAsync>b__6_0(Object state)
+   위치: System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)
+   위치: System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)
+---> (내부 예외 #0) System.InvalidOperationException: 컬렉션이 수정되었습니다. 열거 작업이 실행되지 않을 수도 있습니다.
+   위치: System.ThrowHelper.ThrowInvalidOperationException(ExceptionResource resource)
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNextRare()
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNext()
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk_Buffered(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerator.GrabNextChunk(Int32 requestedChunkSize)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionEnumerator_Abstract`2.MoveNext()
+   위치: System.Threading.Tasks.Parallel.<>c__DisplayClass42_0`2.<PartitionerForEachWorker>b__1()
+   위치: System.Threading.Tasks.Task.InnerInvoke()
+   위치: System.Threading.Tasks.Task.InnerInvokeWithArg(Task childTask)
+   위치: System.Threading.Tasks.Task.<>c__DisplayClass176_0.<ExecuteSelfReplicating>b__0(Object <p0>)<---
+
+Microsoft Windows NT 6.2.9200.0
+
+
+[2022-05-13 10:30] (Current_DispatcherUnhandledException)
+System.AggregateException: 하나 이상의 오류가 발생했습니다. ---> System.InvalidOperationException: 컬렉션이 수정되었습니다. 열거 작업이 실행되지 않을 수도 있습니다.
+   위치: System.ThrowHelper.ThrowInvalidOperationException(ExceptionResource resource)
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNextRare()
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNext()
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk_Buffered(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerator.GrabNextChunk(Int32 requestedChunkSize)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionEnumerator_Abstract`2.MoveNext()
+   위치: System.Threading.Tasks.Parallel.<>c__DisplayClass42_0`2.<PartitionerForEachWorker>b__1()
+   위치: System.Threading.Tasks.Task.InnerInvoke()
+   위치: System.Threading.Tasks.Task.InnerInvokeWithArg(Task childTask)
+   위치: System.Threading.Tasks.Task.<>c__DisplayClass176_0.<ExecuteSelfReplicating>b__0(Object <p0>)
+   --- 내부 예외 스택 추적의 끝 ---
+   위치: System.Threading.Tasks.Task.ThrowIfExceptional(Boolean includeTaskCanceledExceptions)
+   위치: System.Threading.Tasks.Task.Wait(Int32 millisecondsTimeout, CancellationToken cancellationToken)
+   위치: System.Threading.Tasks.Task.Wait()
+   위치: System.Threading.Tasks.Parallel.PartitionerForEachWorker[TSource,TLocal](Partitioner`1 source, ParallelOptions parallelOptions, Action`1 simpleBody, Action`2 bodyWithState, Action`3 bodyWithStateAndIndex, Func`4 bodyWithStateAndLocal, Func`5 bodyWithEverything, Func`1 localInit, Action`1 localFinally)
+   위치: System.Threading.Tasks.Parallel.ForEachWorker[TSource,TLocal](IEnumerable`1 source, ParallelOptions parallelOptions, Action`1 body, Action`2 bodyWithState, Action`3 bodyWithStateAndIndex, Func`4 bodyWithStateAndLocal, Func`5 bodyWithEverything, Func`1 localInit, Action`1 localFinally)
+   위치: System.Threading.Tasks.Parallel.ForEach[TSource](IEnumerable`1 source, ParallelOptions parallelOptions, Action`1 body)
+   위치: MoDaDamRenewal.ViewModels.ModadamListsPageViewModel.<>c__DisplayClass39_0.<get_DownloadAllCommand>b__3() 파일 C:\Users\jayeo\Desktop\MoDaDamRenewal\MoDaDamRenewal\Pages\4.ModadamLists\ModadamListsPageViewModel.cs:줄 215
+   위치: System.Threading.Tasks.Task.InnerInvoke()
+   위치: System.Threading.Tasks.Task.Execute()
+--- 예외가 throw된 이전 위치의 스택 추적 끝 ---
+   위치: System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   위치: System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   위치: MoDaDamRenewal.ViewModels.ModadamListsPageViewModel.<<get_DownloadAllCommand>b__39_0>d.MoveNext() 파일 C:\Users\jayeo\Desktop\MoDaDamRenewal\MoDaDamRenewal\Pages\4.ModadamLists\ModadamListsPageViewModel.cs:줄 213
+--- 예외가 throw된 이전 위치의 스택 추적 끝 ---
+   위치: System.Runtime.CompilerServices.AsyncMethodBuilderCore.<>c.<ThrowAsync>b__6_0(Object state)
+   위치: System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)
+   위치: System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)
+---> (내부 예외 #0) System.InvalidOperationException: 컬렉션이 수정되었습니다. 열거 작업이 실행되지 않을 수도 있습니다.
+   위치: System.ThrowHelper.ThrowInvalidOperationException(ExceptionResource resource)
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNextRare()
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNext()
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk_Buffered(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerator.GrabNextChunk(Int32 requestedChunkSize)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionEnumerator_Abstract`2.MoveNext()
+   위치: System.Threading.Tasks.Parallel.<>c__DisplayClass42_0`2.<PartitionerForEachWorker>b__1()
+   위치: System.Threading.Tasks.Task.InnerInvoke()
+   위치: System.Threading.Tasks.Task.InnerInvokeWithArg(Task childTask)
+   위치: System.Threading.Tasks.Task.<>c__DisplayClass176_0.<ExecuteSelfReplicating>b__0(Object <p0>)<---
+
+Microsoft Windows NT 6.2.9200.0
+
+
+[2022-10-11 23:31] (Dispatcher_UnhandledException)
+System.AggregateException: 하나 이상의 오류가 발생했습니다. ---> System.InvalidOperationException: 컬렉션이 수정되었습니다. 열거 작업이 실행되지 않을 수도 있습니다.
+   위치: System.ThrowHelper.ThrowInvalidOperationException(ExceptionResource resource)
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNextRare()
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNext()
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk_Buffered(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerator.GrabNextChunk(Int32 requestedChunkSize)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionEnumerator_Abstract`2.MoveNext()
+   위치: System.Threading.Tasks.Parallel.<>c__DisplayClass42_0`2.<PartitionerForEachWorker>b__1()
+   위치: System.Threading.Tasks.Task.InnerInvoke()
+   위치: System.Threading.Tasks.Task.InnerInvokeWithArg(Task childTask)
+   위치: System.Threading.Tasks.Task.<>c__DisplayClass176_0.<ExecuteSelfReplicating>b__0(Object <p0>)
+   --- 내부 예외 스택 추적의 끝 ---
+   위치: System.Threading.Tasks.Task.ThrowIfExceptional(Boolean includeTaskCanceledExceptions)
+   위치: System.Threading.Tasks.Task.Wait(Int32 millisecondsTimeout, CancellationToken cancellationToken)
+   위치: System.Threading.Tasks.Task.Wait()
+   위치: System.Threading.Tasks.Parallel.PartitionerForEachWorker[TSource,TLocal](Partitioner`1 source, ParallelOptions parallelOptions, Action`1 simpleBody, Action`2 bodyWithState, Action`3 bodyWithStateAndIndex, Func`4 bodyWithStateAndLocal, Func`5 bodyWithEverything, Func`1 localInit, Action`1 localFinally)
+   위치: System.Threading.Tasks.Parallel.ForEachWorker[TSource,TLocal](IEnumerable`1 source, ParallelOptions parallelOptions, Action`1 body, Action`2 bodyWithState, Action`3 bodyWithStateAndIndex, Func`4 bodyWithStateAndLocal, Func`5 bodyWithEverything, Func`1 localInit, Action`1 localFinally)
+   위치: System.Threading.Tasks.Parallel.ForEach[TSource](IEnumerable`1 source, ParallelOptions parallelOptions, Action`1 body)
+   위치: MoDaDamRenewal.ViewModels.ModadamListsPageViewModel.<>c__DisplayClass39_0.<get_DownloadAllCommand>b__3() 파일 C:\Users\jayeo\Desktop\MoDaDamRenewal\MoDaDamRenewal\Pages\4.ModadamLists\ModadamListsPageViewModel.cs:줄 215
+   위치: System.Threading.Tasks.Task.InnerInvoke()
+   위치: System.Threading.Tasks.Task.Execute()
+--- 예외가 throw된 이전 위치의 스택 추적 끝 ---
+   위치: System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   위치: System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   위치: MoDaDamRenewal.ViewModels.ModadamListsPageViewModel.<<get_DownloadAllCommand>b__39_0>d.MoveNext() 파일 C:\Users\jayeo\Desktop\MoDaDamRenewal\MoDaDamRenewal\Pages\4.ModadamLists\ModadamListsPageViewModel.cs:줄 213
+--- 예외가 throw된 이전 위치의 스택 추적 끝 ---
+   위치: System.Runtime.CompilerServices.AsyncMethodBuilderCore.<>c.<ThrowAsync>b__6_0(Object state)
+   위치: System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)
+   위치: System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)
+---> (내부 예외 #0) System.InvalidOperationException: 컬렉션이 수정되었습니다. 열거 작업이 실행되지 않을 수도 있습니다.
+   위치: System.ThrowHelper.ThrowInvalidOperationException(ExceptionResource resource)
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNextRare()
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNext()
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk_Buffered(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerator.GrabNextChunk(Int32 requestedChunkSize)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionEnumerator_Abstract`2.MoveNext()
+   위치: System.Threading.Tasks.Parallel.<>c__DisplayClass42_0`2.<PartitionerForEachWorker>b__1()
+   위치: System.Threading.Tasks.Task.InnerInvoke()
+   위치: System.Threading.Tasks.Task.InnerInvokeWithArg(Task childTask)
+   위치: System.Threading.Tasks.Task.<>c__DisplayClass176_0.<ExecuteSelfReplicating>b__0(Object <p0>)<---
+
+Microsoft Windows NT 6.2.9200.0
+
+
+[2022-10-11 23:32] (Current_DispatcherUnhandledException)
+System.AggregateException: 하나 이상의 오류가 발생했습니다. ---> System.InvalidOperationException: 컬렉션이 수정되었습니다. 열거 작업이 실행되지 않을 수도 있습니다.
+   위치: System.ThrowHelper.ThrowInvalidOperationException(ExceptionResource resource)
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNextRare()
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNext()
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk_Buffered(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerator.GrabNextChunk(Int32 requestedChunkSize)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionEnumerator_Abstract`2.MoveNext()
+   위치: System.Threading.Tasks.Parallel.<>c__DisplayClass42_0`2.<PartitionerForEachWorker>b__1()
+   위치: System.Threading.Tasks.Task.InnerInvoke()
+   위치: System.Threading.Tasks.Task.InnerInvokeWithArg(Task childTask)
+   위치: System.Threading.Tasks.Task.<>c__DisplayClass176_0.<ExecuteSelfReplicating>b__0(Object <p0>)
+   --- 내부 예외 스택 추적의 끝 ---
+   위치: System.Threading.Tasks.Task.ThrowIfExceptional(Boolean includeTaskCanceledExceptions)
+   위치: System.Threading.Tasks.Task.Wait(Int32 millisecondsTimeout, CancellationToken cancellationToken)
+   위치: System.Threading.Tasks.Task.Wait()
+   위치: System.Threading.Tasks.Parallel.PartitionerForEachWorker[TSource,TLocal](Partitioner`1 source, ParallelOptions parallelOptions, Action`1 simpleBody, Action`2 bodyWithState, Action`3 bodyWithStateAndIndex, Func`4 bodyWithStateAndLocal, Func`5 bodyWithEverything, Func`1 localInit, Action`1 localFinally)
+   위치: System.Threading.Tasks.Parallel.ForEachWorker[TSource,TLocal](IEnumerable`1 source, ParallelOptions parallelOptions, Action`1 body, Action`2 bodyWithState, Action`3 bodyWithStateAndIndex, Func`4 bodyWithStateAndLocal, Func`5 bodyWithEverything, Func`1 localInit, Action`1 localFinally)
+   위치: System.Threading.Tasks.Parallel.ForEach[TSource](IEnumerable`1 source, ParallelOptions parallelOptions, Action`1 body)
+   위치: MoDaDamRenewal.ViewModels.ModadamListsPageViewModel.<>c__DisplayClass39_0.<get_DownloadAllCommand>b__3() 파일 C:\Users\jayeo\Desktop\MoDaDamRenewal\MoDaDamRenewal\Pages\4.ModadamLists\ModadamListsPageViewModel.cs:줄 215
+   위치: System.Threading.Tasks.Task.InnerInvoke()
+   위치: System.Threading.Tasks.Task.Execute()
+--- 예외가 throw된 이전 위치의 스택 추적 끝 ---
+   위치: System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   위치: System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   위치: MoDaDamRenewal.ViewModels.ModadamListsPageViewModel.<<get_DownloadAllCommand>b__39_0>d.MoveNext() 파일 C:\Users\jayeo\Desktop\MoDaDamRenewal\MoDaDamRenewal\Pages\4.ModadamLists\ModadamListsPageViewModel.cs:줄 213
+--- 예외가 throw된 이전 위치의 스택 추적 끝 ---
+   위치: System.Runtime.CompilerServices.AsyncMethodBuilderCore.<>c.<ThrowAsync>b__6_0(Object state)
+   위치: System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)
+   위치: System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)
+---> (내부 예외 #0) System.InvalidOperationException: 컬렉션이 수정되었습니다. 열거 작업이 실행되지 않을 수도 있습니다.
+   위치: System.ThrowHelper.ThrowInvalidOperationException(ExceptionResource resource)
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNextRare()
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNext()
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk_Buffered(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerator.GrabNextChunk(Int32 requestedChunkSize)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionEnumerator_Abstract`2.MoveNext()
+   위치: System.Threading.Tasks.Parallel.<>c__DisplayClass42_0`2.<PartitionerForEachWorker>b__1()
+   위치: System.Threading.Tasks.Task.InnerInvoke()
+   위치: System.Threading.Tasks.Task.InnerInvokeWithArg(Task childTask)
+   위치: System.Threading.Tasks.Task.<>c__DisplayClass176_0.<ExecuteSelfReplicating>b__0(Object <p0>)<---
+
+Microsoft Windows NT 6.2.9200.0
+
+
+[2022-10-12 15:11] (DownloadCommand)
+Url : https://www.youtube.com/watch?v=M8UPyeF5DfM&t=209s
+System.Exception: Download Failed: 1
+   위치: MoDaDamRenewal.Services.YoutubeService.DownloadVideoInner(String videoUrl, String path, DownloadOption option, CancellationToken ct) 파일 C:\Users\jayeo\Desktop\MoDaDamRenewal\MoDaDamRenewal\Services\YoutubeService.cs:줄 125
+   위치: MoDaDamRenewal.Home.Pages.SearchDownload.DownloadPopupViewModel.<get_DownloadCommand>b__64_3() 파일 C:\Users\jayeo\Desktop\MoDaDamRenewal\MoDaDamRenewal\Pages\0.Common\DownloadPopupViewModel.cs:줄 243
+Microsoft Windows NT 6.2.9200.0
+
+
+[2022-10-15 01:43] (Dispatcher_UnhandledException)
+System.AggregateException: 하나 이상의 오류가 발생했습니다. ---> System.InvalidOperationException: 컬렉션이 수정되었습니다. 열거 작업이 실행되지 않을 수도 있습니다.
+   위치: System.ThrowHelper.ThrowInvalidOperationException(ExceptionResource resource)
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNextRare()
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNext()
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk_Buffered(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerator.GrabNextChunk(Int32 requestedChunkSize)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionEnumerator_Abstract`2.MoveNext()
+   위치: System.Threading.Tasks.Parallel.<>c__DisplayClass42_0`2.<PartitionerForEachWorker>b__1()
+   위치: System.Threading.Tasks.Task.InnerInvoke()
+   위치: System.Threading.Tasks.Task.InnerInvokeWithArg(Task childTask)
+   위치: System.Threading.Tasks.Task.<>c__DisplayClass176_0.<ExecuteSelfReplicating>b__0(Object <p0>)
+   --- 내부 예외 스택 추적의 끝 ---
+   위치: System.Threading.Tasks.Task.ThrowIfExceptional(Boolean includeTaskCanceledExceptions)
+   위치: System.Threading.Tasks.Task.Wait(Int32 millisecondsTimeout, CancellationToken cancellationToken)
+   위치: System.Threading.Tasks.Task.Wait()
+   위치: System.Threading.Tasks.Parallel.PartitionerForEachWorker[TSource,TLocal](Partitioner`1 source, ParallelOptions parallelOptions, Action`1 simpleBody, Action`2 bodyWithState, Action`3 bodyWithStateAndIndex, Func`4 bodyWithStateAndLocal, Func`5 bodyWithEverything, Func`1 localInit, Action`1 localFinally)
+   위치: System.Threading.Tasks.Parallel.ForEachWorker[TSource,TLocal](IEnumerable`1 source, ParallelOptions parallelOptions, Action`1 body, Action`2 bodyWithState, Action`3 bodyWithStateAndIndex, Func`4 bodyWithStateAndLocal, Func`5 bodyWithEverything, Func`1 localInit, Action`1 localFinally)
+   위치: System.Threading.Tasks.Parallel.ForEach[TSource](IEnumerable`1 source, ParallelOptions parallelOptions, Action`1 body)
+   위치: MoDaDamRenewal.ViewModels.ModadamListsPageViewModel.<>c__DisplayClass39_0.<get_DownloadAllCommand>b__3() 파일 C:\Users\jayeo\Desktop\MoDaDamRenewal\MoDaDamRenewal\Pages\4.ModadamLists\ModadamListsPageViewModel.cs:줄 215
+   위치: System.Threading.Tasks.Task.InnerInvoke()
+   위치: System.Threading.Tasks.Task.Execute()
+--- 예외가 throw된 이전 위치의 스택 추적 끝 ---
+   위치: System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   위치: System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   위치: MoDaDamRenewal.ViewModels.ModadamListsPageViewModel.<<get_DownloadAllCommand>b__39_0>d.MoveNext() 파일 C:\Users\jayeo\Desktop\MoDaDamRenewal\MoDaDamRenewal\Pages\4.ModadamLists\ModadamListsPageViewModel.cs:줄 213
+--- 예외가 throw된 이전 위치의 스택 추적 끝 ---
+   위치: System.Runtime.CompilerServices.AsyncMethodBuilderCore.<>c.<ThrowAsync>b__6_0(Object state)
+   위치: System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)
+   위치: System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)
+---> (내부 예외 #0) System.InvalidOperationException: 컬렉션이 수정되었습니다. 열거 작업이 실행되지 않을 수도 있습니다.
+   위치: System.ThrowHelper.ThrowInvalidOperationException(ExceptionResource resource)
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNextRare()
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNext()
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk_Buffered(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerator.GrabNextChunk(Int32 requestedChunkSize)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionEnumerator_Abstract`2.MoveNext()
+   위치: System.Threading.Tasks.Parallel.<>c__DisplayClass42_0`2.<PartitionerForEachWorker>b__1()
+   위치: System.Threading.Tasks.Task.InnerInvoke()
+   위치: System.Threading.Tasks.Task.InnerInvokeWithArg(Task childTask)
+   위치: System.Threading.Tasks.Task.<>c__DisplayClass176_0.<ExecuteSelfReplicating>b__0(Object <p0>)<---
+
+Microsoft Windows NT 6.2.9200.0
+
+
+[2022-10-15 01:43] (Current_DispatcherUnhandledException)
+System.AggregateException: 하나 이상의 오류가 발생했습니다. ---> System.InvalidOperationException: 컬렉션이 수정되었습니다. 열거 작업이 실행되지 않을 수도 있습니다.
+   위치: System.ThrowHelper.ThrowInvalidOperationException(ExceptionResource resource)
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNextRare()
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNext()
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk_Buffered(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerator.GrabNextChunk(Int32 requestedChunkSize)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionEnumerator_Abstract`2.MoveNext()
+   위치: System.Threading.Tasks.Parallel.<>c__DisplayClass42_0`2.<PartitionerForEachWorker>b__1()
+   위치: System.Threading.Tasks.Task.InnerInvoke()
+   위치: System.Threading.Tasks.Task.InnerInvokeWithArg(Task childTask)
+   위치: System.Threading.Tasks.Task.<>c__DisplayClass176_0.<ExecuteSelfReplicating>b__0(Object <p0>)
+   --- 내부 예외 스택 추적의 끝 ---
+   위치: System.Threading.Tasks.Task.ThrowIfExceptional(Boolean includeTaskCanceledExceptions)
+   위치: System.Threading.Tasks.Task.Wait(Int32 millisecondsTimeout, CancellationToken cancellationToken)
+   위치: System.Threading.Tasks.Task.Wait()
+   위치: System.Threading.Tasks.Parallel.PartitionerForEachWorker[TSource,TLocal](Partitioner`1 source, ParallelOptions parallelOptions, Action`1 simpleBody, Action`2 bodyWithState, Action`3 bodyWithStateAndIndex, Func`4 bodyWithStateAndLocal, Func`5 bodyWithEverything, Func`1 localInit, Action`1 localFinally)
+   위치: System.Threading.Tasks.Parallel.ForEachWorker[TSource,TLocal](IEnumerable`1 source, ParallelOptions parallelOptions, Action`1 body, Action`2 bodyWithState, Action`3 bodyWithStateAndIndex, Func`4 bodyWithStateAndLocal, Func`5 bodyWithEverything, Func`1 localInit, Action`1 localFinally)
+   위치: System.Threading.Tasks.Parallel.ForEach[TSource](IEnumerable`1 source, ParallelOptions parallelOptions, Action`1 body)
+   위치: MoDaDamRenewal.ViewModels.ModadamListsPageViewModel.<>c__DisplayClass39_0.<get_DownloadAllCommand>b__3() 파일 C:\Users\jayeo\Desktop\MoDaDamRenewal\MoDaDamRenewal\Pages\4.ModadamLists\ModadamListsPageViewModel.cs:줄 215
+   위치: System.Threading.Tasks.Task.InnerInvoke()
+   위치: System.Threading.Tasks.Task.Execute()
+--- 예외가 throw된 이전 위치의 스택 추적 끝 ---
+   위치: System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   위치: System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   위치: MoDaDamRenewal.ViewModels.ModadamListsPageViewModel.<<get_DownloadAllCommand>b__39_0>d.MoveNext() 파일 C:\Users\jayeo\Desktop\MoDaDamRenewal\MoDaDamRenewal\Pages\4.ModadamLists\ModadamListsPageViewModel.cs:줄 213
+--- 예외가 throw된 이전 위치의 스택 추적 끝 ---
+   위치: System.Runtime.CompilerServices.AsyncMethodBuilderCore.<>c.<ThrowAsync>b__6_0(Object state)
+   위치: System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)
+   위치: System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)
+---> (내부 예외 #0) System.InvalidOperationException: 컬렉션이 수정되었습니다. 열거 작업이 실행되지 않을 수도 있습니다.
+   위치: System.ThrowHelper.ThrowInvalidOperationException(ExceptionResource resource)
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNextRare()
+   위치: System.Collections.Generic.List`1.Enumerator.MoveNext()
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk_Buffered(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerable.GrabChunk(KeyValuePair`2[] destArray, Int32 requestedChunkSize, Int32& actualNumElementsGrabbed)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionerForIEnumerable`1.InternalPartitionEnumerator.GrabNextChunk(Int32 requestedChunkSize)
+   위치: System.Collections.Concurrent.Partitioner.DynamicPartitionEnumerator_Abstract`2.MoveNext()
+   위치: System.Threading.Tasks.Parallel.<>c__DisplayClass42_0`2.<PartitionerForEachWorker>b__1()
+   위치: System.Threading.Tasks.Task.InnerInvoke()
+   위치: System.Threading.Tasks.Task.InnerInvokeWithArg(Task childTask)
+   위치: System.Threading.Tasks.Task.<>c__DisplayClass176_0.<ExecuteSelfReplicating>b__0(Object <p0>)<---
+
+Microsoft Windows NT 6.2.9200.0!

@@ -1,0 +1,103 @@
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+}
+table {
+  border-collapse: collapse;
+  margin-top: 10px;
+  width: 100%;
+}
+th, td {
+  border: 1px solid #dee2e6;
+  padding: 10px;
+  text-align: center;
+}
+.amount-column {
+  text-align: right;
+}
+.notice {
+  margin-top: 5px;
+  color: red;
+}
+.btn {
+  display: inline-block;
+  padding: 5px 10px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+  text-decoration: none;
+  color: #333;
+}
+/* 해당 "월" 에 색상으로 표시를 쉽게 보여준다. */
+a.btn.active {
+  background-color: #007bff !important;
+  color: #ffffff !important;
+  border-color: #007bff !important;
+}
+a.btn.active:hover {
+  background-color: #0056b3 !important;
+  color: #ffffff !important;
+}
+.btn_edit_delete {
+  text-align: center;
+}
+.total_balance {
+  margin: 30px 0 80px 12px;
+  color: blue;
+}
+.total_balance > span {
+  color: red;
+}
+.account_image {
+  position: relative;
+  top: -30px;
+  left: 15px;
+  font-size: 21px;
+  text-decoration: none;
+}
+/* 합계 라벨 스타일 */
+.summary-label-income {
+  color: #063788; /* 짙은 주황색 */
+  text-align: center;
+}
+.summary-label-expense {
+  color: #006400; /* 짙은 녹색 */
+  text-align: center;
+}
+.summary-value {
+  text-align: right;
+}
+/* 모바일 반응형 */
+@media (max-width: 580px) {
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  th, td {
+    font-size: 14px; /* 모바일에서 폰트 크기 줄임 */
+    padding: 8px; /* 패딩 줄여 컴팩트하게 */
+  }
+  /* 데이터 칼럼 너비 조정 */
+  th:nth-child(1), td:nth-child(1) { /* no */
+    width: 8%;
+  }
+  th:nth-child(2), td:nth-child(2) { /* 일자 */
+    width: 15%;
+  }
+  th:nth-child(3), td:nth-child(3) { /* 항목 */
+    width: 40%;
+  }
+  th:nth-child(4), td:nth-child(4) { /* 비고 */
+    width: 25%;
+  }
+  th:nth-child(5), td:nth-child(5) { /* 금액 */
+    width: 12%;
+  }
+  /* 합계 라벨과 값 조정 */
+  .summary-label-income, .summary-label-expense {
+    font-size: 14px;
+  }
+  .summary-value {
+    font-size: 14px;
+  }
+}

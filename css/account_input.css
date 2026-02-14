@@ -1,0 +1,136 @@
+<style>
+    body {
+      font-size: 18px;
+      margin: 0;
+      padding: 0;
+      overflow-x: auto;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 50px auto;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      color: coral;
+      font-weight: bold;
+      font-size: 28px;
+      margin-bottom: 40px;
+    }
+
+    form {
+      padding: 0 20px;
+    }
+
+    .form-group {
+      margin: 20px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    label {
+      margin-bottom: 8px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    input[type='date'],
+    #type,
+    input[type='text'],
+    input[type='number'] {
+      height: 45px;
+      font-size: 16px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    input[type='text'],
+    input[type='number'] {
+      background-color: rgba(209, 220, 244, 0.6);
+      color: rgb(70, 73, 85);
+      font-weight: bold;
+    }
+
+    button.btn-success {
+      width: 120px;
+      margin-top: 40px;
+      font-size: 18px;
+    }
+
+    .success-message {
+      display: none; /* 기본 숨김 */
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #fff;
+      border: 2px solid #28a745;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      z-index: 1000;
+      text-align: center;
+    }
+
+    .success-message p {
+      font-size: 18px;
+      color: #28a745;
+      margin: 0 0 20px;
+    }
+
+    .success-message button {
+      font-size: 16px;
+    }
+
+    /* 모바일 반응형 */
+    @media (max-width: 575px) {
+      .container {
+        max-width: 100%;
+        padding: 10px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .form-group {
+        margin: 15px 0;
+      }
+
+      label {
+        font-size: 16px;
+      }
+
+      input[type='date'],
+      #type,
+      input[type='text'],
+      input[type='number'] {
+        height: 40px;
+        font-size: 14px;
+        max-width: 100%;
+      }
+
+      button.btn-success {
+        font-size: 16px;
+        margin-top: 30px;
+      }
+
+      .success-message p {
+        font-size: 16px;
+      }
+
+      .success-message button {
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 5px;
+      }
+    }
+  </style>

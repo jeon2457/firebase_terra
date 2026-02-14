@@ -1,0 +1,861 @@
+<?php
+// ✅ MongoDB DB 연결
+require_once __DIR__ . '/php/db-connect-mongo.php';
+
+// 🔹 [추가] 보안 스위치 상태 가져오기 (거주지 헤더 색상 표시용)
+$auth_status = 1; // 기본값 보안 ON
+try {
+  $settings_col = $database->site_settings;
+  $status_doc = $settings_col->findOne(['setting_name' => 'auth_switch']);
+  if ($status_doc) {
+    $auth_status = (int) $status_doc['is_active'];
+  }
+} catch (Exception $e) {
+  $auth_status = 1;
+}
+?>
+
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="직지황악회" />
+  <title>회원연락망</title>
+  <meta name="format-detection" content="telephone=no">
+
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="msapplication-config" content="./browserconfig.xml">
+  <meta name="msapplication-TileColor" content="#ffffff" />
+  <meta name="msapplication-TileImage" content="./ms-icon-144x144.png" />
+  <meta name="theme-color" content="#ffffff" />
+
+  <link rel="icon" href="/favicon.png?v=2" />
+  <link rel="icon" type="image/png" sizes="36x36" href="./favicons/2/android-icon-36x36.png" />
+  <link rel="icon" type="image/png" sizes="48x48" href="./favicons/2/android-icon-48x48.png" />
+  <link rel="icon" type="image/png" sizes="72x72" href="./favicons/2/android-icon-72x72.png" />
+  <link rel="apple-touch-icon" sizes="32x32" href="./favicons/2/apple-icon-32x32.png">
+  <link rel="apple-touch-icon" sizes="57x57" href="./favicons/2/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="./favicons/2/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="./favicons/2/apple-icon-72x72.png">
+
+  <style>
+    /* ==========================================
+       전역 설정
+       ========================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      color: #faf8f8;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* ==========================================
+       로딩 화면
+       ========================================== */
+    #loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 1.8s ease;
+    }
+
+
+    #loading-screen img {
+      /* 이미지를 줄이고 싶다면 여기서 조절하세요 */
+      width: 350px;
+      /* 원하는 크기로 고정 (예: 150px) */
+      max-width: 50%;
+      /* 모바일에서 너무 크지 않게 제한 */
+      height: auto;
+    }
+
+
+    /* ==========================================
+       컨테이너 (최대 너비 제한 및 중앙 정렬)
+       ========================================== */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 15px;
+      display: none;
+      /* JS 로딩 후 block 처리 */
+      position: relative;
+    }
+
+    /* ==========================================
+       [수정됨] 상단 고정 영역 래퍼 (헤더 + 전광판)
+       - 이것을 사용하여 width를 컨테이너에 맞추고 sticky 적용
+       ========================================== */
+    .sticky-wrapper {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      width: 100%;
+      background: transparent;
+    }
+
+    /* ==========================================
+       헤더 (시계) - Fixed 제거
+       ========================================== */
+    .header {
+      /* position: fixed; -> 제거됨 (sticky-wrapper 안으로 이동) */
+      width: 100%;
+      height: 50px;
+      /* PC 높이 고정 */
+      background: linear-gradient(90deg, #1a237e 0%, #283593 100%);
+      color: #fff;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      font-weight: bold;
+    }
+
+    #Clockday {
+      font-size: 16px;
+      letter-spacing: 1px;
+    }
+
+    #Clock {
+      font-size: 20px;
+      letter-spacing: 2px;
+      color: #4A9EFF;
+    }
+
+    /* ==========================================
+       전광판 영역 (wrap2) - Fixed 제거
+       ========================================== */
+    .wrap2 {
+      /* position: fixed; -> 제거됨 */
+      position: relative;
+      /* 자식 요소(wrap1, billboard) 배치를 위해 relative 필수 */
+      width: 100%;
+      height: 50px;
+      /* PC 높이 고정 */
+
+      background-image: url('./images/bg.gif');
+      background-size: auto;
+      background-repeat: repeat;
+      background-position: center;
+
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    /* 큐브 컨테이너 */
+    .wrap1 {
+      position: absolute;
+      left: 5px;
+      /* 큐브아이콘 위치 */
+      top: 50%;
+      transform: translateY(-50%);
+      width: 50px;
+      height: 50px;
+      perspective: 500px;
+      z-index: 10;
+    }
+
+    .cube {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(0deg);
+      transition: transform 0.6s ease;
+    }
+
+    .cube img {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+    }
+
+    .cube img:nth-child(1) {
+      transform: rotateX(0deg) translateZ(25px);
+    }
+
+    .cube img:nth-child(2) {
+      transform: rotateX(90deg) translateZ(25px);
+    }
+
+    .cube img:nth-child(3) {
+      transform: rotateX(180deg) translateZ(25px);
+    }
+
+    .cube img:nth-child(4) {
+      transform: rotateX(270deg) translateZ(25px);
+    }
+
+    /* 전광판 텍스트 영역 */
+    #billboard-container {
+      position: absolute;
+      left: 114px;
+      /* 좌로 이동하는글자가 사라지는 경계지점 */
+      right: 67px;
+      /* 좌로 이동하는글자가 나타나는 경계지점 */
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #billboard {
+      position: absolute;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      height: 100%;
+      animation: marquee 15s linear infinite;
+    }
+
+    @keyframes marquee {
+      0% {
+        transform: translateX(100%);
+      }
+
+      100% {
+        transform: translateX(-100%);
+      }
+    }
+
+    #billboard img {
+      margin: 0 5px;
+    }
+
+    .custom-span {
+      color: #ffd700;
+      font-size: 20px;
+      font-weight: bold;
+      margin: 0 10px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    /* ==========================================
+       테이블 영역
+       ========================================== */
+    .table-container {
+      margin-top: 3px;
+      background: #fff;
+      border-radius: 10px;
+      /* ✅ sticky 작동을 위해 overflow: visible 처리 */
+      overflow: visible;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      /* 비율 고정을 위해 필수 */
+    }
+
+    /* ✅ [핵심] PC에서 thead th 고정 (header 50px + wrap2 50px = 100px) */
+    .table thead th {
+      position: sticky;
+      top: 100px;
+      z-index: 990;
+      background: linear-gradient(90deg, #283593 0%, #3949ab 100%);
+      padding: 12px 8px;
+      text-align: center;
+      font-weight: bold;
+      border: 1px solid #1a237e;
+    }
+
+    .table tbody tr {
+      border-bottom: 1px solid #e0e0e0;
+      transition: background 0.2s;
+    }
+
+    .table tbody tr:hover {
+      background: #f5f5f5;
+    }
+
+    .table tbody td {
+      padding: 10px 8px;
+      text-align: center;
+      border: 1px solid #e0e0e0;
+      vertical-align: middle;
+      word-break: break-word;
+      /* 긴 텍스트 줄바꿈 */
+      /* ✅ [수정] 기본 텍스트 색상 설정 */
+      color: #333;
+    }
+
+    /* 🔹 [수정됨] 비고(remark) 및 거주지(address) 데이터 파란색 고정 */
+    .remark-cell,
+    .address-cell {
+      color: #1565c0 !important;
+      font-weight: 600;
+    }
+
+
+    /* [PC 화면 비율 설정] */
+    th.no {
+      width: 5%;
+    }
+
+    th.name {
+      width: 25%;
+    }
+
+    th.tel {
+      width: 30%;
+    }
+
+    th.address {
+      width: 15%;
+      cursor: pointer;
+    }
+
+    /* 🔹 클릭 가능하게 수정 */
+    th.remark {
+      width: 15%;
+    }
+
+    th.sms {
+      width: 10%;
+    }
+
+    /* 🔹 거주지(address) 헤더의 보안 상태별 색상 클래스 추가 */
+    .address-header-on {
+      color: #ffffff !important;
+    }
+
+    /* 보안 ON: 하얀색 */
+    .address-header-off {
+      color: #dbab52ff !important;
+      font-weight: 800 !important;
+    }
+
+    /* 보안 OFF: 금색 */
+
+    th.no span {
+      font-size: 0.6rem;
+    }
+
+    th.name span {
+      font-size: 1.2rem;
+    }
+
+    th.tel span {
+      font-size: 1.2rem;
+    }
+
+    th.address span {
+      font-size: 0.8rem;
+    }
+
+    th.remark span {
+      font-size: 1rem;
+    }
+
+    th.sms span {
+      font-size: 0.9rem;
+    }
+
+    /* 셀 스타일 */
+    .name-cell a,
+    .tel-cell a {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #1565c0 !important;
+    }
+
+    .name-cell a:hover,
+    .tel-cell a:hover {
+      color: #0765f1 !important;
+      text-decoration: underline;
+    }
+
+    .leader-sms-link {
+      color: #1565c0 !important;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .leader-sms-link:hover {
+      color: #0d47a1 !important;
+      text-decoration: underline;
+    }
+
+    td.tel-cell {
+      white-space: nowrap;
+    }
+
+    .sms-icon {
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .sms-icon:hover {
+      transform: scale(1.2);
+    }
+
+    /* ==========================================
+       푸터
+       ========================================== */
+    .foot {
+      text-align: center;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      margin-top: 4px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .jik a {
+      color: #1565c0 !important;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .jik a:hover {
+      color: #0d47a1;
+      text-decoration: underline;
+    }
+
+    /* ==========================================
+       맨 위로 이동 버튼 (FAB 스타일)
+       ========================================== */
+    .gototop {
+      position: fixed;
+      bottom: 10px;
+      right: 13px;
+      z-index: 2000;
+      /* 테이블 위로 오게 */
+    }
+
+    .fab-btn {
+      width: 27px;
+      height: 27px;
+      border-radius: 50%;
+      border: none;
+      background-color: #0A84FF;
+      color: #fff;
+      font-size: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .fab-btn:hover {
+      transform: scale(1.1);
+    }
+
+    /* ==========================================
+       반응형 (모바일)
+       ========================================== */
+    @media (max-width: 768px) {
+
+      /* 컨테이너 여백 최소화 */
+      .container {
+        padding: 0 5px;
+      }
+
+      /* 헤더 */
+      .header {
+        height: 60px;
+        /* 모바일 높이 고정 */
+        font-size: 14px;
+        padding: 8px 10px;
+        justify-content: center;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      #Clockday {
+        font-size: 13px;
+      }
+
+      #Clock {
+        font-size: 16px;
+      }
+
+      /* 전광판 - 배경 이미지 */
+      .wrap2 {
+        height: 33px;
+        /* 모바일 높이 고정 */
+        background-image: url('./images/bg.gif');
+        background-size: auto;
+        background-repeat: repeat;
+        background-position: center;
+      }
+
+      /* ✅ [핵심] 모바일에서 thead th 고정 (header 60px + wrap2 33px = 93px -> 92px 요청 반영) */
+      .table thead th {
+        position: sticky;
+        top: 92px;
+        z-index: 998;
+        background: linear-gradient(90deg, #283593 0%, #3949ab 100%);
+      }
+
+      /* 큐브 컨테이너 */
+      .wrap1 {
+        width: 24px;
+        height: 24px;
+        left: 4px;
+      }
+
+      .cube img {
+        width: 24px;
+        height: 24px;
+      }
+
+      .cube img:nth-child(1) {
+        transform: rotateX(0deg) translateZ(12px);
+      }
+
+      .cube img:nth-child(2) {
+        transform: rotateX(90deg) translateZ(12px);
+      }
+
+      .cube img:nth-child(3) {
+        transform: rotateX(180deg) translateZ(12px);
+      }
+
+      .cube img:nth-child(4) {
+        transform: rotateX(270deg) translateZ(12px);
+      }
+
+      #billboard-container {
+        left: 62px;
+        right: 45px;
+      }
+
+      .custom-span {
+        font-size: 15px;
+      }
+
+      /* 테이블 */
+      .table-container {
+        margin-top: 2px;
+        overflow: visible;
+      }
+
+      .table {
+        font-size: 11px;
+      }
+
+      .table thead th {
+        padding: 6px 2px;
+      }
+
+      .table tbody td {
+        padding: 6px 2px;
+      }
+
+
+      /* 글자 크기 유지 */
+      th.name span {
+        font-size: 1rem;
+      }
+
+      th.tel span {
+        font-size: 1rem;
+      }
+
+      th.address span {
+        font-size: 0.85rem;
+      }
+
+      th.sms span {
+        font-size: 0.9rem;
+      }
+
+      /* [모바일 전용 너비 설정] */
+      th.no {
+        width: 28px !important;
+      }
+
+      th.name {
+        width: 73px !important;
+      }
+
+      th.tel {
+        width: auto !important;
+      }
+
+      th.address {
+        width: 52px !important;
+      }
+
+      th.remark,
+      td.remark-cell {
+        display: none !important;
+      }
+
+      th.sms {
+        width: 45px !important;
+      }
+
+
+      .name-cell a,
+      .tel-cell a {
+        font-size: 0.95rem;
+      }
+
+      .sms-icon {
+        width: 22px;
+        height: 22px;
+      }
+
+      #goTopBtn img {
+        width: 30px;
+        height: 30px;
+      }
+
+      /* 푸터 */
+      .foot {
+        padding: 15px 5px;
+        font-size: 12px;
+      }
+
+      .jik a {
+        font-size: 11px;
+      }
+    }
+  </style>
+
+  <script type="text/javascript">
+    document.oncontextmenu = function () { return false; };
+
+    // 🔹 [추가됨] 보안 스위치 토글 함수
+    function toggleAuthSwitch() {
+      if (!confirm("단체문자 발송 페이지의 보안 설정을 변경하시겠습니까?")) return;
+
+      fetch('./php/toggle_auth.php')
+        .then(response => response.text())
+        .then(data => {
+          if (data.trim() === "success") {
+            alert("설정이 변경되었습니다. 페이지를 새로고침합니다.");
+            location.reload();
+          } else {
+            alert("오류가 발생했습니다: " + data);
+          }
+        })
+        .catch(error => alert("통신 오류가 발생했습니다."));
+    }
+  </script>
+
+  <script type="text/javascript">
+    window.onload = () => {
+      // 큐브 회전
+      let deg = 0;
+      const cube = document.querySelector('.cube');
+      if (cube) {
+        setInterval(() => {
+          deg -= 90;
+          cube.style.transform = `rotateX(${deg}deg)`;
+        }, 1000);
+      }
+
+      // 시계 업데이트
+      let lastTimeString = '';
+      function updateClock() {
+        var date = new Date();
+        var YYYY = String(date.getFullYear());
+        var MM = String(date.getMonth() + 1).padStart(2, '0');
+        var DD = String(date.getDate()).padStart(2, '0');
+        var hh = String(date.getHours()).padStart(2, '0');
+        var mm = String(date.getMinutes()).padStart(2, '0');
+        var week = getWeekday(date);
+
+        const currentTimeString = `${YYYY}/${MM}/${DD}(${week}) ${hh}:${mm}`;
+        if (currentTimeString !== lastTimeString) {
+          var Clockday = document.getElementById('Clockday');
+          var Clock = document.getElementById('Clock');
+          if (Clockday) Clockday.innerText = `${YYYY}/${MM}/${DD}(${week})`;
+          if (Clock) Clock.innerText = `${hh}:${mm}`;
+          lastTimeString = currentTimeString;
+        }
+      }
+
+      function getWeekday(date) {
+        var weekDays = ['일', '월', '화', '수', '목', '금', '토'];
+        return weekDays[date.getDay()];
+      }
+
+      setInterval(updateClock, 1000);
+      updateClock();
+
+      // 로딩 화면 처리
+      setTimeout(() => {
+        const loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) {
+          loadingScreen.style.opacity = '0';
+          setTimeout(() => {
+            loadingScreen.style.display = 'none';
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) {
+              mainContent.style.display = 'block';
+            }
+          }, 400);
+        }
+      }, 1200);
+    };
+  </script>
+</head>
+
+<body>
+  <div id="loading-screen">
+    <img src="image/jikji35-1.jpg" alt="직지황악회 로딩 이미지" />
+  </div>
+
+  <div class="container" id="main-content">
+    <section>
+
+      <div class="sticky-wrapper">
+        <div class="header">
+          <div id="Clockday"><a>0000/00/00(일)</a></div>
+          <div id="Clock"><a>00:00</a></div>
+        </div>
+
+        <div class="wrap2" id="wrap2">
+          <div class="wrap1">
+            <div class="cube">
+              <img src="./images/mail_1.png" alt="이메일 아이콘" />
+              <img src="./images/chat_1.png" alt="채팅 아이콘" />
+              <img src="./images/phone_1.png" alt="전화 아이콘" />
+              <img src="./images/sms_1.png" alt="문자 아이콘" />
+            </div>
+          </div>
+
+          <div id="billboard-container">
+            <div id="billboard">
+              <img src="./images/aa.gif" width="25" height="25" border="0" alt="">
+              <img src="./images/dd.gif" width="25" height="25" border="0" alt="">
+              <span class="custom-span">직지초35회 김천지부 동기연락망</span>
+              <img src="./images/dd.gif" width="25" height="25" border="0" alt="">
+              <img src="./images/aa.gif" width="25" height="25" border="0" alt="">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="no"><span>NO</span></th>
+              <th class="name"><span>이름</span></th>
+              <th class="tel"><span>전화번호</span></th>
+              <th class="address <?= $auth_status ? 'address-header-on' : 'address-header-off' ?>"
+                onclick="toggleAuthSwitch()">
+                <span>거주지</span>
+              </th>
+              <th class="remark"><span>비고</span></th>
+              <th class="sms"><span>SMS</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php
+            // ✅ [데이터 로드 보완] MongoDB 쿼리 실행
+            $cursor = $collection->find(
+              ['name' => ['$ne' => null, '$ne' => '']],
+              ['sort' => ['name' => 1]]
+            );
+            $count = 1;
+
+            foreach ($cursor as $row) {
+              $name = htmlspecialchars($row['name'] ?? '', ENT_QUOTES, 'UTF-8');
+              $tel_link = htmlspecialchars($row['tel'] ?? '', ENT_QUOTES, 'UTF-8');
+              $tel_display = htmlspecialchars($row['tel'] ?? '', ENT_QUOTES, 'UTF-8');
+              $addr = htmlspecialchars($row['addr'] ?? '', ENT_QUOTES, 'UTF-8');
+              $remark = htmlspecialchars($row['remark'] ?? '', ENT_QUOTES, 'UTF-8');
+              $sms_link = htmlspecialchars($row['sms'] ?? '', ENT_QUOTES, 'UTF-8');
+
+              $is_leader = (mb_stripos($remark, '회장') !== false || mb_stripos($remark, '총무') !== false);
+
+              echo "<tr>";
+              echo "<td>{$count}</td>";
+              echo "<td class='name-cell'><a href='tel:{$tel_link}'>{$name}</a></td>";
+              echo "<td class='tel-cell'><a href='tel:{$tel_link}'>{$tel_display}</a></td>";
+
+              // 🔹 [수정] 거주지 데이터 색상 파란색 고정
+              if ($is_leader) {
+                echo "<td class='address-cell'><a href='tel_sms_send.php?exclude_tel={$tel_link}' class='leader-sms-link'>{$addr}</a></td>";
+              } else {
+                echo "<td class='address-cell'>{$addr}</td>";
+              }
+
+              // 🔹 [수정] 비고 데이터 색상 파란색 고정
+              echo "<td class='remark-cell'>{$remark}</td>";
+
+              echo "<td><a href='sms:{$sms_link}'><img src='./images/sms-4.png' alt='SMS 보내기' class='sms-icon'></a></td>";
+              echo "</tr>";
+              $count++;
+            }
+            ?>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="foot">
+        <img src="image/anicircle03_green.gif" />&nbsp;&nbsp;<span class="jik"><a href="../../book/index.html"
+            target="_blank">https://terraone-d0318.web.app/</a></span>&nbsp;
+        <img src="image/anicircle03_green.gif" />
+      </div>
+
+      <div class="gototop">
+        <button id="goTopBtn" type="button" aria-label="맨 위로 이동" class="fab-btn">
+          ⬆️
+        </button>
+      </div>
+
+    </section>
+  </div>
+
+  <script>
+    document.getElementById("goTopBtn").addEventListener("click", function () {
+      const start = window.scrollY;
+      const duration = 1500;
+      const startTime = performance.now();
+
+      function scrollStep(timestamp) {
+        const elapsed = timestamp - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        const ease = progress < 0.5
+          ? 2 * progress * progress
+          : -1 + (4 - 2 * progress) * progress;
+
+        window.scrollTo(0, start * (1 - ease));
+
+        if (progress < 1) {
+          requestAnimationFrame(scrollStep);
+        }
+      }
+
+      requestAnimationFrame(scrollStep);
+    });
+  </script>
+</body>
+
+</html>

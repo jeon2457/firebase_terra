@@ -1,0 +1,56 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.upload-container {
+  width: 500px;
+  height: 700px; /* 비고 필드 추가로 높이 증가 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.upload-form {
+  width: 80%;
+  padding: 50px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.upload-form h2 {
+  margin-bottom: 30px;
+}
+
+.upload-form .mb-3 {
+  width: 100%;
+}
+
+.upload-form input[type="file"],
+.upload-form input[type="date"],
+.upload-form textarea {
+  margin-bottom: 10px;
+}
+
+.upload-form textarea {
+  resize: vertical; /* 세로 크기 조정 가능 */
+  min-height: 80px; /* 최소 높이 설정 */
+}
+
+.upload-form input[type="submit"] {
+  padding: 10px 20px;
+  margin-top: 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}

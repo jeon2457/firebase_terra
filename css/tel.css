@@ -1,0 +1,412 @@
+@charset "UTF-8"; /* 맨 위에 유지 */
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #3b3d3f;
+  color: white;
+  margin: 0;
+  padding: 0;
+}
+
+#loading-screen {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: #363434;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.5s ease;
+  z-index: 9999;
+}
+
+#loading-screen img {
+  width: 250px;
+}
+
+#main-content {
+  display: none;
+}
+
+.container {
+  width: 100%;
+  max-width: 700px; /* 기본 최대 너비 */
+  margin: 0 auto;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden; /* 필요시 유지 */
+}
+
+section {
+  margin: 0;
+  padding: 0;
+}
+
+main-body {
+  padding: 0;
+  margin: 0;
+}
+
+/* --- Header --- */
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  max-width: 700px; /* container와 동일하게 */
+  margin: 0 auto; /* 중앙 정렬 */
+  height: 58px;
+  text-align: center;
+  color: #f4f4f4;
+  background-color: black;
+  padding: 0;
+  box-sizing: border-box;
+  left: 0; /* 중앙 정렬을 위해 추가 */
+  right: 0; /* 중앙 정렬을 위해 추가 */
+  z-index: 100; /* From inline style */
+}
+
+#Clockday, #Clock {
+  color: #f0c420;
+  font-size: 1.5rem;
+  display: inline-block;
+  margin: 17px 5px; /* 수직 중앙 정렬 되도록 조정 */
+}
+
+.header a {
+  color: #f0c420;
+  text-decoration: none;
+}
+
+/* --- Wrap2 (전광판 부분) --- */
+.wrap2 {
+  position: fixed; /* From inline style */
+  top: 58px; /* header 높이만큼 아래에 고정 From inline style */
+  left: 0; /* From inline style */
+  right: 0; /* From inline style */
+  height: 36px; /* From inline style */
+  z-index: 91; /* From inline style */
+  max-width: 700px; /* container와 동일하게 From inline style */
+  margin: 0 auto; /* 중앙 정렬 From inline style */
+  box-sizing: border-box; /* From inline style */
+  background-image: url('../images/bg.gif'); /* Keep */
+  overflow: hidden; /* Keep */
+  line-height: 36px; /* 높이에 맞춤 */
+  padding: 0 75px 0 92px;  /* 전광판 좌우 여백을 두어서 글자가 보이는 공간을 지정 */
+}
+
+/* --- Wrap1 (Cube Container) --- */
+.wrap1 {
+  /* position: fixed; */ /* Replaced by absolute positioning inside wrap2 */
+  position: absolute; /* From inline style */
+  top: 7px;  /* 전광판 내 수직 위치 From inline style */
+  left: 14px; /* 전광판 내 수평 위치 From inline style */
+  z-index: 100; /* From inline style (Keep) */
+  margin: 0; /* From inline style */
+  padding: 0; /* From inline style */
+  width: 25px; /* Keep */
+  height: 25px; /* Keep */
+  perspective: 500px; /* Added for 3D */
+  transform-style: preserve-3d; /* Added for 3D */
+  /* color: aliceblue; */ /* Removed, inherited or not needed */
+}
+
+/* --- Cube --- */
+.wrap1 > .cube {
+  width: 25px; /* Keep */
+  height: 25px; /* Keep */
+  margin-top: 0; /* From inline style (Overwrite old value) */
+  padding: 0; /* Keep */
+  transform-style: preserve-3d; /* Keep */
+  /* animation: rotateCube 8s infinite linear; */ /* Removed, JS handles rotation */
+  transition: transform 0.8s ease-in-out; /* Added for smooth JS rotation */
+  position: relative; /* Added for absolute positioned children */
+}
+
+.wrap1 > .cube img {
+  position: absolute; /* Keep */
+  top: 0; /* Keep */
+  left: 0; /* Keep */
+  width: 25px; /* Keep */
+  height: 25px; /* Keep */
+  backface-visibility: hidden; /* Recommended */
+  transform-origin: center center; /* Recommended */
+  border: none; /* Ensure no border */
+}
+
+/* Cube Face Positions (Default Size) */
+.wrap1 > .cube img:nth-child(1) { transform: translateZ(12.5px); } /* 25px / 2 */
+.wrap1 > .cube img:nth-child(2) { transform: rotateX(90deg) translateZ(12.5px); }
+.wrap1 > .cube img:nth-child(3) { transform: rotateX(180deg) translateZ(12.5px); }
+.wrap1 > .cube img:nth-child(4) { transform: rotateX(270deg) translateZ(12.5px); }
+
+/* --- Billboard Content --- */
+#billboard-container {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0 50px 0 50px; /* 좌우 여백 확보 (큐브 공간 제외) */
+  overflow: hidden;
+  white-space: nowrap;
+  box-sizing: border-box;
+  position: relative; /* 자식 billboard 위치 기준 */
+}
+
+#billboard {
+  display: inline-block;
+  padding-left: 100%; /* 시작 위치 */
+  animation: billboard 20s linear infinite;
+  /* position: relative; */ /* 불필요, 부모가 relative */
+  /* animation-fill-mode: forwards; */ /* infinite에는 불필요 */
+}
+
+#billboard > img {
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+.custom-span {
+  display: inline-block;
+  font-size: 17px;
+  color: rgb(185, 216, 252);
+  line-height: 36px; /* wrap2 높이에 맞춤 */
+  margin: 0;
+  padding: 0 28px; /* 글자와 gif 사이 간격 */
+  vertical-align: middle;
+}
+
+@keyframes billboard {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-100%); }
+}
+
+/* --- Table Area --- */
+.table-container { /* From inline style */
+  padding-top: 95px; /* header(58) + wrap2(36) + 여백(1) */
+}
+
+.table {
+  border-spacing: 0; /* Keep */
+  border-collapse: collapse; /* Keep */
+  margin-top: 0; /* From inline style (Overwrite old value) */
+  width: 100%; /* Keep */
+}
+
+.table thead { /* From inline style */
+  position: sticky;
+  top: 94px; /* header(58) + wrap2(36) = 94px */
+  z-index: 90; /* wrap2(91) 보다 낮게 */
+  background-color: #212121; /* th와 동일한 배경 적용 */
+}
+
+th, td {
+  border: 1px solid #eedca6; /* 테이블 테두리 색상 */
+  text-align: center;
+  padding: 8px;
+  font-size: 14px;
+}
+
+th {
+  color: #c49c19d0; /* 헤드부분 제목 색상 */
+}
+
+/* Specific column widths (Default) */
+.no { width: 1.56rem; }
+.name { width: 4.8rem; font-size: 1.2em; }
+.tel { width: 9.2rem; font-size: 1.2em; }
+.address { width: 3.75rem; }
+.remark { width: 3.75rem; }
+.sms { width: 3.75rem; font-size: 1.1em; }
+
+.name-cell a, .tel-cell a, td a { /* 링크 색상 및 밑줄 제거 */
+  color: #ffffff;
+  text-decoration: none;
+}
+.name-cell a:hover, .tel-cell a:hover, td a:hover { /* 호버 효과 (선택사항) */
+  color: #f0c420;
+  text-decoration: underline;
+}
+
+.sms-icon {
+  width: 20px;
+  height: 20px;
+  max-width: 20px;
+  max-height: 20px;
+  object-fit: contain;
+  vertical-align: middle; /* 아이콘 정렬 */
+}
+
+/* --- Footer & GoToTop --- */
+.foot {
+  display: block;
+  color: antiquewhite;
+  font-size: 0.8em;
+  /* height: 1.87rem; */ /* 불필요, 내용에 따라 자동 조절 */
+  margin-top: 1.87rem;
+  text-align: center;
+  padding: 10px 0; /* 상하 여백 추가 */
+}
+.foot img {
+  vertical-align: middle;
+}
+.foot span.jik a {
+    color: white;
+    text-decoration: none;  /* 링크 밑줄제거 */
+    margin: 0 5px;
+}
+
+.gototop {
+  position: fixed;
+  right: 10.15rem; /* 기본 위치 */
+  bottom: 0.5rem;
+  z-index: 110; /* 다른 요소 위에 오도록 */
+}
+
+.gototop .fa {
+  background-color: #fff;
+  border: 1px solid lightgray;
+  width: 1.1em;
+  height: 1.1em;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: 0.3s;
+  display: block; /* 이미지 링크 영역 확보 */
+}
+
+.gototop .fa:hover {
+  background-color: #838180;
+  /* color: #ffffff; */ /* 이미지가 배경색 바뀜 */
+}
+
+
+
+/* ==================== 반응형 영역 ==================== */
+
+/* --- Tablet (670px 이하) --- */
+@media (max-width: 670px) {
+  .container, .header, .wrap2 {
+    max-width: 100%; /* 전체 너비 사용 */
+  }
+
+  #Clockday, #Clock {
+    font-size: 1.3rem;
+    margin: 12px 5px; /* 헤더 높이에 맞게 조정 필요시 */
+  }
+
+  /* .wrap2 { top: 58px; } */ /* 이미 fixed, top값 변경 불필요 */
+
+  .wrap1 {
+    top: 6px; /* From inline style */
+    left: 10px; /* From inline style */
+    /* Cube size unchanged at this breakpoint */
+  }
+
+  #billboard-container {
+    padding: 0 40px 0 40px; /* 태블릿 좌우 여백 조정 */
+  }
+
+  /* Hide remark column */
+  .remark { display: none; }
+  .remark-cell { display: none; }
+
+  /* Adjust column widths for tablet */
+  .no { width: 8%; font-size: 0.8em; }
+  .name { width: 25%; font-size: 1.1em; }
+  .tel { width: 40%; font-size: 1.1em; }
+  .address { width: 15%; font-size: 0.9em; }
+  .sms { width: 12%; font-size: 1.1em; }
+
+  .gototop {
+    right: 1.5rem; /* 태블릿 위치 조정 */
+    bottom: 0.8rem;
+  }
+}
+
+/* --- Mobile (480px 이하) --- */
+@media (max-width: 480px) {
+  .header {
+    height: 54px; /* 모바일 헤더 높이 약간 줄임 (선택사항) */
+  }
+  .wrap2 {
+    top: 54px; /* 모바일 헤더 높이에 맞춤 */
+    height: 32px; /* 모바일 전광판 높이 약간 줄임 (선택사항) */
+    line-height: 32px;
+    padding: 0 40px 0 60px;  /* 전광판 좌우 여백을 두어서 글자가 보이는 공간을 지정 */
+  }
+  .table thead {
+    top: 86px; /* 모바일 header(54) + wrap2(32) */
+  }
+  .table-container {
+    padding-top: 90px; /* 모바일 header + wrap2 + 여백 */
+  }
+
+
+  #Clockday, #Clock {
+    font-size: 1.1rem; /* 더 작은 글꼴 */
+    margin: 16px 3px; /* 모바일 헤더 높이에 맞게 조정 필요시 */
+  }
+
+  .wrap1 {
+    left: 6px; /* From inline style */
+    top: 7px; /* From inline style, 전광판 높이 변경따라 조정 */
+    width: 23px; /* Cube size reduction */
+    height: 23px; /* Cube size reduction */
+  }
+
+  /* Cube size reduction */
+  .wrap1 > .cube {
+     width: 23px;
+     height: 23px;
+  }
+  .wrap1 > .cube img {
+     width: 23px;
+     height: 23px;
+  }
+
+  /* TranslateZ adjustment for smaller cube */
+  .wrap1 > .cube img:nth-child(1) { transform: translateZ(11.5px); } /* 23px / 2 */
+  .wrap1 > .cube img:nth-child(2) { transform: rotateX(90deg) translateZ(11.5px); }
+  .wrap1 > .cube img:nth-child(3) { transform: rotateX(180deg) translateZ(11.5px); }
+  .wrap1 > .cube img:nth-child(4) { transform: rotateX(270deg) translateZ(11.5px); }
+
+  #billboard-container {
+    padding: 0 30px 0 35px; /* 모바일 좌우 여백 조정 (큐브 고려) */
+  }
+  .custom-span {
+    font-size: 14px;
+    line-height: 32px; /* 모바일 전광판 높이 맞춤 */
+    padding: 0 10px; /* 모바일 글자 간격 */
+  }
+  #billboard > img {
+    width: 20px; /* 모바일 gif 크기 조정 */
+    height: 20px;
+  }
+
+
+  th, td {
+    padding: 6px 3px; /* 모바일 셀 패딩 줄임 */
+    font-size: 12px; /* 모바일 기본 글꼴 크기 줄임 */
+  }
+
+  /* Adjust column widths for mobile */
+  .no { width: 10%; font-size: 0.7em; }
+  .name { width: 28%; font-size: 0.85em; }
+  .tel { width: 37%; font-size: 0.85em; }
+  .address { width: 15%; font-size: 0.7em; }
+  .sms { width: 10%; font-size: 0.85em; }
+
+  .sms-icon {
+    width: 16px;
+    height: 16px;
+    max-width: 16px;
+    max-height: 16px;
+  }
+
+  .gototop {
+    right: 1rem; /* 모바일 위치 조정 */
+    bottom: 0.8rem;
+  }
+  .gototop .fa {
+      width: 1em;
+      height: 1em;
+  }
+}
