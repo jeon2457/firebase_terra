@@ -316,13 +316,25 @@ export default function MemberInputPage() {
                         <button type="submit" className="btn-main text-white" style={{ background: "#4A90E2" }}>
                             입력하기
                         </button>
-                        <Link href="/members" className="btn-main text-secondary text-decoration-none d-flex align-items-center" style={{ background: "#e0e5ec" }}>
+                        <Link href="/members" className="btn-main text-white text-decoration-none d-flex align-items-center justify-content-center" style={{ background: "#a3b1c6" }}>
                             돌아가기
                         </Link>
                     </div>
 
                 </form>
             </div>
-        </div>
+            <style jsx>{`
+                @media (max-width: 768px) {
+                    .btn-main {
+                        padding: 10px 20px !important;
+                        font-size: 16px !important;
+                        min-width: 100px;
+                    }
+                }
+            `}</style>
+
+        </form>
+            </div >
+        </div >
     );
 }
