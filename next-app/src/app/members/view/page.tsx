@@ -370,7 +370,6 @@ export default function MembersViewPage() {
                                     {['회장', '총무'].some(role => member.remark?.includes(role)) ? (
                                         <a
                                             href={`sms:${members.filter(m => m.tel && m.tel !== member.tel).map(m => m.tel.replace(/-/g, '')).join(',')}`}
-                                            className="name-link"
                                             style={{ color: '#ffffff', textDecoration: 'none', cursor: 'pointer' }}
                                             title="전체 회원에게 문자 보내기"
                                         >
