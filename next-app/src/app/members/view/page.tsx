@@ -293,10 +293,16 @@ export default function MembersViewPage() {
         @media (min-width: 769px) {
              .col-no { width: 5%; }
              .col-name { width: 15%; }
-             .col-tel { width: 20%; }
+             .col-tel { width: 20%; white-space: nowrap; }
              .col-addr { width: 30%; }
              .col-remark { width: 10%; }
              .col-sms { width: 10%; }
+        }
+
+        /* Phone cell specific style to prevent wrapping and ensure consistency */
+        .member-tel-cell {
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums; /* Ensures numbers are same width */
         }
       `}</style>
 
@@ -331,7 +337,6 @@ export default function MembersViewPage() {
                 </div>
             </div>
 
-
             {/* Table */}
             <div className="table-container">
                 <table className="custom-table">
@@ -356,7 +361,7 @@ export default function MembersViewPage() {
                                         {member.name}
                                     </Link>
                                 </td>
-                                <td>
+                                <td className="member-tel-cell">
                                     <Link href={`tel:${member.tel}`} className="name-link" style={{ color: '#ffffff', textDecoration: 'none' }}>
                                         {member.tel}
                                     </Link>
@@ -367,7 +372,7 @@ export default function MembersViewPage() {
                                 <td className="hide-mobile">{member.remark}</td>
                                 <td>
                                     <Link href={`sms:${member.sms || member.tel}`}>
-                                        <img src="/images/sms-4.png" alt="SMS" className="sms-icon" style={{ width: '28px', height: '28px' }} />
+                                        <img src="/images/sms-4.png" alt="SMS" className="sms-icon" style={{ width: '18px', height: '18px' }} />
                                     </Link>
                                 </td>
                             </tr>
@@ -376,18 +381,18 @@ export default function MembersViewPage() {
                 </table>
             </div>
 
-            {/* Floating Action Button (Go to Dashboard) */}
+            {/* Floating Action Button (Scroll to Top) */}
             <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 2000 }}>
                 <button
-                    onClick={() => router.push(userLevel >= 10 ? "/members" : "/guest")}
+                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                     style={{
-                        width: '50px', height: '50px', borderRadius: '50%', border: 'none',
-                        background: 'rgba(10, 132, 255, 0.7)', color: '#fff', fontSize: '24px',
+                        width: '40px', height: '40px', borderRadius: '50%', border: 'none',
+                        background: 'rgba(10, 132, 255, 0.7)', color: '#fff', fontSize: '20px',
                         display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
                         backdropFilter: 'blur(4px)', boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
                     }}
                 >
-                    <i className="bi bi-arrow-left"></i>
+                    <i className="bi bi-arrow-up"></i>
                 </button>
             </div>
         </div>
