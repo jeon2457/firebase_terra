@@ -47,7 +47,7 @@ export default function GuestPage() {
 
                 <div className={styles.optionBox}>
                     {/* 1. 연락망 보기 */}
-                    <Link href="/members" className={styles.selectCard}>
+                    <Link href="/members/view" className={styles.selectCard}>
                         <div className={`${styles.bookSpine} ${styles.bgTel}`}>
                             <i className={`bi bi-people-fill ${styles.bookIcon}`}></i>
                             <div className={styles.bookTitle}>연락망 보기</div>

@@ -1,318 +1,159 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import {
-    ArrowLeft,
-    UserPlus,
-    Search,
-    MessageSquare,
-    Phone,
-    MapPin,
-    Tag,
-    X,
-    Lock,
-    Unlock
-} from "lucide-react";
-import axios from "axios";
+import { UserPlus, Edit, Users, LogOut, ArrowLeft } from "lucide-react";
 
-export default function MembersPage() {
+export default function MembersSelectPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
-    const [members, setMembers] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [showAddModal, setShowAddModal] = useState(false);
-    const [isSecured, setIsSecured] = useState(true); // Security switch
-
-    // New Member Form State
-    const [newMember, setNewMember] = useState({
-        id: "",
-        password: "",
-        name: "",
-        tel: "",
-        addr: "",
-        remark: "",
-        sms: "",
-        email: "",
-        user_level: 1
-    });
+    const [selectedPage, setSelectedPage] = useState<string | null>(null);
 
     useEffect(() => {
         if (status === "unauthenticated") {
             router.push("/login");
-        } else if (status === "authenticated") {
-            fetchMembers();
         }
     }, [status, router]);
 
-    const fetchMembers = async () => {
-        try {
-            const res = await axios.get("/api/members");
-            if (res.data.success) {
-                setMembers(res.data.members);
-            }
-        } catch (error) {
-            console.error("Failed to fetch members", error);
-        } finally {
-            setLoading(false);
+    const handleGoNext = () => {
+        if (!selectedPage) {
+            alert("이동할 페이지를 선택해주세요.");
+            return;
         }
+        router.push(selectedPage);
     };
 
-    const handleAddMember = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            const res = await axios.post("/api/members", newMember);
-            if (res.data.success) {
-                alert("회원이 성공적으로 등록되었습니다.");
-                setShowAddModal(false);
-                fetchMembers();
-                setNewMember({
-                    id: "",
-                    password: "",
-                    name: "",
-                    tel: "",
-                    addr: "",
-                    remark: "",
-                    sms: "",
-                    email: "",
-                    user_level: 1
-                });
-            }
-        } catch (error: any) {
-            alert("등록 실패: " + (error.response?.data?.message || error.message));
-        }
-    };
-
-    const filteredMembers = members.filter(m =>
-        m.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        m.tel?.includes(searchTerm) ||
-        m.remark?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    if (status === "loading" || loading) {
+    if (status === "loading") {
         return <div className="text-center mt-5">Loading...</div>;
     }
 
+    const menuItems = [
+        {
+            id: "opt_input",
+            title: "회원 등록",
+            desc: "새로운 회원 정보를 입력하고 저장합니다.",
+            path: "/members/input",
+            icon: <UserPlus size={24} />,
+            color: "border-primary"
+        },
+        {
+            id: "opt_edit",
+            title: "회원 편집",
+            desc: "기존 회원 정보를 검색하고 수정합니다.",
+            path: "/members/edit",
+            icon: <Edit size={24} />,
+            color: "border-warning"
+        },
+        {
+            id: "opt_view",
+            title: "회원 연락망 열람",
+            desc: "회원 정보를 열람합니다.",
+            path: "/members/view",
+            icon: <Users size={24} />,
+            color: "border-success"
+        }
+    ];
+
     return (
-        <div className="container-fluid p-0 pb-5" style={{ background: "#000", minHeight: "100vh", color: "#fff" }}>
+        <div className="container py-5" style={{ maxWidth: "650px" }}>
             <style jsx>{`
-                .sticky-header {
-                    position: sticky;
-                    top: 0;
-                    z-index: 100;
-                    background: #000;
-                    border-bottom: 1px solid #333;
-                    padding: 15px 20px;
-                }
-                .member-table {
-                    width: 100%;
-                    border-collapse: collapse;
-                }
-                .member-table th {
-                    background: #111;
-                    color: #cea71b;
-                    padding: 12px;
-                    text-align: center;
-                    border-bottom: 1px solid #333;
-                    font-size: 14px;
-                }
-                .member-table td {
-                    padding: 15px 10px;
-                    text-align: center;
-                    border-bottom: 1px solid #222;
-                    vertical-align: middle;
-                }
-                .member-row:hover {
-                    background: #1a1a1a;
-                }
-                .sms-btn {
-                    color: #4A9EFF;
-                    cursor: pointer;
-                    transition: transform 0.2s;
-                }
-                .sms-btn:hover {
-                    transform: scale(1.2);
-                }
-                .security-toggle {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 5px 15px;
-                    border-radius: 20px;
-                    cursor: pointer;
-                    font-size: 12px;
-                    transition: all 0.3s;
-                }
-                .security-on { background: #333; color: #cea71b; border: 1px solid #cea71b; }
-                .security-off { background: #cea71b; color: #000; font-weight: bold; }
-                
-                /* Modal */
-                .modal-overlay {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0,0,0,0.8);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    z-index: 1000;
-                    padding: 20px;
-                }
-                .modal-content {
-                    background: #e0e5ec;
-                    color: #333;
-                    border-radius: 25px;
-                    max-width: 600px;
-                    width: 100%;
-                    max-height: 90vh;
-                    overflow-y: auto;
-                    padding: 30px;
-                    box-shadow: 10px 10px 20px #000;
-                }
-            `}</style>
+        .section-title {
+          text-align: center;
+          color: #007bff;
+          font-weight: 700;
+          margin-bottom: 30px;
+          padding: 10px;
+          background: #e9f3ff;
+          border-radius: 10px;
+          border: 1px solid #c9e3ff;
+        }
+        .admin-info {
+          text-align: right;
+          font-size: 15px;
+          color: #6c757d;
+          margin-bottom: 20px;
+        }
+        .select-card {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          border: 1px solid #dee2e6;
+          border-radius: 10px;
+          padding: 18px;
+          transition: all 0.2s ease-in-out;
+          cursor: pointer;
+          background: white;
+        }
+        .select-card:hover {
+          border-color: #007bff;
+          box-shadow: 0 6px 16px rgba(13, 110, 253, 0.1);
+          transform: translateY(-3px);
+        }
+        .select-card.active {
+          border-color: #007bff;
+          box-shadow: 0 8px 20px rgba(13, 110, 253, 0.15);
+          background-color: #f8f9ff;
+        }
+        .btn-area {
+          margin-top: 30px;
+          display: flex;
+          gap: 10px;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+      `}</style>
 
-            <div className="sticky-header shadow-sm">
-                <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                    <div className="d-flex align-items-center gap-3">
-                        <button className="btn btn-outline-light btn-sm rounded-circle" onClick={() => router.push("/dashboard")}>
-                            <ArrowLeft size={18} />
-                        </button>
-                        <h4 className="m-0 fw-bold" style={{ color: "#cea71b" }}>회원 연락망</h4>
-                    </div>
+            <div className="p-4 bg-white rounded-4 shadow-sm">
+                <h2 className="section-title">회원관리 선택</h2>
+                <div className="admin-info">
+                    👤 관리자: <strong>{(session?.user as any)?.name || "User"}</strong> (Level {(session?.user as any)?.user_level})
+                </div>
 
-                    <div className="d-flex align-items-center gap-3 flex-grow-1" style={{ maxWidth: "400px" }}>
-                        <div className="input-group input-group-sm">
-                            <span className="input-group-text bg-dark border-secondary text-secondary">
-                                <Search size={16} />
-                            </span>
-                            <input
-                                type="text"
-                                className="form-control bg-dark border-secondary text-white"
-                                placeholder="이름, 전화번호, 비고 검색..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="d-flex align-items-center gap-2">
+                <div className="d-flex flex-column gap-3">
+                    {menuItems.map((item) => (
                         <div
-                            className={`security-toggle ${isSecured ? 'security-on' : 'security-off'}`}
-                            onClick={() => setIsSecured(!isSecured)}
+                            key={item.id}
+                            className={`select-card ${selectedPage === item.path ? 'active' : ''}`}
+                            onClick={() => setSelectedPage(item.path)}
                         >
-                            {isSecured ? <Lock size={14} /> : <Unlock size={14} />}
-                            {isSecured ? '보안 ON' : '보안 OFF'}
-                        </div>
-                        {(session?.user as any).user_level >= 5 && (
-                            <button className="btn btn-primary btn-sm rounded-pill px-3" onClick={() => setShowAddModal(true)}>
-                                <UserPlus size={16} className="me-1" /> 등록
-                            </button>
-                        )}
-                    </div>
-                </div>
-            </div>
-
-            <div className="table-responsive mt-3">
-                <table className="member-table">
-                    <thead>
-                        <tr>
-                            <th style={{ width: "60px" }}>NO</th>
-                            <th style={{ width: "120px" }}>이름</th>
-                            <th style={{ width: "160px" }}>전화번호</th>
-                            <th>거주지</th>
-                            <th style={{ width: "120px" }}>비고</th>
-                            <th style={{ width: "80px" }}>SMS</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredMembers.map((member, index) => (
-                            <tr key={member._id} className="member-row">
-                                <td className="text-secondary">{index + 1}</td>
-                                <td className="fw-bold">{member.name}</td>
-                                <td>
-                                    <a href={`tel:${member.tel}`} className="text-white text-decoration-none">
-                                        {member.tel}
-                                    </a>
-                                </td>
-                                <td className="text-secondary" style={{ fontSize: "14px" }}>
-                                    {isSecured ? "****" : member.addr}
-                                </td>
-                                <td className="small text-info">{member.remark}</td>
-                                <td>
-                                    <a href={`sms:${member.sms || member.tel}`} className="sms-btn">
-                                        <MessageSquare size={20} />
-                                    </a>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-
-            {/* Add Member Modal */}
-            {showAddModal && (
-                <div className="modal-overlay" onClick={() => setShowAddModal(false)}>
-                    <div className="modal-content" onClick={e => e.stopPropagation()}>
-                        <div className="d-flex justify-content-between align-items-center mb-4">
-                            <h4 className="fw-bold m-0" style={{ color: "#115ef7" }}>모임회원 신규등록</h4>
-                            <button className="btn btn-link text-dark p-0" onClick={() => setShowAddModal(false)}><X size={24} /></button>
-                        </div>
-
-                        <form onSubmit={handleAddMember}>
-                            <div className="row">
-                                <div className="col-md-6 mb-3">
-                                    <label className="fw-bold small mb-1">아이디</label>
-                                    <input type="text" className="form-control" required
-                                        value={newMember.id} onChange={e => setNewMember({ ...newMember, id: e.target.value })} />
-                                </div>
-                                <div className="col-md-6 mb-3">
-                                    <label className="fw-bold small mb-1">비밀번호</label>
-                                    <input type="password" className="form-control" required
-                                        value={newMember.password} onChange={e => setNewMember({ ...newMember, password: e.target.value })} />
-                                </div>
-                                <div className="col-md-6 mb-3">
-                                    <label className="fw-bold small mb-1">이름</label>
-                                    <input type="text" className="form-control" required
-                                        value={newMember.name} onChange={e => setNewMember({ ...newMember, name: e.target.value })} />
-                                </div>
-                                <div className="col-md-6 mb-3">
-                                    <label className="fw-bold small mb-1">전화번호</label>
-                                    <input type="text" className="form-control" required placeholder="010-0000-0000"
-                                        value={newMember.tel} onChange={e => setNewMember({ ...newMember, tel: e.target.value })} />
-                                </div>
-                                <div className="col-12 mb-3">
-                                    <label className="fw-bold small mb-1">거주지</label>
-                                    <input type="text" className="form-control" required
-                                        value={newMember.addr} onChange={e => setNewMember({ ...newMember, addr: e.target.value })} />
-                                </div>
-                                <div className="col-md-6 mb-3">
-                                    <label className="fw-bold small mb-1">비고(직책)</label>
-                                    <input type="text" className="form-control" placeholder="회원, 총무, 회장 등"
-                                        value={newMember.remark} onChange={e => setNewMember({ ...newMember, remark: e.target.value })} />
-                                </div>
-                                <div className="col-md-6 mb-3">
-                                    <label className="fw-bold small mb-1">회원 레벨</label>
-                                    <select className="form-select" value={newMember.user_level}
-                                        onChange={e => setNewMember({ ...newMember, user_level: Number(e.target.value) })}>
-                                        <option value="1">게스트 (1)</option>
-                                        <option value="2">정회원 (2)</option>
-                                        <option value="5">Premium (5)</option>
-                                        <option value="10">관리자 (10)</option>
-                                    </select>
-                                </div>
+                            <div className={`p-2 rounded-circle bg-light ${selectedPage === item.path ? 'text-primary' : 'text-secondary'}`}>
+                                {item.icon}
                             </div>
-                            <button type="submit" className="btn btn-primary w-100 py-3 fw-bold rounded-pill mt-4 shadow" style={{ background: "#4A90E2" }}>
-                                등록하기
-                            </button>
-                        </form>
-                    </div>
+                            <div>
+                                <h5 className="mb-1 fw-bold">{item.title}</h5>
+                                <p className="mb-0 text-secondary small">{item.desc}</p>
+                            </div>
+                            <div className="ms-auto">
+                                <input
+                                    type="radio"
+                                    name="pageSelect"
+                                    checked={selectedPage === item.path}
+                                    onChange={() => setSelectedPage(item.path)}
+                                    style={{ width: "20px", height: "20px" }}
+                                />
+                            </div>
+                        </div>
+                    ))}
                 </div>
-            )}
+
+                <div className="btn-area">
+                    <button type="button" className="btn btn-primary px-4 py-2 fw-bold" onClick={handleGoNext}>
+                        선택한 페이지로 이동
+                    </button>
+                    <button type="button" className="btn btn-outline-danger px-4 py-2" onClick={() => signOut()}>
+                        <LogOut size={18} className="me-1" /> 로그아웃
+                    </button>
+                </div>
+
+                <div className="d-flex justify-content-center mt-4">
+                    <Link href="/dashboard" className="btn btn-secondary w-100 py-2 d-flex align-items-center justify-content-center" style={{ maxWidth: "300px" }}>
+                        <ArrowLeft size={16} className="me-2" /> 전체 관리시스템으로 되돌아가기
+                    </Link>
+                </div>
+            </div>
         </div>
     );
 }
