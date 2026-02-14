@@ -349,7 +349,7 @@ export default function DashboardPage() {
                 <button className="btn btn-outline-secondary rounded-pill fw-bold" onClick={() => router.push("/theme")}>
                     <Palette className="me-2" size={18} /> 디자인 변경 / 테마 설정
                 </button>
-                <div className="d-flex gap-3">
+                <div className="d-flex flex-column flex-md-row gap-3">
                     <button className="btn btn-primary btn-same shadow-lg d-flex align-items-center justify-content-center" onClick={handleGoNext}>
                         <BookOpen className="me-2" size={20} /> 책 펼쳐보기
                     </button>
