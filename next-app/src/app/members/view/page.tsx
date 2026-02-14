@@ -62,7 +62,9 @@ export default function MembersViewPage() {
         try {
             const res = await axios.get("/api/members");
             if (res.data.success) {
-                setMembers(res.data.members);
+                // Filter out specific system/public accounts
+                const filteredMembers = res.data.members.filter((m: any) => m.name !== '공용계정' && m.id !== 'jikji35');
+                setMembers(filteredMembers);
             }
         } catch (error) {
             console.error("Failed to fetch members", error);
