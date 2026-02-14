@@ -3,42 +3,25 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import {
-    ArrowLeft,
-    UserPlus,
-    Search,
-    MessageSquare,
-    Phone,
-    MapPin,
-    Tag,
-    X,
-    Lock,
-    Unlock
-} from "lucide-react";
+import Link from "next/link";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import axios from "axios";
 
-export default function MembersPage() {
+export default function MembersViewPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
+
+
     const [members, setMembers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [showAddModal, setShowAddModal] = useState(false);
-    const [isSecured, setIsSecured] = useState(true); // Security switch
+    const [isSecured, setIsSecured] = useState(true); // Default ON
 
-    // New Member Form State
-    const [newMember, setNewMember] = useState({
-        id: "",
-        password: "",
-        name: "",
-        tel: "",
-        addr: "",
-        remark: "",
-        sms: "",
-        email: "",
-        user_level: 1
-    });
+    // Clock State
+    const [timeStr, setTimeStr] = useState("");
+    const [dateStr, setDateStr] = useState("");
+
+    // Animation State
+    const [cubeDeg, setCubeDeg] = useState(0);
 
     useEffect(() => {
         if (status === "unauthenticated") {
@@ -47,6 +30,33 @@ export default function MembersPage() {
             fetchMembers();
         }
     }, [status, router]);
+
+    // Clock Timer
+    useEffect(() => {
+        const timer = setInterval(() => {
+            const now = new Date();
+
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const week = ['일', '월', '화', '수', '목', '금', '토'][now.getDay()];
+
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+
+            setDateStr(`${year}/${month}/${day}(${week})`);
+            setTimeStr(`${hours}:${minutes}`);
+        }, 1000);
+        return () => clearInterval(timer);
+    }, []);
+
+    // Cube Animation Timer
+    useEffect(() => {
+        const cubeTimer = setInterval(() => {
+            setCubeDeg(prev => prev - 90);
+        }, 2000); // Slower rotate for better stability
+        return () => clearInterval(cubeTimer);
+    }, []);
 
     const fetchMembers = async () => {
         try {
@@ -61,192 +71,309 @@ export default function MembersPage() {
         }
     };
 
-    const handleAddMember = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            const res = await axios.post("/api/members", newMember);
-            if (res.data.success) {
-                alert("회원이 성공적으로 등록되었습니다.");
-                setShowAddModal(false);
-                fetchMembers();
-                setNewMember({
-                    id: "",
-                    password: "",
-                    name: "",
-                    tel: "",
-                    addr: "",
-                    remark: "",
-                    sms: "",
-                    email: "",
-                    user_level: 1
-                });
+    const handleToggleSecurity = () => {
+        if ((session?.user as any)?.user_level >= 5) {
+            setIsSecured(!isSecured);
+        } else {
+            if (confirm("이 기능을 사용하려면 관리자 로그인이 필요합니다.\n로그인 페이지로 이동하시겠습니까?")) {
+                router.push("/login");
             }
-        } catch (error: any) {
-            alert("등록 실패: " + (error.response?.data?.message || error.message));
         }
     };
 
-    const filteredMembers = members.filter(m =>
-        m.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        m.tel?.includes(searchTerm) ||
-        m.remark?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
     if (status === "loading" || loading) {
-        return <div className="text-center mt-5">Loading...</div>;
+        return (
+            <div style={{ background: "#000", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center", color: "#fff" }}>
+                Loading...
+            </div>
+        );
     }
 
+    const userLevel = (session?.user as any)?.user_level || 0;
+    const userName = (session?.user as any)?.name || "Guest";
+    const userDisplayText = userLevel >= 10 ? `관리자: ${userName}님` : `회원: ${userName}님`;
+
     return (
-        <div className="container-fluid p-0 pb-5" style={{ background: "#000", minHeight: "100vh", color: "#fff" }}>
+        <div className="wrapper">
+            <style jsx global>{`
+        body {
+          background-color: #000;
+          color: #fff;
+          font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+          margin: 0;
+          padding: 0;
+        }
+      `}</style>
             <style jsx>{`
-                .sticky-header {
-                    position: sticky;
-                    top: 0;
-                    z-index: 100;
-                    background: #000;
-                    border-bottom: 1px solid #333;
-                    padding: 15px 20px;
-                }
-                .member-table {
-                    width: 100%;
-                    border-collapse: collapse;
-                }
-                .member-table th {
-                    background: #111;
-                    color: #cea71b;
-                    padding: 12px;
-                    text-align: center;
-                    border-bottom: 1px solid #333;
-                    font-size: 14px;
-                }
-                .member-table td {
-                    padding: 15px 10px;
-                    text-align: center;
-                    border-bottom: 1px solid #222;
-                    vertical-align: middle;
-                }
-                .member-row:hover {
-                    background: #1a1a1a;
-                }
-                .sms-btn {
-                    color: #4A9EFF;
-                    cursor: pointer;
-                    transition: transform 0.2s;
-                }
-                .sms-btn:hover {
-                    transform: scale(1.2);
-                }
-                .security-toggle {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 5px 15px;
-                    border-radius: 20px;
-                    cursor: pointer;
-                    font-size: 12px;
-                    transition: all 0.3s;
-                }
-                .security-on { background: #333; color: #cea71b; border: 1px solid #cea71b; }
-                .security-off { background: #cea71b; color: #000; font-weight: bold; }
-                
-                /* Modal */
-                .modal-overlay {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0,0,0,0.8);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    z-index: 1000;
-                    padding: 20px;
-                }
-                .modal-content {
-                    background: #e0e5ec;
-                    color: #333;
-                    border-radius: 25px;
-                    max-width: 600px;
-                    width: 100%;
-                    max-height: 90vh;
-                    overflow-y: auto;
-                    padding: 30px;
-                    box-shadow: 10px 10px 20px #000;
-                }
-            `}</style>
+        .wrapper {
+            width: 100%;
+            min-height: 100vh;
+            background: #000;
+        }
+        /* Header */
+        .header {
+            width: 100%;
+            height: 55px;
+            background: #000;
+            color: #cea71b;
+            padding: 5px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 1001;
+        }
+        .date-text { font-size: 16px; letter-spacing: 1px; color: #cea71b; }
+        .header-right { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; }
+        .time-text { font-size: 20px; letter-spacing: 2px; color: #4A9EFF; line-height: 1.1; }
+        .user-info-box {
+            font-size: 10px;
+            color: #fff;
+            background: #333;
+            padding: 2px 8px;
+            border-radius: 5px;
+            margin-top: 3px;
+            border: 1px solid #555;
+        }
 
-            <div className="sticky-header shadow-sm">
-                <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                    <div className="d-flex align-items-center gap-3">
-                        <button className="btn btn-outline-light btn-sm rounded-circle" onClick={() => router.push("/dashboard")}>
-                            <ArrowLeft size={18} />
-                        </button>
-                        <h4 className="m-0 fw-bold" style={{ color: "#cea71b" }}>회원 연락망</h4>
+        /* Marquee Section (wrap2) */
+        .wrap2 {
+            position: sticky;
+            top: 55px; /* Below Header */
+            z-index: 1000;
+            width: 100%;
+            height: 50px;
+            background-image: url('/images/bg.gif');
+            background-size: auto;
+            background-repeat: repeat;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            border-bottom: 1px solid #444;
+        }
+        
+        /* 3D Cube */
+        .wrap1 {
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            perspective: 500px;
+            z-index: 10;
+        }
+        .cube {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(${cubeDeg}deg);
+            transition: transform 0.6s ease;
+        }
+        .cube img {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+        }
+        .cube img:nth-child(1) { transform: rotateX(0deg) translateZ(25px); }
+        .cube img:nth-child(2) { transform: rotateX(90deg) translateZ(25px); }
+        .cube img:nth-child(3) { transform: rotateX(180deg) translateZ(25px); }
+        .cube img:nth-child(4) { transform: rotateX(270deg) translateZ(25px); }
+
+        /* Marquee Text */
+        .billboard-container {
+            position: absolute;
+            left: 70px; /* Adjusted for Cube */
+            right: 0;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+        .billboard {
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            animation: marquee 20s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .custom-span {
+             color: #ccc; font-size: 20px; font-weight: bold; margin: 0 20px; text-shadow: 1px 1px 2px #000;
+        }
+
+        /* Table */
+        .table-container {
+            margin-top: 0;
+            background: #333;
+        }
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+        .custom-table thead th {
+             position: sticky;
+             top: 105px; /* Header 55 + Wrap2 50 */
+             background: url('/images/background_mable-1.jpg') center center / cover no-repeat !important; /* Fixed path */
+             color: #cea71b !important;
+             z-index: 990;
+             padding: 12px 8px;
+             text-align: center;
+             font-weight: bold;
+             border: 1px solid #555;
+        }
+        .custom-table tbody tr {
+             background-color: #333;
+             color: #fff;
+             border-bottom: 1px solid #555;
+        }
+        .custom-table tbody tr:hover { background: #444; }
+        .custom-table td {
+             padding: 10px 8px;
+             text-align: center;
+             border: 1px solid #555;
+             vertical-align: middle;
+             word-break: break-word;
+        }
+        .name-link {
+             font-size: 1.1rem; font-weight: 600; color: #ffffff; text-decoration: none;
+        }
+        .name-link:hover { color: #ffd700; text-decoration: underline; }
+        
+        .sms-icon { color: #4A9EFF; font-size: 24px; cursor: pointer; transition: transform 0.2s; }
+        .sms-icon:hover { transform: scale(1.2); }
+
+        /* Address Toggle Logic */
+        .address-header { cursor: pointer; }
+        .addr-hidden { color: #ffff00; font-weight: bold; } /* Yellow for hidden */
+        .addr-visible { color: #fff; } 
+        
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .header { height: 60px; padding: 5px 10px; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; }
+            .date-text { font-size: 13px; width: 100%; text-align: left; }
+            .header-right { width: 100%; flex-direction: row; justify-content: center; position: relative; }
+            .time-text { font-size: 17px; }
+            .user-info-box { position: absolute; right: 0; bottom: 0; font-size: 8px; padding: 1px 5px; }
+            
+            .wrap2 { top: 60px; height: 33px; }
+            .wrap1 { width: 24px; height: 24px; left: 4px; }
+            .cube img { width: 24px; height: 24px; }
+            .cube img:nth-child(1) { transform: rotateX(0deg) translateZ(12px); }
+            .cube img:nth-child(2) { transform: rotateX(90deg) translateZ(12px); }
+            .cube img:nth-child(3) { transform: rotateX(180deg) translateZ(12px); }
+            .cube img:nth-child(4) { transform: rotateX(270deg) translateZ(12px); }
+            
+            .custom-table thead th { top: 93px; font-size: 12px; padding: 6px 2px; }
+            .custom-table td { font-size: 12px; padding: 6px 2px; }
+            
+            .billboard-container { left: 40px; }
+            .custom-span { font-size: 14px; }
+            
+            /* Column Widths Mobile */
+            .col-no { width: 30px; }
+            .col-name { width: 70px; }
+            .col-tel { width: auto; }
+            .col-addr { width: 50px; }
+            .col-remark { display: none; } /* Hide remark on mobile */
+            .col-sms { width: 40px; }
+            .hide-mobile { display: none; }
+        }
+
+        /* PC Column Widths */
+        @media (min-width: 769px) {
+             .col-no { width: 5%; }
+             .col-name { width: 15%; }
+             .col-tel { width: 20%; }
+             .col-addr { width: 30%; }
+             .col-remark { width: 10%; }
+             .col-sms { width: 10%; }
+        }
+      `}</style>
+
+            {/* Header */}
+            <div className="header">
+                <div className="date-text">{dateStr}</div>
+                <div className="header-right">
+                    <div className="time-text">{timeStr}</div>
+                    <div className="user-info-box">{userDisplayText}</div>
+                </div>
+            </div>
+
+            {/* Feature Section (Marquee / Cube) */}
+            <div className="wrap2">
+                <div className="wrap1">
+                    <div className="cube">
+                        <img src="/images/mail_1.png" alt="이메일" />
+                        <img src="/images/chat_1.png" alt="채팅" />
+                        <img src="/images/phone_1.png" alt="전화" />
+                        <img src="/images/sms_1.png" alt="문자" />
                     </div>
+                </div>
 
-                    <div className="d-flex align-items-center gap-3 flex-grow-1" style={{ maxWidth: "400px" }}>
-                        <div className="input-group input-group-sm">
-                            <span className="input-group-text bg-dark border-secondary text-secondary">
-                                <Search size={16} />
-                            </span>
-                            <input
-                                type="text"
-                                className="form-control bg-dark border-secondary text-white"
-                                placeholder="이름, 전화번호, 비고 검색..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="d-flex align-items-center gap-2">
-                        <div
-                            className={`security-toggle ${isSecured ? 'security-on' : 'security-off'}`}
-                            onClick={() => setIsSecured(!isSecured)}
-                        >
-                            {isSecured ? <Lock size={14} /> : <Unlock size={14} />}
-                            {isSecured ? '보안 ON' : '보안 OFF'}
-                        </div>
-                        {(session?.user as any).user_level >= 5 && (
-                            <button className="btn btn-primary btn-sm rounded-pill px-3" onClick={() => setShowAddModal(true)}>
-                                <UserPlus size={16} className="me-1" /> 등록
-                            </button>
-                        )}
+                <div className="billboard-container">
+                    <div className="billboard">
+                        <img src="/images/aa.gif" width="25" height="25" alt="" />
+                        <img src="/images/dd.gif" width="25" height="25" alt="" />
+                        <span className="custom-span">직지초35회 김천지부 동기연락망</span>
+                        <img src="/images/dd.gif" width="25" height="25" alt="" />
+                        <img src="/images/aa.gif" width="25" height="25" alt="" />
                     </div>
                 </div>
             </div>
 
-            <div className="table-responsive mt-3">
-                <table className="member-table">
+
+            {/* Table */}
+            <div className="table-container">
+                <table className="custom-table">
                     <thead>
                         <tr>
-                            <th style={{ width: "60px" }}>NO</th>
-                            <th style={{ width: "120px" }}>이름</th>
-                            <th style={{ width: "160px" }}>전화번호</th>
-                            <th>거주지</th>
-                            <th style={{ width: "120px" }}>비고</th>
-                            <th style={{ width: "80px" }}>SMS</th>
+                            <th className="col-no">NO</th>
+                            <th className="col-name">이름</th>
+                            <th className="col-tel">전화번호</th>
+                            <th className="col-addr address-header" onClick={handleToggleSecurity}>
+                                {isSecured ? <span className="addr-hidden">거주지(잠김)</span> : <span className="addr-visible">거주지(해제)</span>}
+                            </th>
+                            <th className="col-remark hide-mobile">비고</th>
+                            <th className="col-sms">SMS</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredMembers.map((member, index) => (
-                            <tr key={member._id} className="member-row">
-                                <td className="text-secondary">{index + 1}</td>
-                                <td className="fw-bold">{member.name}</td>
+                        {members.map((member, index) => (
+                            <tr key={member._id}>
+                                <td>{index + 1}</td>
                                 <td>
-                                    <a href={`tel:${member.tel}`} className="text-white text-decoration-none">
+                                    <Link href={`tel:${member.tel}`} className="name-link">
+                                        {member.name}
+                                    </Link>
+                                </td>
+                                <td>
+                                    <Link href={`tel:${member.tel}`} className="name-link">
                                         {member.tel}
-                                    </a>
+                                    </Link>
                                 </td>
-                                <td className="text-secondary" style={{ fontSize: "14px" }}>
-                                    {isSecured ? "****" : member.addr}
-                                </td>
-                                <td className="small text-info">{member.remark}</td>
                                 <td>
-                                    <a href={`sms:${member.sms || member.tel}`} className="sms-btn">
-                                        <MessageSquare size={20} />
-                                    </a>
+                                    {isSecured ? (
+                                        <span style={{ color: "yellow", fontWeight: "bold" }}>****</span>
+                                    ) : (
+                                        member.addr
+                                    )}
+                                </td>
+                                <td className="hide-mobile">{member.remark}</td>
+                                <td>
+                                    <Link href={`sms:${member.sms || member.tel}`}>
+                                        <img src="/images/sms-4.png" alt="SMS" className="sms-icon" style={{ width: '28px', height: '28px' }} />
+                                    </Link>
                                 </td>
                             </tr>
                         ))}
@@ -254,65 +381,20 @@ export default function MembersPage() {
                 </table>
             </div>
 
-            {/* Add Member Modal */}
-            {showAddModal && (
-                <div className="modal-overlay" onClick={() => setShowAddModal(false)}>
-                    <div className="modal-content" onClick={e => e.stopPropagation()}>
-                        <div className="d-flex justify-content-between align-items-center mb-4">
-                            <h4 className="fw-bold m-0" style={{ color: "#115ef7" }}>모임회원 신규등록</h4>
-                            <button className="btn btn-link text-dark p-0" onClick={() => setShowAddModal(false)}><X size={24} /></button>
-                        </div>
-
-                        <form onSubmit={handleAddMember}>
-                            <div className="row">
-                                <div className="col-md-6 mb-3">
-                                    <label className="fw-bold small mb-1">아이디</label>
-                                    <input type="text" className="form-control" required
-                                        value={newMember.id} onChange={e => setNewMember({ ...newMember, id: e.target.value })} />
-                                </div>
-                                <div className="col-md-6 mb-3">
-                                    <label className="fw-bold small mb-1">비밀번호</label>
-                                    <input type="password" className="form-control" required
-                                        value={newMember.password} onChange={e => setNewMember({ ...newMember, password: e.target.value })} />
-                                </div>
-                                <div className="col-md-6 mb-3">
-                                    <label className="fw-bold small mb-1">이름</label>
-                                    <input type="text" className="form-control" required
-                                        value={newMember.name} onChange={e => setNewMember({ ...newMember, name: e.target.value })} />
-                                </div>
-                                <div className="col-md-6 mb-3">
-                                    <label className="fw-bold small mb-1">전화번호</label>
-                                    <input type="text" className="form-control" required placeholder="010-0000-0000"
-                                        value={newMember.tel} onChange={e => setNewMember({ ...newMember, tel: e.target.value })} />
-                                </div>
-                                <div className="col-12 mb-3">
-                                    <label className="fw-bold small mb-1">거주지</label>
-                                    <input type="text" className="form-control" required
-                                        value={newMember.addr} onChange={e => setNewMember({ ...newMember, addr: e.target.value })} />
-                                </div>
-                                <div className="col-md-6 mb-3">
-                                    <label className="fw-bold small mb-1">비고(직책)</label>
-                                    <input type="text" className="form-control" placeholder="회원, 총무, 회장 등"
-                                        value={newMember.remark} onChange={e => setNewMember({ ...newMember, remark: e.target.value })} />
-                                </div>
-                                <div className="col-md-6 mb-3">
-                                    <label className="fw-bold small mb-1">회원 레벨</label>
-                                    <select className="form-select" value={newMember.user_level}
-                                        onChange={e => setNewMember({ ...newMember, user_level: Number(e.target.value) })}>
-                                        <option value="1">게스트 (1)</option>
-                                        <option value="2">정회원 (2)</option>
-                                        <option value="5">Premium (5)</option>
-                                        <option value="10">관리자 (10)</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <button type="submit" className="btn btn-primary w-100 py-3 fw-bold rounded-pill mt-4 shadow" style={{ background: "#4A90E2" }}>
-                                등록하기
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            )}
+            {/* Floating Action Button (Go to Dashboard) */}
+            <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 2000 }}>
+                <button
+                    onClick={() => router.push(userLevel >= 10 ? "/members" : "/guest")}
+                    style={{
+                        width: '50px', height: '50px', borderRadius: '50%', border: 'none',
+                        background: 'rgba(10, 132, 255, 0.7)', color: '#fff', fontSize: '24px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                        backdropFilter: 'blur(4px)', boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
+                    }}
+                >
+                    <i className="bi bi-arrow-left"></i>
+                </button>
+            </div>
         </div>
     );
 }
