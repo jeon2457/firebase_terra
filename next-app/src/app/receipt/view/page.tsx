@@ -6,12 +6,10 @@ import { useState, useEffect, Suspense } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {
     ArrowLeft,
-    Calendar,
     Download,
     Maximize2,
     X,
-    FileText,
-    ChevronDown
+    FileText
 } from "lucide-react";
 import axios from "axios";
 
@@ -25,6 +23,11 @@ function ReceiptViewContent() {
     const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
     const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
     const [selectedImg, setSelectedImg] = useState<string | null>(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         if (status === "unauthenticated") {
@@ -51,6 +54,7 @@ function ReceiptViewContent() {
     const years = [0, 1, 2, 3].map(i => new Date().getFullYear() - i);
     const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
+    if (!mounted) return <div className="text-center mt-5">Loading...</div>;
     if (status === "loading") return <div className="text-center mt-5">Loading...</div>;
 
     return (
@@ -62,12 +66,18 @@ function ReceiptViewContent() {
                     border-bottom: 2px solid #e9ecef;
                     margin-bottom: 30px;
                 }
-                .month-grid {
+                .mobile-month-grid {
                     display: grid;
                     grid-template-columns: repeat(6, 1fr);
                     gap: 8px;
                     max-width: 600px;
                     margin: 0 auto;
+                }
+                @media (max-width: 576px) {
+                    .mobile-month-grid {
+                        grid-template-columns: repeat(6, 1fr);
+                        gap: 5px;
+                    }
                 }
                 .month-btn {
                     padding: 8px;
@@ -136,11 +146,8 @@ function ReceiptViewContent() {
             `}</style>
 
             <div className="header-section shadow-sm sticky-top">
-                <div className="container">
+                <div className="container" style={{ maxWidth: '800px' }}>
                     <div className="d-flex justify-content-between align-items-center mb-4">
-                        <button className="btn btn-outline-dark btn-sm rounded-pill" onClick={() => router.push("/dashboard")}>
-                            <ArrowLeft size={18} className="me-1" /> 돌아가기
-                        </button>
                         <h4 className="m-0 fw-bold text-primary">영수증 보관함</h4>
                         <div className="dropdown">
                             <button className="btn btn-dark btn-sm dropdown-toggle rounded-pill px-3" data-bs-toggle="dropdown">
@@ -154,7 +161,7 @@ function ReceiptViewContent() {
                         </div>
                     </div>
 
-                    <div className="month-grid">
+                    <div className="mobile-month-grid">
                         {months.map(m => (
                             <button key={m}
                                 className={`month-btn ${m === currentMonth ? 'active' : ''}`}
@@ -167,7 +174,7 @@ function ReceiptViewContent() {
                 </div>
             </div>
 
-            <div className="container">
+            <div className="container" style={{ maxWidth: '1000px' }}>
                 {loading ? (
                     <div className="text-center p-5">Loading...</div>
                 ) : images.length === 0 ? (
@@ -200,6 +207,13 @@ function ReceiptViewContent() {
                         ))}
                     </div>
                 )}
+            </div>
+
+            {/* Bottom Back Button */}
+            <div className="container pb-5 mt-5" style={{ maxWidth: '800px' }}>
+                <button className="btn btn-secondary w-100 py-2 fw-bold" onClick={() => router.push("/dashboard")}>
+                    <ArrowLeft size={18} className="me-2" /> 돌아가기
+                </button>
             </div>
 
             {selectedImg && (
