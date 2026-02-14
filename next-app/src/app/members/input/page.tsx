@@ -333,8 +333,6 @@ export default function MemberInputPage() {
                 }
             `}</style>
 
-        </form>
-            </div >
-        </div >
+        </div>
     );
 }
