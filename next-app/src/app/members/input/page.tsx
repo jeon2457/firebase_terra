@@ -316,7 +316,7 @@ export default function MemberInputPage() {
                         <button type="submit" className="btn-main text-white" style={{ background: "#4A90E2" }}>
                             입력하기
                         </button>
-                        <Link href="/members" className="btn-main text-white text-decoration-none d-flex align-items-center justify-content-center" style={{ background: "#a3b1c6" }}>
+                        <Link href="/members" className="btn-main text-white text-decoration-none d-flex align-items-center justify-content-center" style={{ background: "#a3b1c6", borderRadius: "20px" }}>
                             돌아가기
                         </Link>
                     </div>
