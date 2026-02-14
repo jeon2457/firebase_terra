@@ -245,17 +245,16 @@ export default function MembersViewPage() {
              word-break: break-word;
         }
         .name-link {
-             font-size: 1.1rem; font-weight: 600; color: #ffffff; text-decoration: none;
+             font-size: 1.1rem; font-weight: 600; color: #ffffff !important; text-decoration: none !important;
         }
-        .name-link:hover { color: #ffffff; text-decoration: none; }
+        .name-link:hover { color: #ffffff !important; text-decoration: none !important; }
         
         .sms-icon { color: #4A9EFF; font-size: 24px; cursor: pointer; transition: transform 0.2s; }
         .sms-icon:hover { transform: scale(1.2); }
 
         /* Address Toggle Logic */
-        .address-header { cursor: pointer; }
-        .addr-hidden { color: #ffff00; font-weight: bold; } /* Yellow for hidden */
-        .addr-visible { color: #fff; } 
+        .address-header { cursor: pointer; color: #cea71b !important; }
+        .addr-visible { color: #cea71b !important; } 
         
         
         /* Mobile Responsive */
