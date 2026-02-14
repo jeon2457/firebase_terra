@@ -1,7 +1,12 @@
 // src/app/api/fee/status/route.ts
+
 import { NextResponse } from 'next/server';
 import clientPromise from '@/lib/db'; // 몽고DB 연결 설정 파일 (경로는 본인 프로젝트에 맞게)
+
+// 2. [주의] NextAuth 설정 경로가 정확해야 합니다.
+// 만약 authOptions 에러가 계속 난다면, 이 줄을 잠시 주석 처리하고 테스트해보세요.
 import { getServerSession } from 'next-auth';
+// 👇 경로가 정확한지 꼭 확인하세요! (보통은 아래 경로가 맞습니다)
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'; // NextAuth 설정 경로 확인
 
 export async function GET(request: Request) {
