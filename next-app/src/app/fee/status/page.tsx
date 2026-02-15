@@ -282,6 +282,7 @@ export default function FeeStatusPage() {
                     display: flex;
                     align-items: center;
                     justify-content: center;
+                    padding: 20px;
                 }
                 
                 .modal-content-custom {
@@ -305,10 +306,33 @@ export default function FeeStatusPage() {
                     body { margin: 10px 3px; }
                     
                     .header-box {
-                        grid-template-columns: 1fr;
-                        grid-template-rows: auto auto;
-                        row-gap: 12px;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 12px;
                         margin-bottom: 15px;
+                        align-items: stretch;
+                    }
+                    
+                    /* 제목을 맨 위에 중앙정렬 */
+                    .header-box > div:nth-child(2) {
+                        order: 1;
+                        display: flex;
+                        justify-content: center;
+                    }
+                    
+                    /* 연도 선택을 두 번째로 */
+                    .header-box > div:nth-child(1) {
+                        order: 2;
+                        display: flex;
+                        justify-content: flex-start;
+                    }
+                    
+                    /* 보는법, 월회비를 세 번째로 */
+                    .header-box > div:nth-child(3) {
+                        order: 3;
+                        display: flex;
+                        justify-content: flex-end;
+                        gap: 8px;
                     }
                     
                     .admin-info {
@@ -318,34 +342,44 @@ export default function FeeStatusPage() {
                     }
                     
                     .help-btn {
-                        padding: 3px 6px;
+                        padding: 6px 10px;
                         font-size: 12px;
-                    }
-                    
-                    .header-box > div:nth-child(2) {
-                        grid-row: 1;
-                        justify-self: center;
-                    }
-                    
-                    .header-box > div:nth-child(1) {
-                        grid-row: 2;
-                        justify-self: start;
-                    }
-                    
-                    .header-box > div:nth-child(3) {
-                        grid-row: 2;
-                        justify-self: end;
-                        gap: 10px;
+                        border-radius: 12px;
                     }
                     
                     .title-btn {
-                        font-size: 15px;
+                        font-size: 16px;
                         padding: 10px 20px;
+                        text-align: center;
+                        width: 100%;
                     }
                     
                     .fee-btn {
+                        font-size: 11px;
+                        padding: 6px 10px;
+                        white-space: nowrap;
+                    }
+                    
+                    /* 모달창 모바일 크기 조정 */
+                    .modal-content-custom {
+                        width: 95%;
+                        max-width: 350px;
+                        padding: 20px;
+                        max-height: 90vh;
+                        overflow-y: auto;
+                    }
+                    
+                    .modal-content-custom h5 {
+                        font-size: 16px;
+                    }
+                    
+                    .modal-content-custom .form-label {
                         font-size: 13px;
-                        padding: 6px 12px;
+                    }
+                    
+                    .modal-content-custom .form-control,
+                    .modal-content-custom .form-select {
+                        font-size: 13px;
                     }
                     
                     /* 테이블을 카드 형식으로 변경 */
@@ -420,6 +454,12 @@ export default function FeeStatusPage() {
                         font-weight: 700;
                         color: #f57c00;
                         display: block !important;
+                    }
+                    
+                    /* 입금합계, 미납금 헤더 숨김 */
+                    .list-table.mode-admin thead th:nth-last-child(2),
+                    .list-table.mode-admin thead th:nth-last-child(1) {
+                        display: none !important;
                     }
                     
                     /* Body - 체크박스 */
@@ -515,6 +555,12 @@ export default function FeeStatusPage() {
                         border-radius: 10px;
                         box-shadow: 0 2px 4px rgba(0,0,0,0.08);
                         border: 1px solid #e0e0e0;
+                    }
+                    
+                    /* 입금합계, 미납금 헤더 숨김 */
+                    .list-table.mode-guest thead th:nth-last-child(2),
+                    .list-table.mode-guest thead th:nth-last-child(1) {
+                        display: none !important;
                     }
                     
                     .list-table.mode-guest thead th:nth-child(1) {
@@ -615,6 +661,12 @@ export default function FeeStatusPage() {
                     }
                 }
             `}</style>
+
+
+
+
+
+            
 
             <div className="admin-info">
                 {isAdmin ? (
