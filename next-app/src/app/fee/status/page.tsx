@@ -1,6 +1,5 @@
 // src/app/fee/status/page.tsx
 'use client';
-
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -29,7 +28,6 @@ export default function FeeStatusPage() {
            alert(data.error);
            return;
         }
-
         setMembers(data.members);
         setStatusMap(data.passMap);
         setLoading(false);
@@ -37,24 +35,26 @@ export default function FeeStatusPage() {
         console.error(err);
       }
     };
-
     fetchData();
   }, [year]);
 
   // 2. 납부 상태 변경 (PHP의 togglePaidStatus 대체)
   const togglePaidStatus = async (memberId: string, month: number, currentStatus: number) => {
     // 관리자 권한 체크 (클라이언트 측)
-    if (session?.user?.level < 10) return;
-
+    if ((session?.user as any)?.user_level < 10) return;
+    
     const newStatus = currentStatus === 1 ? 0 : 1;
-
+    
     try {
       const res = await fetch('/api/fee/update', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ memberId, year, month, paid: newStatus }),
       });
       const result = await res.json();
-
+      
       if (result.success) {
         // UI 즉시 업데이트
         setStatusMap(prev => ({
