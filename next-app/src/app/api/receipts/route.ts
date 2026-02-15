@@ -44,21 +44,25 @@ export async function POST(req: NextRequest) {
         await dbConnect();
         const { url, notice } = await req.json();
 
-        const now = new Date();
-        const datetime = now.toISOString().replace('T', ' ').substring(0, 19);
 
+
+        // 한국 시간으로 변환
+        const now = new Date();
+        const koreaTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
+        const datetime = koreaTime.toISOString().replace('T', ' ').substring(0, 19);
+        
         const newImage = new Image({
             url,
             notice,
             date: datetime
         });
-
         await newImage.save();
         return NextResponse.json({ success: true, image: newImage });
     } catch (error) {
         return NextResponse.json({ success: false, message: "Server Error" }, { status: 500 });
     }
 }
+
 
 export async function PUT(req: NextRequest) {
     const session = await getServerSession(authOptions);

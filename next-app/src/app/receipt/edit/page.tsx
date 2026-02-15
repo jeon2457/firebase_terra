@@ -28,26 +28,6 @@ function ReceiptEditContent() {
     // Track editing notices
     const [notices, setNotices] = useState<{ [key: string]: string }>({});
 
-    // 한국 시간으로 변환하는 함수
-    const formatToKST = (dateString: string) => {
-        if (!dateString) return '';
-        try {
-            const date = new Date(dateString);
-            return new Intl.DateTimeFormat('ko-KR', {
-                timeZone: 'Asia/Seoul',
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            }).format(date);
-        } catch (error) {
-            return dateString;
-        }
-    };
-
     useEffect(() => {
         setMounted(true);
     }, []);
@@ -207,7 +187,7 @@ function ReceiptEditContent() {
 
                                         <div className="flex-fill w-100">
                                             <div className="small text-muted mb-1">
-                                                {formatToKST(img.createdAt || img.date)}
+                                                {img.date}
                                             </div>
                                             <textarea
                                                 className="form-control form-control-sm"
