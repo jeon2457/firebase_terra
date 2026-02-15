@@ -59,7 +59,6 @@ export default function FeeStatusPage() {
         setLoading(true);
         try {
             const res = await axios.get(`/api/fee/status?year=${year}`);
-            console.log('API Response:', res.data); // 디버깅용
             if (res.data.success) {
                 setMembers(res.data.members);
                 setPassMap(res.data.passMap);
@@ -197,14 +196,17 @@ export default function FeeStatusPage() {
     const years = [0, 1, 2, 3].map(i => new Date().getFullYear() - i);
 
     return (
-        <div className="container py-4" style={{ background: "#f9f9fa", minHeight: "100vh" }}>
+        <div className="container-fluid py-4" style={{ background: "#f9f9fa", minHeight: "100vh" }}>
             <style jsx>{`
+                body { background: #f9f9f9; margin: 20px 5px 10px 5px; }
+                
                 .admin-info {
                     text-align: right;
                     font-size: 15px;
                     color: #6c757d;
                     margin-bottom: 20px;
                 }
+                
                 .header-box {
                     display: grid;
                     grid-template-columns: auto 1fr auto;
@@ -212,6 +214,7 @@ export default function FeeStatusPage() {
                     margin-bottom: 10px;
                     gap: 10px;
                 }
+                
                 .title-btn {
                     background: #1976d2;
                     color: #fff;
@@ -219,13 +222,20 @@ export default function FeeStatusPage() {
                     border-radius: 30px;
                     font-weight: 800;
                     font-size: 18px;
+                    white-space: nowrap;
                 }
+                
                 .fee-btn {
                     background: #eee;
                     padding: 8px 15px;
                     border-radius: 6px;
+                    white-space: nowrap;
                     cursor: pointer;
+                    transition: background 0.2s;
                 }
+                
+                .fee-btn:hover { background: #ddd; }
+                
                 .help-btn {
                     background: #fff3e0;
                     color: #f57c00;
@@ -233,16 +243,25 @@ export default function FeeStatusPage() {
                     padding: 8px 15px;
                     border-radius: 15px;
                     font-weight: bold;
+                    cursor: pointer;
+                    white-space: nowrap;
                 }
+                
+                .help-btn:hover { background: #ffe0b2; }
+                
                 .ox {
                     cursor: pointer;
                     font-weight: bold;
                     font-size: 18px;
                     padding: 8px;
+                    display: inline-block;
+                    min-width: 32px;
                 }
+                
                 .ox.o { color: green; }
                 .ox.x { color: red; }
                 .ox.no-access { cursor: default; opacity: 0.8; }
+                
                 .status-popup {
                     position: absolute;
                     background: white;
@@ -252,7 +271,9 @@ export default function FeeStatusPage() {
                     padding: 12px;
                     z-index: 2000;
                     width: 180px;
+                    text-align: center;
                 }
+                
                 .modal-overlay {
                     position: fixed;
                     inset: 0;
@@ -262,6 +283,7 @@ export default function FeeStatusPage() {
                     align-items: center;
                     justify-content: center;
                 }
+                
                 .modal-content-custom {
                     background: white;
                     padding: 25px;
@@ -269,13 +291,336 @@ export default function FeeStatusPage() {
                     width: 90%;
                     max-width: 400px;
                 }
+                
+                .total-members-info {
+                    font-size: 14px;
+                    color: #555;
+                    font-weight: 700;
+                    margin-bottom: 8px;
+                    margin-left: 5px;
+                }
+                
+                /* 모바일 반응형 */
+                @media (max-width: 768px) {
+                    body { margin: 10px 3px; }
+                    
+                    .header-box {
+                        grid-template-columns: 1fr;
+                        grid-template-rows: auto auto;
+                        row-gap: 12px;
+                        margin-bottom: 15px;
+                    }
+                    
+                    .admin-info {
+                        text-align: right;
+                        font-size: 12px;
+                        margin-bottom: 20px;
+                    }
+                    
+                    .help-btn {
+                        padding: 3px 6px;
+                        font-size: 12px;
+                    }
+                    
+                    .header-box > div:nth-child(2) {
+                        grid-row: 1;
+                        justify-self: center;
+                    }
+                    
+                    .header-box > div:nth-child(1) {
+                        grid-row: 2;
+                        justify-self: start;
+                    }
+                    
+                    .header-box > div:nth-child(3) {
+                        grid-row: 2;
+                        justify-self: end;
+                        gap: 10px;
+                    }
+                    
+                    .title-btn {
+                        font-size: 15px;
+                        padding: 10px 20px;
+                    }
+                    
+                    .fee-btn {
+                        font-size: 13px;
+                        padding: 6px 12px;
+                    }
+                    
+                    /* 테이블을 카드 형식으로 변경 */
+                    .list-table { display: block; border: none; }
+                    .list-table thead { display: block; margin-bottom: 10px; }
+                    .list-table tbody { display: block; }
+                    .list-table thead tr:nth-child(2) { display: none !important; }
+                    
+                    /* 관리자 모드 */
+                    .list-table.mode-admin thead tr:first-child,
+                    .list-table.mode-admin tbody tr {
+                        display: grid;
+                        grid-template-columns: 35px 70px repeat(6, 1fr);
+                        grid-template-rows: auto auto;
+                        gap: 1px;
+                        background: white;
+                    }
+                    
+                    .list-table.mode-admin thead tr:first-child {
+                        background: #f8f9fa;
+                    }
+                    
+                    .list-table.mode-admin tbody tr {
+                        grid-template-rows: auto auto auto;
+                        padding: 10px 5px;
+                        margin-bottom: 12px;
+                        border-radius: 10px;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+                        border: 1px solid #e0e0e0;
+                    }
+                    
+                    /* 체크박스 */
+                    .list-table.mode-admin thead th:nth-child(1) {
+                        grid-column: 1;
+                        grid-row: 1/3;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    
+                    /* 이름 */
+                    .list-table.mode-admin thead th:nth-child(2) {
+                        grid-column: 2;
+                        grid-row: 1/3;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 13px;
+                        font-weight: 700;
+                    }
+                    
+                    /* 상반기 */
+                    .list-table.mode-admin thead th:nth-child(3) {
+                        grid-column: 3/9;
+                        grid-row: 1;
+                        background: #e3f2fd;
+                        border-radius: 4px;
+                        padding: 4px;
+                        font-size: 12px;
+                        font-weight: 700;
+                        color: #1976d2;
+                    }
+                    
+                    /* 하반기 */
+                    .list-table.mode-admin thead th:nth-child(4) {
+                        grid-column: 3/9;
+                        grid-row: 2;
+                        background: #fff3e0;
+                        border-radius: 4px;
+                        padding: 4px;
+                        font-size: 12px;
+                        font-weight: 700;
+                        color: #f57c00;
+                        display: block !important;
+                    }
+                    
+                    /* Body - 체크박스 */
+                    .list-table.mode-admin tbody td:nth-child(1) {
+                        grid-column: 1;
+                        grid-row: 1/4;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    
+                    /* Body - 이름 */
+                    .list-table.mode-admin tbody td:nth-child(2) {
+                        grid-column: 2;
+                        grid-row: 1/4;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: 700;
+                        font-size: 14px;
+                        color: #333;
+                        word-break: keep-all;
+                    }
+                    
+                    /* 1~6월 (상반기) */
+                    .list-table.mode-admin tbody td:nth-child(3) { grid-column: 3; grid-row: 1; background: #f0f8ff; border-radius: 4px; padding: 6px 2px; }
+                    .list-table.mode-admin tbody td:nth-child(4) { grid-column: 4; grid-row: 1; background: #f0f8ff; border-radius: 4px; padding: 6px 2px; }
+                    .list-table.mode-admin tbody td:nth-child(5) { grid-column: 5; grid-row: 1; background: #f0f8ff; border-radius: 4px; padding: 6px 2px; }
+                    .list-table.mode-admin tbody td:nth-child(6) { grid-column: 6; grid-row: 1; background: #f0f8ff; border-radius: 4px; padding: 6px 2px; }
+                    .list-table.mode-admin tbody td:nth-child(7) { grid-column: 7; grid-row: 1; background: #f0f8ff; border-radius: 4px; padding: 6px 2px; }
+                    .list-table.mode-admin tbody td:nth-child(8) { grid-column: 8; grid-row: 1; background: #f0f8ff; border-radius: 4px; padding: 6px 2px; }
+                    
+                    /* 7~12월 (하반기) */
+                    .list-table.mode-admin tbody td:nth-child(9) { grid-column: 3; grid-row: 2; background: #fff8f0; border-radius: 4px; padding: 6px 2px; }
+                    .list-table.mode-admin tbody td:nth-child(10) { grid-column: 4; grid-row: 2; background: #fff8f0; border-radius: 4px; padding: 6px 2px; }
+                    .list-table.mode-admin tbody td:nth-child(11) { grid-column: 5; grid-row: 2; background: #fff8f0; border-radius: 4px; padding: 6px 2px; }
+                    .list-table.mode-admin tbody td:nth-child(12) { grid-column: 6; grid-row: 2; background: #fff8f0; border-radius: 4px; padding: 6px 2px; }
+                    .list-table.mode-admin tbody td:nth-child(13) { grid-column: 7; grid-row: 2; background: #fff8f0; border-radius: 4px; padding: 6px 2px; }
+                    .list-table.mode-admin tbody td:nth-child(14) { grid-column: 8; grid-row: 2; background: #fff8f0; border-radius: 4px; padding: 6px 2px; }
+                    
+                    /* 입금합계 */
+                    .list-table.mode-admin tbody td:nth-child(15) {
+                        grid-column: 3/6;
+                        grid-row: 3;
+                        background: #e8f5e9;
+                        border-radius: 4px;
+                        padding: 8px;
+                        font-weight: 700;
+                        font-size: 13px;
+                        color: #2e7d32;
+                    }
+                    .list-table.mode-admin tbody td:nth-child(15)::before {
+                        content: '입금: ';
+                        font-weight: 500;
+                        color: #666;
+                    }
+                    
+                    /* 미납금 */
+                    .list-table.mode-admin tbody td:nth-child(16) {
+                        grid-column: 6/9;
+                        grid-row: 3;
+                        background: #ffebee;
+                        border-radius: 4px;
+                        padding: 8px;
+                        font-weight: 700;
+                        font-size: 13px;
+                        color: #c62828;
+                    }
+                    .list-table.mode-admin tbody td:nth-child(16)::before {
+                        content: '미납: ';
+                        font-weight: 500;
+                        color: #666;
+                    }
+                    
+                    /* 일반 모드 (게스트) */
+                    .list-table.mode-guest thead tr:first-child,
+                    .list-table.mode-guest tbody tr {
+                        display: grid;
+                        grid-template-columns: 80px repeat(6, 1fr);
+                        grid-template-rows: auto auto;
+                        gap: 1px;
+                        background: white;
+                    }
+                    
+                    .list-table.mode-guest thead tr:first-child {
+                        background: #f8f9fa;
+                    }
+                    
+                    .list-table.mode-guest tbody tr {
+                        grid-template-rows: auto auto auto;
+                        padding: 10px 5px;
+                        margin-bottom: 12px;
+                        border-radius: 10px;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+                        border: 1px solid #e0e0e0;
+                    }
+                    
+                    .list-table.mode-guest thead th:nth-child(1) {
+                        grid-column: 1;
+                        grid-row: 1/3;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 13px;
+                        font-weight: 700;
+                    }
+                    
+                    .list-table.mode-guest thead th:nth-child(2) {
+                        grid-column: 2/8;
+                        grid-row: 1;
+                        background: #e3f2fd;
+                        border-radius: 4px;
+                        padding: 4px;
+                        font-size: 12px;
+                        font-weight: 700;
+                        color: #1976d2;
+                    }
+                    
+                    .list-table.mode-guest thead th:nth-child(3) {
+                        grid-column: 2/8;
+                        grid-row: 2;
+                        background: #fff3e0;
+                        border-radius: 4px;
+                        padding: 4px;
+                        font-size: 12px;
+                        font-weight: 700;
+                        color: #f57c00;
+                        display: block !important;
+                    }
+                    
+                    .list-table.mode-guest tbody td:nth-child(1) {
+                        grid-column: 1;
+                        grid-row: 1/4;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: 700;
+                        font-size: 14px;
+                        color: #333;
+                        word-break: keep-all;
+                    }
+                    
+                    .list-table.mode-guest tbody td:nth-child(2) { grid-column: 2; grid-row: 1; background: #f0f8ff; border-radius: 4px; padding: 6px 2px; }
+                    .list-table.mode-guest tbody td:nth-child(3) { grid-column: 3; grid-row: 1; background: #f0f8ff; border-radius: 4px; padding: 6px 2px; }
+                    .list-table.mode-guest tbody td:nth-child(4) { grid-column: 4; grid-row: 1; background: #f0f8ff; border-radius: 4px; padding: 6px 2px; }
+                    .list-table.mode-guest tbody td:nth-child(5) { grid-column: 5; grid-row: 1; background: #f0f8ff; border-radius: 4px; padding: 6px 2px; }
+                    .list-table.mode-guest tbody td:nth-child(6) { grid-column: 6; grid-row: 1; background: #f0f8ff; border-radius: 4px; padding: 6px 2px; }
+                    .list-table.mode-guest tbody td:nth-child(7) { grid-column: 7; grid-row: 1; background: #f0f8ff; border-radius: 4px; padding: 6px 2px; }
+                    
+                    .list-table.mode-guest tbody td:nth-child(8) { grid-column: 2; grid-row: 2; background: #fff8f0; border-radius: 4px; padding: 6px 2px; }
+                    .list-table.mode-guest tbody td:nth-child(9) { grid-column: 3; grid-row: 2; background: #fff8f0; border-radius: 4px; padding: 6px 2px; }
+                    .list-table.mode-guest tbody td:nth-child(10) { grid-column: 4; grid-row: 2; background: #fff8f0; border-radius: 4px; padding: 6px 2px; }
+                    .list-table.mode-guest tbody td:nth-child(11) { grid-column: 5; grid-row: 2; background: #fff8f0; border-radius: 4px; padding: 6px 2px; }
+                    .list-table.mode-guest tbody td:nth-child(12) { grid-column: 6; grid-row: 2; background: #fff8f0; border-radius: 4px; padding: 6px 2px; }
+                    .list-table.mode-guest tbody td:nth-child(13) { grid-column: 7; grid-row: 2; background: #fff8f0; border-radius: 4px; padding: 6px 2px; }
+                    
+                    .list-table.mode-guest tbody td:nth-child(14) {
+                        grid-column: 2/5;
+                        grid-row: 3;
+                        background: #e8f5e9;
+                        border-radius: 4px;
+                        padding: 8px;
+                        font-weight: 700;
+                        font-size: 13px;
+                        color: #2e7d32;
+                    }
+                    .list-table.mode-guest tbody td:nth-child(14)::before {
+                        content: '입금: ';
+                        font-weight: 500;
+                        color: #666;
+                    }
+                    
+                    .list-table.mode-guest tbody td:nth-child(15) {
+                        grid-column: 5/8;
+                        grid-row: 3;
+                        background: #ffebee;
+                        border-radius: 4px;
+                        padding: 8px;
+                        font-weight: 700;
+                        font-size: 13px;
+                        color: #c62828;
+                    }
+                    .list-table.mode-guest tbody td:nth-child(15)::before {
+                        content: '미납: ';
+                        font-weight: 500;
+                        color: #666;
+                    }
+                    
+                    .ox {
+                        font-size: 15px;
+                        padding: 4px;
+                        min-width: 28px;
+                    }
+                }
             `}</style>
 
             <div className="admin-info">
                 {isAdmin ? (
                     <>
                         <span className="badge bg-primary">관리자 모드</span>
-                        👤 관리자: <strong>{(session?.user as any)?.user_id || 'Admin'}</strong> (Level {(session?.user as any)?.user_level})
+                        👤 관리자: <strong>{(session?.user as any)?.user_id || 'terraone'}</strong> (Level {(session?.user as any)?.user_level})
                     </>
                 ) : (
                     <>
@@ -305,15 +650,15 @@ export default function FeeStatusPage() {
                 <div className="text-center">
                     <div className="title-btn">{year}년도 회비납부 현황</div>
                 </div>
-                <div className="d-flex gap-2">
+                <div className="d-flex align-items-center gap-2">
                     <button className="help-btn" onClick={() => setShowGuideModal(true)}>❓ 보는법</button>
-                    <div className={isAdmin ? 'fee-btn' : 'fee-btn no-access'} onClick={() => isAdmin && setShowFeeModal(true)}>
+                    <div className={isAdmin ? 'fee-btn' : 'fee-btn'} onClick={() => isAdmin && setShowFeeModal(true)} style={{ cursor: isAdmin ? 'pointer' : 'default' }}>
                         월회비: {currentMonthFee.toLocaleString()}원
                     </div>
                 </div>
             </div>
 
-            <div className="mb-2" style={{ fontSize: '14px', fontWeight: 700, color: '#555' }}>
+            <div className="total-members-info">
                 전체 회원 수: {members.length}명
             </div>
 
@@ -323,19 +668,19 @@ export default function FeeStatusPage() {
                 </div>
             ) : (
                 <div className="table-responsive">
-                    <table className="table table-bordered text-center align-middle">
+                    <table className={`table table-bordered text-center align-middle list-table ${isAdmin ? 'mode-admin' : 'mode-guest'}`}>
                         <thead>
                             <tr>
                                 {isAdmin && <th rowSpan={2} style={{ width: '40px' }}><input type="checkbox" checked={checkAll} onChange={handleCheckAll} /></th>}
                                 <th rowSpan={2}>이름</th>
-                                <th colSpan={6}>상반기</th>
-                                <th colSpan={6}>하반기</th>
+                                <th colSpan={6} className="month-group">상반기</th>
+                                <th colSpan={6} className="month-group second-half">하반기</th>
                                 <th rowSpan={2}>입금합계</th>
                                 <th rowSpan={2}>미납금</th>
                             </tr>
                             <tr>
                                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
-                                    <th key={m}>{m}월</th>
+                                    <th key={m} className={`month-col month-${m}`}>{m}월</th>
                                 ))}
                             </tr>
                         </thead>
@@ -343,11 +688,12 @@ export default function FeeStatusPage() {
                             {members.map(member => {
                                 const { totalPaid, unpaidTotal } = calculateTotals(member._id);
                                 return (
-                                    <tr key={member._id}>
+                                    <tr key={member._id} data-id={member._id}>
                                         {isAdmin && (
                                             <td>
                                                 <input 
                                                     type="checkbox" 
+                                                    className="member-check"
                                                     checked={checkedMembers.includes(member._id)}
                                                     onChange={() => handleCheckMember(member._id)}
                                                 />
@@ -360,6 +706,8 @@ export default function FeeStatusPage() {
                                                 <td key={m}>
                                                     <span 
                                                         className={`ox ${paid ? 'o' : 'x'} ${!isAdmin ? 'no-access' : ''}`}
+                                                        data-month={m}
+                                                        data-paid={paid}
                                                         onClick={(e) => isAdmin && showChangePopup(e, member._id, m, paid)}
                                                     >
                                                         {paid ? 'O' : 'X'}
@@ -390,10 +738,15 @@ export default function FeeStatusPage() {
             {/* 납부 상태 변경 팝업 */}
             {showPopup && (
                 <div className="status-popup" style={{ top: popupPosition.top, left: popupPosition.left }}>
-                    <p style={{ fontWeight: 'bold', fontSize: '13px', marginBottom: '10px' }}>
-                        {currentTarget?.month}월 - {currentTarget?.paid === 1 ? '미납(X)으로 변경?' : '납부(O)로 변경?'}
-                    </p>
-                    <div className="d-flex gap-2">
+                    <div style={{ marginBottom: '8px' }}>
+                        <p style={{ fontWeight: 'bold', fontSize: '13px', margin: 0 }}>
+                            {currentTarget?.month}월 선택 -
+                        </p>
+                        <p style={{ fontSize: '12px', margin: '4px 0 0 0' }}>
+                            {currentTarget?.paid === 1 ? '미납(X)으로 변경?' : '납부(O)로 변경?'}
+                        </p>
+                    </div>
+                    <div className="d-flex gap-2 justify-content-center">
                         <button className="btn btn-primary btn-sm" onClick={confirmChange}>변경</button>
                         <button className="btn btn-secondary btn-sm" onClick={() => setShowPopup(false)}>취소</button>
                     </div>
@@ -420,7 +773,7 @@ export default function FeeStatusPage() {
                             <label className="form-label">변경할 월회비 (원)</label>
                             <input type="number" className="form-control" value={feeAmount} onChange={(e) => setFeeAmount(parseInt(e.target.value))} />
                         </div>
-                        <div style={{ background: '#fff5f8', padding: '12px', borderRadius: '8px', marginBottom: '15px' }}>
+                        <div style={{ background: '#fff5f8', border: '1px solid #ffe3e3', padding: '12px', borderRadius: '8px', marginBottom: '15px', textAlign: 'center' }}>
                             <p style={{ color: '#d63384', fontWeight: 700, margin: 0, fontSize: '14px' }}>
                                 👉 {lastApplyYear}년 {lastApplyMonth}월부터 월회비가 {currentMonthFee.toLocaleString()}원으로 변경되었습니다.
                             </p>
@@ -453,8 +806,6 @@ export default function FeeStatusPage() {
 
             {/* 팝업 외부 클릭 시 닫기 */}
             {showPopup && <div style={{ position: 'fixed', inset: 0, zIndex: 1999 }} onClick={() => setShowPopup(false)} />}
-
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         </div>
     );
 }
