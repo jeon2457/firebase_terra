@@ -184,7 +184,7 @@ export default function DashboardPage() {
         { title: "월회비 입금현황", icon: <CreditCard />, color: "bg-card", path: "/fee/status" },
         { title: "재무 대시보드", icon: <PieChart />, color: "bg-financial", path: "#financial" },
         { title: "엑셀 리포트", icon: <FileSpreadsheet />, color: "bg-excel", path: "#excel" },
-        { title: "다음 지도 만들기", icon: <MapIcon />, color: "bg-map", path: "/map" },
+        { title: "다음 지도 만들기", icon: <MapIcon />, color: "bg-map", path: "/map/create" },
         { title: "각종 모임 활동", icon: <Users />, color: "bg-activities", path: "/activities" },
         { title: "데이터베이스 백업", icon: <Database />, color: "bg-activities", path: "/backup" },
         { title: "시스템 매뉴얼", icon: <BookOpen />, color: "bg-manual", path: "/manual" },
