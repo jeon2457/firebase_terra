@@ -56,9 +56,11 @@ export default function MapCreatePage() {
     }, [status, session, router]);
 
     const handleKakaoLoad = () => {
-        window.kakao.maps.load(() => {
-            setKakaoLoaded(true);
-        });
+        if (window.kakao && window.kakao.maps) {
+            window.kakao.maps.load(() => {
+                setKakaoLoaded(true);
+            });
+        }
     };
 
     const initializeMap = () => {
@@ -98,12 +100,10 @@ export default function MapCreatePage() {
         const ps = new window.kakao.maps.services.Places();
         const geocoder = new window.kakao.maps.services.Geocoder();
 
-        // 키워드 검색
         ps.keywordSearch(keyword, (data: any, status: any) => {
             if (status === window.kakao.maps.services.Status.OK) {
                 setPlaces(data);
             } else {
-                // 주소 검색
                 geocoder.addressSearch(keyword, (result: any, addrStatus: any) => {
                     if (addrStatus === window.kakao.maps.services.Status.OK) {
                         const addrData = result.map((item: any) => ({
@@ -138,7 +138,8 @@ export default function MapCreatePage() {
         }
 
         document.getElementById('mapBox')?.classList.add('show');
-        document.getElementById('mapPlaceholder')?.style.setProperty('display', 'none');
+        const placeholder = document.getElementById('mapPlaceholder');
+        if (placeholder) placeholder.style.display = 'none';
 
         mapRef.current.setCenter(selectedCoords);
         markerRef.current.setPosition(selectedCoords);
@@ -201,7 +202,7 @@ export default function MapCreatePage() {
     return (
         <>
             <Script
-                src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&libraries=services&autoload=false`}
+                src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3409644aa1cb50eb41430562f5df97d2&libraries=services&autoload=false"
                 strategy="afterInteractive"
                 onLoad={handleKakaoLoad}
             />
@@ -221,116 +222,4 @@ export default function MapCreatePage() {
                     .map-box.show { display: block; }
                     #map { width: 100%; height: 300px; border-radius: 10px; }
                     .map-placeholder { display: flex; align-items: center; justify-content: center; min-height: 300px; color: #999; text-align: center; padding: 40px; }
-                    .btn-link { display: block; width: 100%; max-width: 350px; margin: 15px auto; padding: 16px; font-size: 18px; font-weight: bold; border-radius: 12px; border: none; cursor: pointer; }
-                    .btn-preview { background-color: #34c759; color: white; }
-                    .btn-send { background-color: #4a90e2; color: white; }
-                    .btn-preview:disabled, .btn-send:disabled { background-color: #ccc; cursor: not-allowed; opacity: 0.6; }
-                `}</style>
-
-                <h2 style={{ textAlign: 'center', marginBottom: '15px', color: '#2c3e50' }}>
-                    📍 장소/주소 검색
-                </h2>
-
-                <form className="search-form" onSubmit={handleSearch}>
-                    <input
-                        type="text"
-                        value={keyword}
-                        onChange={(e) => setKeyword(e.target.value)}
-                        placeholder="주소(지번/도로명) 또는 건물명 입력"
-                        autoComplete="off"
-                    />
-                    <button type="submit" className="btn-search">🔍</button>
-                </form>
-
-                <div style={{ marginBottom: '10px' }}>
-                    <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>모달창 생성 안내문</div>
-                    <textarea
-                        value={noticeText}
-                        onChange={(e) => setNoticeText(e.target.value)}
-                        maxLength={500}
-                        rows={10}
-                        style={{
-                            width: '100%',
-                            padding: '15px',
-                            fontSize: '16px',
-                            borderRadius: '12px',
-                            border: '1px solid #ccc',
-                            resize: 'none',
-                            whiteSpace: 'pre-line'
-                        }}
-                    />
-                </div>
-
-                {places.length > 0 && (
-                    <ul className="places-list">
-                        {places.map((place, index) => (
-                            <li
-                                key={index}
-                                className={selectedPlace === place ? 'selected' : ''}
-                                onClick={() => handleSelectPlace(place)}
-                            >
-                                <div className="place-name">{place.place_name}</div>
-                                <div className="place-addr">
-                                    {place.road_address_name || place.address_name}
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-
-                <div className="map-box" id="mapBox">
-                    <div id="map"></div>
-                </div>
-
-                <div className="map-placeholder" id="mapPlaceholder">
-                    📍 위의 검색창에서 장소(주소)를 검색하고<br />
-                    목록에서 선택한 후<br />
-                    "🗺️ 지도 미리보기" 버튼을 눌러주세요
-                </div>
-
-                <div>
-                    <button
-                        className="btn-link btn-preview"
-                        onClick={handlePreview}
-                        disabled={!selectedPlace}
-                    >
-                        🗺️ 지도 미리보기
-                    </button>
-
-                    <button
-                        className="btn-link btn-send"
-                        onClick={handleSend}
-                        disabled={!isMapPreviewed}
-                    >
-                        📤 이 위치로 지도 보내기
-                    </button>
-
-                    <button
-                        className="btn-link"
-                        style={{ backgroundColor: '#6c757d', color: 'white' }}
-                        onClick={() => router.push('/map/view')}
-                    >
-                        🔎 지도 보기
-                    </button>
-
-                    <button
-                        className="btn-link"
-                        style={{ backgroundColor: '#6c757d', color: 'white' }}
-                        onClick={() => router.push('/dashboard')}
-                    >
-                        ⏪ 돌아가기
-                    </button>
-                </div>
-            </div>
-        </>
-    );
-}
-```
-
----
-
-## 4️⃣ 환경변수 설정
-
-`.env.local` 파일에 추가:
-```
-NEXT_PUBLIC_KAKAO_MAP_KEY=3409644aa1cb50eb41430562f5df97d2
+                    .btn-link { display: block; width: 100%; max-width: 350px; margin: 15px auto; padding: 16px; font-size: 18px; font-weight: bold; border
