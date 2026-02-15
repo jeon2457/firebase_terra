@@ -39,13 +39,10 @@ export async function POST(req: NextRequest) {
     if (!session || (session.user as any).user_level < 5) {
         return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
-
     try {
         await dbConnect();
         const { url, notice } = await req.json();
-
-
-
+        
         // 한국 시간으로 변환
         const now = new Date();
         const koreaTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
