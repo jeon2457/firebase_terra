@@ -1,0 +1,185 @@
+
+
+	네! GitHub 저장소 이름을 변경하고 Vercel과 재연결하는 방법을 알려드리겠습니다.
+
+	📝 GitHub 저장소 이름 변경 방법
+	1️⃣ GitHub에서 저장소 이름 변경
+
+	GitHub 저장소 페이지 이동
+
+	https://github.com/jeon2457/firebase_terra 접속
+
+
+	Settings 클릭
+
+	저장소 상단 메뉴에서 Settings 클릭
+
+
+	저장소 이름 변경
+
+	맨 위 "Repository name" 섹션 찾기
+	firebase_terra → vercel_terra로 변경
+	Rename 버튼 클릭
+
+
+	확인
+
+	새 주소: https://github.com/jeon2457/vercel_terra
+	GitHub가 자동으로 리다이렉트 설정해줍니다
+
+
+
+
+	2️⃣ 로컬 Git 설정 업데이트
+	터미널/명령 프롬프트에서 프로젝트 폴더로 이동 후:
+	bash# 현재 remote URL 확인
+	git remote -v
+
+	# 새로운 URL로 변경
+	git remote set-url origin https://github.com/jeon2457/vercel_terra.git
+
+	# 확인
+	git remote -v
+
+	3️⃣ Vercel 프로젝트 재연결
+	방법 A: 자동 감지 (권장)
+
+	Vercel은 GitHub 저장소 이름이 변경되면 자동으로 감지합니다
+	다음 배포 시 자동으로 업데이트됨
+
+	방법 B: 수동 재연결 (필요시)
+
+	Vercel 대시보드 접속
+
+	https://vercel.com 로그인
+	프로젝트 선택
+
+
+	Settings 이동
+
+	프로젝트 > Settings > Git
+
+
+	저장소 확인
+
+	새 저장소 이름이 반영되었는지 확인
+	안 되어있다면 Disconnect 후 다시 연결
+
+
+
+
+	4️⃣ 다음 배포 테스트
+	bash# 변경사항 커밋
+	git add .
+	git commit -m "Update repository name"
+
+	# 푸시
+	git push origin main
+	Vercel이 자동으로 배포를 시작합니다!
+
+	✅ 완료 후 확인사항
+
+	✅ GitHub 주소: https://github.com/jeon2457/vercel_terra
+	✅ Vercel 주소: https://firebase-terra.vercel.app (도메인은 그대로 유지)
+	✅ Git push 정상 작동
+	✅ Vercel 자동 배포 정상 작동
+
+	참고: Vercel 배포 URL(firebase-terra.vercel.app)은 변경되지 않습니다. 필요하면 Vercel Settings > Domains에서 별도로 변경할 수 있습니다.
+	
+	
+	
+	
+	
+	
+	
+	
+	📁 로컬 폴더명 변경 방법
+	방법 1: 직접 폴더명 변경 (권장)
+	Windows:
+
+	파일 탐색기 열기
+	GitHub_firebase_terra 폴더 우클릭 → 이름 바꾸기
+	GitHub_vercel_mongodb로 변경
+	GitHub_vercel_mongodb 폴더 안으로 들어가기
+	firebase_terra 폴더 우클릭 → 이름 바꾸기
+	vercel_mongodb로 변경
+
+	Mac/Linux:
+	터미널에서:
+	bash# 부모 폴더로 이동 (예: Documents)
+	cd ~/Documents  # 실제 경로에 맞게 수정
+
+	# 외부 폴더명 변경
+	mv GitHub_firebase_terra GitHub_vercel_mongodb
+
+	# 내부 폴더명 변경
+	cd GitHub_vercel_mongodb
+	mv firebase_terra vercel_mongodb
+
+	방법 2: 명령어로 변경 (Windows)
+	cmd# 부모 폴더로 이동
+	cd C:\Users\YourName\Documents  # 실제 경로에 맞게 수정
+
+	# 외부 폴더명 변경
+	rename GitHub_firebase_terra GitHub_vercel_mongodb
+
+	# 내부 폴더명 변경
+	cd GitHub_vercel_mongodb
+	rename firebase_terra vercel_mongodb
+
+	✅ 변경 후 확인
+	bash# 새 폴더로 이동
+	cd GitHub_vercel_mongodb/vercel_mongodb
+
+	# Git 상태 확인
+	git status
+
+	# Remote URL 확인
+	git remote -v
+	```
+
+	**결과 확인:**
+	```
+	origin  https://github.com/jeon2457/vercel_mongodb.git (fetch)
+	origin  https://github.com/jeon2457/vercel_mongodb.git (push)
+	```
+
+	모든 것이 정상이면 그대로 사용하시면 됩니다!
+
+	---
+
+	### 📌 주의사항
+
+	1. **VS Code나 에디터를 먼저 닫으세요**
+	   - 폴더를 사용 중인 프로그램은 모두 종료
+
+	2. **Git은 영향 없습니다**
+	   - `.git` 폴더가 그대로 있으므로 모든 Git 정보 유지됨
+	   - 커밋 히스토리, 브랜치 등 모두 보존됨
+
+	3. **변경 후 VS Code에서 다시 열기**
+	```
+	   File > Open Folder > GitHub_vercel_mongodb/vercel_mongodb 선택
+
+	테스트 커밋
+
+	bash   # 아무 파일 수정
+	   git add .
+	   git commit -m "Test after folder rename"
+	   git push origin main
+	```
+
+	---
+
+	## 🎯 최종 구조
+	```
+	GitHub_vercel_mongodb/
+	  └── vercel_mongodb/
+		  ├── .git/
+		  ├── .next/
+		  ├── src/
+		  ├── app/
+		  ├── models/
+		  ├── lib/
+		  ├── package.json
+		  └── ...
