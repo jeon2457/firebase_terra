@@ -51,9 +51,6 @@ export default function FeeStatusPage() {
         if (status === "unauthenticated") {
             router.push("/login");
         } else if (status === "authenticated") {
-            if ((session?.user as any)?.user_level < 10) {
-                // 일반 회원도 조회 가능
-            }
             fetchData();
         }
     }, [status, year]);
@@ -62,6 +59,7 @@ export default function FeeStatusPage() {
         setLoading(true);
         try {
             const res = await axios.get(`/api/fee/status?year=${year}`);
+            console.log('API Response:', res.data); // 디버깅용
             if (res.data.success) {
                 setMembers(res.data.members);
                 setPassMap(res.data.passMap);
@@ -73,6 +71,7 @@ export default function FeeStatusPage() {
             }
         } catch (error) {
             console.error("Failed to fetch data:", error);
+            alert('데이터를 불러오는데 실패했습니다.');
         } finally {
             setLoading(false);
         }
@@ -191,12 +190,14 @@ export default function FeeStatusPage() {
         router.push(`/account/member-check?members=${ids}&year=${year}`);
     };
 
-    if (loading) return <div className="text-center mt-5">Loading...</div>;
+    if (status === "loading" || loading) {
+        return <div className="text-center mt-5">Loading...</div>;
+    }
 
     const years = [0, 1, 2, 3].map(i => new Date().getFullYear() - i);
 
     return (
-        <div className="container py-4" style={{ background: "#f9f9f9", minHeight: "100vh" }}>
+        <div className="container py-4" style={{ background: "#f9f9fa", minHeight: "100vh" }}>
             <style jsx>{`
                 .admin-info {
                     text-align: right;
@@ -261,7 +262,7 @@ export default function FeeStatusPage() {
                     align-items: center;
                     justify-content: center;
                 }
-                .modal-content {
+                .modal-content-custom {
                     background: white;
                     padding: 25px;
                     border-radius: 12px;
@@ -316,43 +317,144 @@ export default function FeeStatusPage() {
                 전체 회원 수: {members.length}명
             </div>
 
-            <div className="table-responsive">
-                <table className={`table table-bordered text-center align-middle ${isAdmin ? 'mode-admin' : 'mode-guest'}`}>
-                    <thead>
-                        <tr>
-                            {isAdmin && <th rowspan="2" style={{ width: '40px' }}><input type="checkbox" checked={checkAll} onChange={handleCheckAll} /></th>}
-                            <th rowSpan={2}>이름</th>
-                            <th colSpan={6}>상반기</th>
-                            <th colSpan={6}>하반기</th>
-                            <th rowSpan={2}>입금합계</th>
-                            <th rowSpan={2}>미납금</th>
-                        </tr>
-                        <tr>
-                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
-                                <th key={m}>{m}월</th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {members.map(member => {
-                            const { totalPaid, unpaidTotal } = calculateTotals(member._id);
-                            return (
-                                <tr key={member._id}>
-                                    {isAdmin && (
-                                        <td>
-                                            <input 
-                                                type="checkbox" 
-                                                checked={checkedMembers.includes(member._id)}
-                                                onChange={() => handleCheckMember(member._id)}
-                                            />
-                                        </td>
-                                    )}
-                                    <td>{member.name}</td>
-                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => {
-                                        const paid = passMap[member._id]?.[m] || 0;
-                                        return (
-                                            <td key={m}>
-                                                <span 
-                                                    className={`ox ${paid ? 'o' : 'x'} ${!isAdmin ? 'no-access' : ''}`}
-                                                    onClick={(e) => isAdmin && showChangePopup(e, member._id, m, paid)}
-                                                >
+            {members.length === 0 ? (
+                <div className="alert alert-warning text-center">
+                    회원 데이터가 없습니다. MongoDB에 회원을 추가해주세요.
+                </div>
+            ) : (
+                <div className="table-responsive">
+                    <table className="table table-bordered text-center align-middle">
+                        <thead>
+                            <tr>
+                                {isAdmin && <th rowSpan={2} style={{ width: '40px' }}><input type="checkbox" checked={checkAll} onChange={handleCheckAll} /></th>}
+                                <th rowSpan={2}>이름</th>
+                                <th colSpan={6}>상반기</th>
+                                <th colSpan={6}>하반기</th>
+                                <th rowSpan={2}>입금합계</th>
+                                <th rowSpan={2}>미납금</th>
+                            </tr>
+                            <tr>
+                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
+                                    <th key={m}>{m}월</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {members.map(member => {
+                                const { totalPaid, unpaidTotal } = calculateTotals(member._id);
+                                return (
+                                    <tr key={member._id}>
+                                        {isAdmin && (
+                                            <td>
+                                                <input 
+                                                    type="checkbox" 
+                                                    checked={checkedMembers.includes(member._id)}
+                                                    onChange={() => handleCheckMember(member._id)}
+                                                />
+                                            </td>
+                                        )}
+                                        <td>{member.name}</td>
+                                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => {
+                                            const paid = passMap[member._id]?.[m] || 0;
+                                            return (
+                                                <td key={m}>
+                                                    <span 
+                                                        className={`ox ${paid ? 'o' : 'x'} ${!isAdmin ? 'no-access' : ''}`}
+                                                        onClick={(e) => isAdmin && showChangePopup(e, member._id, m, paid)}
+                                                    >
+                                                        {paid ? 'O' : 'X'}
+                                                    </span>
+                                                </td>
+                                            );
+                                        })}
+                                        <td>{totalPaid.toLocaleString()}</td>
+                                        <td>{unpaidTotal.toLocaleString()}</td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+
+            {isAdmin && members.length > 0 && (
+                <div className="d-flex justify-content-center gap-2 mt-4">
+                    <button className="btn btn-primary btn-lg" onClick={goMemberCheck}>회원 체크하기</button>
+                </div>
+            )}
+
+            <div className="d-flex justify-content-center mt-3 mb-4">
+                <button className="btn btn-secondary btn-lg" onClick={() => router.push('/dashboard')}>⏪ 돌아가기</button>
+            </div>
+
+            {/* 납부 상태 변경 팝업 */}
+            {showPopup && (
+                <div className="status-popup" style={{ top: popupPosition.top, left: popupPosition.left }}>
+                    <p style={{ fontWeight: 'bold', fontSize: '13px', marginBottom: '10px' }}>
+                        {currentTarget?.month}월 - {currentTarget?.paid === 1 ? '미납(X)으로 변경?' : '납부(O)로 변경?'}
+                    </p>
+                    <div className="d-flex gap-2">
+                        <button className="btn btn-primary btn-sm" onClick={confirmChange}>변경</button>
+                        <button className="btn btn-secondary btn-sm" onClick={() => setShowPopup(false)}>취소</button>
+                    </div>
+                </div>
+            )}
+
+            {/* 월회비 변경 모달 */}
+            {showFeeModal && (
+                <div className="modal-overlay" onClick={() => setShowFeeModal(false)}>
+                    <div className="modal-content-custom" onClick={(e) => e.stopPropagation()}>
+                        <h5>💰 월회비 변경</h5>
+                        <div className="mb-3">
+                            <label className="form-label">적용 연도/월</label>
+                            <div className="d-flex gap-2">
+                                <input type="number" className="form-control" value={feeYear} onChange={(e) => setFeeYear(parseInt(e.target.value))} />
+                                <select className="form-select" value={feeMonth} onChange={(e) => setFeeMonth(parseInt(e.target.value))}>
+                                    {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => (
+                                        <option key={m} value={m}>{m}월</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="mb-3">
+                            <label className="form-label">변경할 월회비 (원)</label>
+                            <input type="number" className="form-control" value={feeAmount} onChange={(e) => setFeeAmount(parseInt(e.target.value))} />
+                        </div>
+                        <div style={{ background: '#fff5f8', padding: '12px', borderRadius: '8px', marginBottom: '15px' }}>
+                            <p style={{ color: '#d63384', fontWeight: 700, margin: 0, fontSize: '14px' }}>
+                                👉 {lastApplyYear}년 {lastApplyMonth}월부터 월회비가 {currentMonthFee.toLocaleString()}원으로 변경되었습니다.
+                            </p>
+                        </div>
+                        <div className="d-flex gap-2 justify-content-end">
+                            <button className="btn btn-secondary" onClick={() => setShowFeeModal(false)}>취소</button>
+                            <button className="btn btn-primary" onClick={saveFee}>저장</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* 안내 모달 */}
+            {showGuideModal && (
+                <div className="modal-overlay" onClick={() => setShowGuideModal(false)}>
+                    <div className="modal-content-custom" style={{ maxWidth: '450px' }} onClick={(e) => e.stopPropagation()}>
+                        <h5 style={{ fontWeight: 800, textAlign: 'center', marginBottom: '15px', color: '#1976d2' }}>
+                            📋 회비납부 현황 보는법 안내
+                        </h5>
+                        <p style={{ fontSize: '14px', textAlign: 'center', color: '#666', marginBottom: '15px' }}>
+                            월별 납부 현황이 표시됩니다.<br />
+                            <span style={{ color: 'green', fontWeight: 'bold' }}>O (납부)</span> / <span style={{ color: 'red', fontWeight: 'bold' }}>X (미납)</span>
+                        </p>
+                        <div className="text-center mt-4">
+                            <button className="btn btn-dark w-100" onClick={() => setShowGuideModal(false)}>확인 및 닫기</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* 팝업 외부 클릭 시 닫기 */}
+            {showPopup && <div style={{ position: 'fixed', inset: 0, zIndex: 1999 }} onClick={() => setShowPopup(false)} />}
+
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        </div>
+    );
+}
