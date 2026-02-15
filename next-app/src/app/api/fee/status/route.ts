@@ -1,45 +1,68 @@
-// src/app/api/fee/status/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../../auth/[...nextauth]/route';
+import dbConnect from '@/lib/mongodb';
+import Member from '@/models/Member';
+import AccountPass from '@/models/AccountPass';
+import MonthlyFeeHistory from '@/models/MonthlyFeeHistory';
 
-import { NextResponse } from 'next/server';
-import clientPromise from '@/lib/db'; // 몽고DB 연결 설정 파일 (경로는 본인 프로젝트에 맞게)
+export async function GET(req: NextRequest) {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-// 2. [주의] NextAuth 설정 경로가 정확해야 합니다.
-// 만약 authOptions 에러가 계속 난다면, 이 줄을 잠시 주석 처리하고 테스트해보세요.
-import { getServerSession } from 'next-auth';
-// 👇 경로가 정확한지 꼭 확인하세요! (보통은 아래 경로가 맞습니다)
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'; // NextAuth 설정 경로 확인
+    const searchParams = req.nextUrl.searchParams;
+    const year = parseInt(searchParams.get('year') || new Date().getFullYear().toString());
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const year = parseInt(searchParams.get('year') || new Date().getFullYear().toString());
+    try {
+        await dbConnect();
 
-  try {
-    const client = await clientPromise;
-    const db = client.db('terraone_db'); // DB 이름 확인
+        // 1. 회원 목록 조회 (공용계정 제외)
+        const members = await Member.find({ name: { $ne: '공용계정' } }).sort({ name: 1 });
 
-    // 1. 회원 목록 조회
-    const members = await db.collection('members')
-      .find({ name: { $ne: '공용계정' } })
-      .sort({ name: 1 })
-      .toArray();
+        // 2. 해당 연도의 모든 납부 현황 조회
+        const passRecords = await AccountPass.find({ pay_year: year });
+        
+        // passMap 생성 (member_id -> { month -> paid })
+        const passMap: any = {};
+        passRecords.forEach((record: any) => {
+            const memberId = record.member_id.toString();
+            if (!passMap[memberId]) {
+                passMap[memberId] = {};
+            }
+            passMap[memberId][record.pay_month] = record.paid;
+        });
 
-    // 2. 납부 현황 조회
-    const passData = await db.collection('account_pass')
-      .find({ pay_year: year })
-      .toArray();
+        // 3. 현재 월회비 조회
+        const currentFee = await MonthlyFeeHistory.findOne().sort({ apply_year: -1, apply_month: -1 });
+        const currentMonthFee = currentFee?.fee_amount || 20000;
+        const lastApplyYear = currentFee?.apply_year || new Date().getFullYear();
+        const lastApplyMonth = currentFee?.apply_month || 1;
 
-    // 3. 데이터 가공 (PHP의 passMap 만들기)
-    const passMap: any = {};
-    passData.forEach((p: any) => {
-      const mId = p.member_id.toString();
-      const month = p.pay_month;
-      if (!passMap[mId]) passMap[mId] = {};
-      passMap[mId][month] = p.paid;
-    });
+        // 4. 월별 회비 내역 조회 (1~12월)
+        const monthlyFees: any = {};
+        for (let m = 1; m <= 12; m++) {
+            const fee = await MonthlyFeeHistory.findOne({
+                $or: [
+                    { apply_year: { $lt: year } },
+                    { apply_year: year, apply_month: { $lte: m } }
+                ]
+            }).sort({ apply_year: -1, apply_month: -1 });
+            monthlyFees[m] = fee?.fee_amount || 20000;
+        }
 
-    return NextResponse.json({ members, passMap });
-
-  } catch (error) {
-    return NextResponse.json({ error: 'DB Error' }, { status: 500 });
-  }
+        return NextResponse.json({
+            success: true,
+            members,
+            passMap,
+            currentMonthFee,
+            lastApplyYear,
+            lastApplyMonth,
+            monthlyFees
+        });
+    } catch (error) {
+        console.error('Error fetching fee status:', error);
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    }
 }
