@@ -60,22 +60,11 @@ export default function ReceiptUploadPage() {
         }
 
         try {
-            // 한국 시간으로 변환
-            const koreaTime = new Date().toLocaleString('ko-KR', {
-                timeZone: 'Asia/Seoul',
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            });
 
             const res = await axios.post("/api/receipts", {
                 url: urlInput,
-                notice: notice,
-                createdAt: new Date(koreaTime).toISOString() // 한국 시간을 ISO 형식으로
+                notice: notice
+                // createdAt는 서버에서 자동으로 생성하도록 제거
             });
 
             if (res.data.success) {
