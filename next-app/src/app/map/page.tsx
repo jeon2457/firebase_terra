@@ -28,7 +28,7 @@ export default function MapCreatePage() {
     const [keyword, setKeyword] = useState("");
     const [places, setPlaces] = useState<PlaceResult[]>([]);
     const [selectedPlace, setSelectedPlace] = useState<PlaceResult | null>(null);
-    const [selectedCoords, setSelectedCoords] = useState<any>(null);
+    const [selectedCoords, setSelectedCoords] = useState<any>(null); // kakao.maps.LatLng
     const [isMapPreviewed, setIsMapPreviewed] = useState(false);
     const [noticeText, setNoticeText] = useState(`📖 모임제목:
 📅 모임날짜:
@@ -44,17 +44,20 @@ export default function MapCreatePage() {
     const markerRef = useRef<any>(null);
     const [kakaoLoaded, setKakaoLoaded] = useState(false);
 
+    // 권한 체크
     useEffect(() => {
         if (status === "unauthenticated") {
             router.push("/login");
         } else if (status === "authenticated") {
-            if ((session?.user as any)?.user_level < 10) {
+            // session.user의 타입 문제 해결을 위해 any로 캐스팅하거나 타입을 확장해야 함
+            if ((session?.user as any)?.level < 10) { // user_level 대신 level 확인 (NextAuth 설정에 따라 다름)
                 alert("관리자 전용 페이지입니다.");
                 router.push("/dashboard");
             }
         }
     }, [status, session, router]);
 
+    // 카카오 맵 로드 완료 핸들러
     const handleKakaoLoad = () => {
         if (window.kakao && window.kakao.maps) {
             window.kakao.maps.load(() => {
@@ -63,28 +66,24 @@ export default function MapCreatePage() {
         }
     };
 
-    const initializeMap = () => {
-        if (!kakaoLoaded || !window.kakao) return;
-
-        const container = document.getElementById('map');
-        if (!container) return;
-
-        const options = {
-            center: new window.kakao.maps.LatLng(37.5665, 126.9780),
-            level: 3
-        };
-
-        mapRef.current = new window.kakao.maps.Map(container, options);
-        markerRef.current = new window.kakao.maps.Marker({ map: mapRef.current });
-    };
-
+    // 지도 초기화
     useEffect(() => {
         if (kakaoLoaded && !mapRef.current) {
-            initializeMap();
+            const container = document.getElementById('map');
+            if (container && window.kakao) {
+                const options = {
+                    center: new window.kakao.maps.LatLng(37.5665, 126.9780),
+                    level: 3
+                };
+                const map = new window.kakao.maps.Map(container, options);
+                mapRef.current = map;
+                markerRef.current = new window.kakao.maps.Marker({ map: map });
+            }
         }
     }, [kakaoLoaded]);
 
-    const handleSearch = async (e: React.FormEvent) => {
+
+    const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!keyword.trim()) {
@@ -98,68 +97,83 @@ export default function MapCreatePage() {
         }
 
         const ps = new window.kakao.maps.services.Places();
-        const geocoder = new window.kakao.maps.services.Geocoder();
+        // const geocoder = new window.kakao.maps.services.Geocoder(); // 사용 안 함
 
         ps.keywordSearch(keyword, (data: any, status: any) => {
             if (status === window.kakao.maps.services.Status.OK) {
                 setPlaces(data);
             } else {
-                geocoder.addressSearch(keyword, (result: any, addrStatus: any) => {
-                    if (addrStatus === window.kakao.maps.services.Status.OK) {
-                        const addrData = result.map((item: any) => ({
-                            place_name: item.road_address ? item.road_address.address_name : item.address.address_name,
-                            address_name: item.address_name,
-                            road_address_name: item.road_address ? item.road_address.address_name : '',
-                            x: item.x,
-                            y: item.y
-                        }));
-                        setPlaces(addrData);
-                    } else {
-                        alert('검색 결과가 존재하지 않습니다.');
-                        setPlaces([]);
-                    }
-                });
+                alert('검색 결과가 존재하지 않습니다.');
+                setPlaces([]);
             }
         });
     };
 
     const handleSelectPlace = (place: PlaceResult) => {
         setSelectedPlace(place);
-        const coords = new window.kakao.maps.LatLng(place.y, place.x);
-        setSelectedCoords(coords);
+        // 좌표 객체 생성은 kakaoLoaded 상태일 때만 가능
+        if (window.kakao) {
+            const coords = new window.kakao.maps.LatLng(place.y, place.x);
+            setSelectedCoords(coords);
+        }
         setKeyword(place.place_name);
-        setIsMapPreviewed(false);
+        setIsMapPreviewed(false); // 장소 변경 시 미리보기 상태 해제
     };
 
     const handlePreview = () => {
-        if (!selectedCoords || !mapRef.current) {
+        if (!selectedPlace || !selectedCoords) {
             alert("목록에서 장소를 먼저 선택해주세요!");
             return;
         }
 
-        document.getElementById('mapBox')?.classList.add('show');
+        if (!mapRef.current) {
+            // 지도가 아직 초기화되지 않았다면 (혹은 hidden 상태여서)
+            // mapBox를 보여주고 지도를 다시 그릴 수 있도록 함
+            const container = document.getElementById('map');
+            if (container && window.kakao) {
+                 const options = {
+                    center: selectedCoords,
+                    level: 3
+                };
+                const map = new window.kakao.maps.Map(container, options);
+                mapRef.current = map;
+                markerRef.current = new window.kakao.maps.Marker({ map: map, position: selectedCoords });
+            }
+        }
+
+        // 지도 박스 보이기
+        const mapBox = document.getElementById('mapBox');
+        if (mapBox) mapBox.classList.add('show');
+        
         const placeholder = document.getElementById('mapPlaceholder');
         if (placeholder) placeholder.style.display = 'none';
 
-        mapRef.current.setCenter(selectedCoords);
-        markerRef.current.setPosition(selectedCoords);
-
-        const infowindow = new window.kakao.maps.InfoWindow({
-            content: `<div style="width:150px;text-align:center;padding:6px 0;font-size:14px;">${selectedPlace?.place_name}</div>`
-        });
-        infowindow.open(mapRef.current, markerRef.current);
-
-        setTimeout(() => {
-            mapRef.current.relayout();
+        if (mapRef.current && window.kakao) {
             mapRef.current.setCenter(selectedCoords);
-        }, 100);
+            markerRef.current.setPosition(selectedCoords);
+
+             // 인포윈도우 (선택 사항)
+            // 기존 인포윈도우가 있다면 닫거나 새로 생성
+            // 여기서는 간단하게 새로 생성
+            const infowindow = new window.kakao.maps.InfoWindow({
+                content: `<div style="padding:5px;font-size:12px;">${selectedPlace.place_name}</div>`
+            });
+            infowindow.open(mapRef.current, markerRef.current);
+            
+            // 지도 레이아웃 재설정 (display:none -> block 변경 시 깨짐 방지)
+            setTimeout(() => {
+                mapRef.current.relayout();
+                mapRef.current.setCenter(selectedCoords);
+            }, 100);
+        }
 
         setIsMapPreviewed(true);
 
         setTimeout(() => {
-            document.getElementById('mapBox')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+             document.getElementById('mapBox')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 200);
     };
+
 
     const handleSend = async () => {
         if (!isMapPreviewed) {
@@ -171,21 +185,27 @@ export default function MapCreatePage() {
             alert("장소를 선택해주세요!");
             return;
         }
-
+        
+        // Kakao LatLng 객체에서 좌표 추출
         const lat = selectedCoords.getLat();
         const lng = selectedCoords.getLng();
 
         try {
             const res = await axios.post('/api/map/save', {
-                addr: selectedPlace.place_name,
+                addr: selectedPlace.place_name, // 장소명
+                road_address: selectedPlace.road_address_name || selectedPlace.address_name, // 주소
                 lat,
                 lng,
                 notice: noticeText
             });
 
             if (res.data.success) {
-                localStorage.setItem('modalNoticeText', noticeText);
-                router.push(`/map/view?addr=${encodeURIComponent(selectedPlace.place_name)}&lat=${lat}&lng=${lng}`);
+                // 성공 시 알림 저장 후 이동 (localStorage 사용 예시)
+                // localStorage.setItem('modalNoticeText', noticeText); 
+                alert('지도가 저장되었습니다.');
+                // router.push(`/map/view?addr=${encodeURIComponent(selectedPlace.place_name)}&lat=${lat}&lng=${lng}`);
+                // 또는 저장된 목록 페이지 등으로 이동
+                router.push('/dashboard'); 
             } else {
                 alert('DB 저장에 실패했습니다: ' + res.data.message);
             }
@@ -200,26 +220,86 @@ export default function MapCreatePage() {
     }
 
     return (
-        <>
+        <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', background: '#f0f2f5', minHeight: '100vh' }}>
             <Script
                 src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3409644aa1cb50eb41430562f5df97d2&libraries=services&autoload=false"
                 strategy="afterInteractive"
-                onLoad={handleKakaoLoad}
+                onReady={handleKakaoLoad}
             />
 
-            <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', background: '#f0f2f5', minHeight: '100vh' }}>
-                <style jsx>{`
-                    .search-form { display: flex; gap: 10px; margin-bottom: 10px; }
-                    input[type="text"] { flex: 1; padding: 15px; font-size: 16px; border-radius: 12px; border: 1px solid #ccc; }
-                    .btn-search { background-color: #4a90e2; color: white; border: none; border-radius: 12px; width: 55px; cursor: pointer; font-size: 1.2rem; }
-                    .places-list { list-style: none; padding: 0; margin: 0 0 20px 0; background: white; border-radius: 12px; max-height: 200px; overflow-y: auto; }
-                    .places-list li { padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; }
-                    .places-list li:hover { background-color: #f9f9f9; }
-                    .places-list li.selected { background-color: #e3f2fd; border-left: 5px solid #4a90e2; }
-                    .place-name { font-weight: bold; font-size: 16px; margin-bottom: 5px; }
-                    .place-addr { font-size: 13px; color: #777; }
-                    .map-box { background: white; padding: 5px; border-radius: 15px; min-height: 300px; margin: 20px 0; display: none; }
-                    .map-box.show { display: block; }
-                    #map { width: 100%; height: 300px; border-radius: 10px; }
-                    .map-placeholder { display: flex; align-items: center; justify-content: center; min-height: 300px; color: #999; text-align: center; padding: 40px; }
-                    .btn-link { display: block; width: 100%; max-width: 350px; margin: 15px auto; padding: 16px; font-size: 18px; font-weight: bold; border
+            <h2 className="text-center mb-4">지도 생성</h2>
+
+            {/* 검색 폼 */}
+            <form className="search-form" onSubmit={handleSearch} style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+                <input 
+                    type="text" 
+                    value={keyword} 
+                    onChange={(e) => setKeyword(e.target.value)} 
+                    placeholder="장소를 검색하세요" 
+                    style={{ flex: 1, padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
+                />
+                <button type="submit" className="btn btn-primary">검색</button>
+            </form>
+
+            {/* 검색 결과 목록 */}
+            {places.length > 0 && (
+                <ul className="places-list" style={{ listStyle: 'none', padding: 0, background: 'white', borderRadius: '5px', maxHeight: '200px', overflowY: 'auto', marginBottom: '20px' }}>
+                    {places.map((place, index) => (
+                        <li 
+                            key={index} 
+                            onClick={() => handleSelectPlace(place)}
+                            style={{ 
+                                padding: '10px', 
+                                borderBottom: '1px solid #eee', 
+                                cursor: 'pointer',
+                                backgroundColor: selectedPlace?.x === place.x && selectedPlace?.y === place.y ? '#e3f2fd' : 'white'
+                            }}
+                        >
+                            <div className="place-name" style={{ fontWeight: 'bold' }}>{place.place_name}</div>
+                            <div className="place-addr" style={{ fontSize: '12px', color: '#666' }}>
+                                {place.road_address_name || place.address_name}
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            )}
+
+            {/* 지도 미리보기 버튼 */}
+            <button onClick={handlePreview} className="btn btn-secondary w-100 mb-3">
+                지도 미리보기
+            </button>
+
+            {/* 지도 영역 */}
+            <div id="mapBox" className="map-box" style={{ display: 'none', marginBottom: '20px' }}>
+                 <div id="map" style={{ width: '100%', height: '300px', borderRadius: '10px' }}></div>
+            </div>
+             <div id="mapPlaceholder" style={{ 
+                height: '300px', 
+                background: '#ddd', 
+                display: isMapPreviewed ? 'none' : 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                borderRadius: '10px',
+                marginBottom: '20px',
+                color: '#666'
+            }}>
+                지도가 여기에 표시됩니다.
+            </div>
+
+
+            {/* 공지사항 입력 */}
+            <textarea 
+                className="form-control mb-3" 
+                rows={10} 
+                value={noticeText} 
+                onChange={(e) => setNoticeText(e.target.value)}
+                style={{ fontSize: '14px' }}
+            ></textarea>
+
+            {/* 저장 버튼 */}
+            <button onClick={handleSend} className="btn btn-success w-100">
+                저장하기
+            </button>
+        </div>
+    );
+}
