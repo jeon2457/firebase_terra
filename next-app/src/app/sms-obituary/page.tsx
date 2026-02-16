@@ -6,10 +6,18 @@ import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 interface Member {
-    _id: string;
+    _id: string; // MongoDB ObjectId
+    id: string;
     name: string;
     tel: string;
     addr?: string;
+    remark?: string;
+    sms?: string;
+    sms_2?: string;
+    email?: string;
+    user_level?: number;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export default function SmsObituaryPage() {
@@ -67,9 +75,10 @@ export default function SmsObituaryPage() {
             const response = await fetch('/api/members');
             const result = await response.json();
             if (result.success) {
-                setMembers(result.data);
+                const membersData: Member[] = result.data;
+                setMembers(membersData);
                 // 기본적으로 모든 멤버 선택
-                const allMemberIds = new Set(result.data.map((m: Member) => m._id));
+                const allMemberIds = new Set(membersData.map((m: Member) => m._id));
                 setSelectedMembers(allMemberIds);
             }
         } catch (error) {
