@@ -22,10 +22,13 @@ function MapViewContent() {
     const [locationData, setLocationData] = useState<any>(null);
     const [noticeText, setNoticeText] = useState("");
     const [showModal, setShowModal] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [mapInitialized, setMapInitialized] = useState(false);
 
     const mapRef = useRef<any>(null);
     const markerRef = useRef<any>(null);
     const mapContainerRef = useRef<HTMLDivElement>(null);
+    const initAttemptRef = useRef(0);
 
     useEffect(() => {
         if (status === "unauthenticated") {
@@ -36,9 +39,12 @@ function MapViewContent() {
     }, [status, router]);
 
     const loadLocationData = async () => {
+        setIsLoading(true);
         const addr = searchParams.get('addr');
         const lat = searchParams.get('lat');
         const lng = searchParams.get('lng');
+
+        console.log('Loading location data...', { addr, lat, lng });
 
         if (addr && lat && lng) {
             const data = {
@@ -46,15 +52,21 @@ function MapViewContent() {
                 lat: parseFloat(lat),
                 lng: parseFloat(lng)
             };
+            console.log('Setting location from URL:', data);
             setLocationData(data);
+            setIsLoading(false);
         } else {
             try {
+                console.log('Fetching location from API...');
                 const res = await axios.get('/api/map/save');
+                console.log('API response:', res.data);
                 if (res.data.success && res.data.location) {
                     setLocationData(res.data.location);
                 }
             } catch (error) {
                 console.error('Failed to load location data', error);
+            } finally {
+                setIsLoading(false);
             }
         }
 
@@ -65,35 +77,63 @@ function MapViewContent() {
     };
 
     const handleKakaoLoad = () => {
+        console.log('Kakao script loaded');
         if (window.kakao && window.kakao.maps) {
             window.kakao.maps.load(() => {
+                console.log('Kakao maps API ready');
                 setKakaoLoaded(true);
             });
         }
     };
 
     useEffect(() => {
-        if (kakaoLoaded && locationData && !mapRef.current && mapContainerRef.current) {
-            initializeMap();
+        console.log('Init effect triggered:', { 
+            kakaoLoaded, 
+            locationData: !!locationData, 
+            mapInitialized,
+            isLoading,
+            container: !!mapContainerRef.current 
+        });
+
+        if (kakaoLoaded && locationData && !mapInitialized && !isLoading && mapContainerRef.current) {
+            initAttemptRef.current += 1;
+            console.log(`Attempting to initialize map (attempt ${initAttemptRef.current})...`);
+            
+            // 약간의 지연을 주어 DOM이 완전히 준비되도록 함
+            const timer = setTimeout(() => {
+                initializeMap();
+            }, 100);
+
+            return () => clearTimeout(timer);
         }
-    }, [kakaoLoaded, locationData]);
+    }, [kakaoLoaded, locationData, mapInitialized, isLoading]);
 
     const initializeMap = () => {
-        if (!kakaoLoaded || !window.kakao || !locationData) {
+        if (!kakaoLoaded || !window.kakao || !locationData || !mapContainerRef.current) {
+            console.log('Cannot initialize map - missing requirements:', {
+                kakaoLoaded,
+                kakao: !!window.kakao,
+                locationData: !!locationData,
+                container: !!mapContainerRef.current
+            });
+            return;
+        }
+
+        // 이미 초기화되었으면 중복 실행 방지
+        if (mapRef.current) {
+            console.log('Map already initialized');
             return;
         }
 
         const container = mapContainerRef.current;
-        if (!container) {
-            return;
-        }
-
-        const options = {
-            center: new window.kakao.maps.LatLng(locationData.lat, locationData.lng),
-            level: 3
-        };
+        console.log('Initializing map with:', locationData);
 
         try {
+            const options = {
+                center: new window.kakao.maps.LatLng(locationData.lat, locationData.lng),
+                level: 3
+            };
+
             mapRef.current = new window.kakao.maps.Map(container, options);
             markerRef.current = new window.kakao.maps.Marker({
                 map: mapRef.current,
@@ -104,6 +144,9 @@ function MapViewContent() {
                 content: `<div style="width:150px;text-align:center;padding:6px 0;font-size:14px;">${locationData.addr}</div>`
             });
             infowindow.open(mapRef.current, markerRef.current);
+
+            setMapInitialized(true);
+            console.log('Map initialized successfully');
         } catch (error) {
             console.error('Map initialization error:', error);
         }
@@ -120,20 +163,17 @@ function MapViewContent() {
         
         const tmapUrl = `tmap://route?goalname=${encodeURIComponent(locationData.addr)}&goalx=${locationData.lng}&goaly=${locationData.lat}`;
         
-        // iframe으로 앱 실행 시도
         const iframe = document.createElement('iframe');
         iframe.style.display = 'none';
         iframe.src = tmapUrl;
         document.body.appendChild(iframe);
 
-        // 2초 후 iframe 제거
         setTimeout(() => {
             if (document.body.contains(iframe)) {
                 document.body.removeChild(iframe);
             }
         }, 2000);
 
-        // 3초 후에도 페이지가 그대로면 앱이 없는 것으로 판단
         setTimeout(() => {
             if (document.visibilityState === 'visible') {
                 if (confirm('TMAP 앱이 설치되어 있지 않습니다.\n앱 스토어로 이동하시겠습니까?')) {
@@ -158,8 +198,15 @@ function MapViewContent() {
         window.open(url, '_blank');
     };
 
-    if (status === "loading") {
-        return <div className="text-center mt-5">Loading...</div>;
+    if (status === "loading" || isLoading) {
+        return (
+            <div className="text-center mt-5">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+                <p className="mt-3">지도 정보를 불러오는 중...</p>
+            </div>
+        );
     }
 
     return (
@@ -243,6 +290,19 @@ function MapViewContent() {
                         max-height: 80vh;
                         overflow-y: auto;
                     }
+                    .loading-overlay {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: rgba(255,255,255,0.9);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        border-radius: 15px;
+                        z-index: 10;
+                    }
                 `}</style>
 
                 <h2 style={{ textAlign: 'center', marginBottom: '15px', color: '#2c3e50' }}>
@@ -258,18 +318,30 @@ function MapViewContent() {
                             </small>
                         </div>
 
-                        <div 
-                            id="map" 
-                            ref={mapContainerRef}
-                            style={{ 
-                                width: '100%', 
-                                height: '400px', 
-                                borderRadius: '15px', 
-                                marginBottom: '20px',
-                                background: '#e9ecef',
-                                boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
-                            }}
-                        />
+                        <div style={{ position: 'relative' }}>
+                            <div 
+                                id="map" 
+                                ref={mapContainerRef}
+                                style={{ 
+                                    width: '100%', 
+                                    height: '400px', 
+                                    borderRadius: '15px', 
+                                    marginBottom: '20px',
+                                    background: '#e9ecef',
+                                    boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
+                                }}
+                            />
+                            {!mapInitialized && kakaoLoaded && (
+                                <div className="loading-overlay">
+                                    <div className="text-center">
+                                        <div className="spinner-border text-primary" role="status">
+                                            <span className="visually-hidden">Loading...</span>
+                                        </div>
+                                        <p className="mt-2 text-muted">지도를 불러오는 중...</p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
 
                         <button className="btn-nav btn-kakao" onClick={openKakaoMap}>
                             🗺️ 카카오맵으로 보기
@@ -347,7 +419,13 @@ function MapViewContent() {
 
 export default function MapViewPage() {
     return (
-        <Suspense fallback={<div className="text-center mt-5">Loading...</div>}>
+        <Suspense fallback={
+            <div className="text-center mt-5">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        }>
             <MapViewContent />
         </Suspense>
     );
