@@ -133,39 +133,53 @@ export default function MapCreatePage() {
 
     // ✅ [핵심] 이 위치로 지도 보내기 (저장)
     const handleSend = async () => {
-        if (!selectedPlace || !selectedCoords) {
-            alert("장소를 선택하고 지도 미리보기를 확인해주세요.");
-            return;
-        }
+    if (!isMapPreviewed) {
+        alert("먼저 '지도 미리보기' 버튼을 눌러 지도를 확인해주세요!");
+        return;
+    }
 
-        const lat = selectedCoords.getLat();
-        const lng = selectedCoords.getLng();
+    if (!selectedPlace || !selectedCoords) {
+        alert("장소를 선택해주세요!");
+        return;
+    }
 
-        if(!confirm(`"${selectedPlace.place_name}" 위치로 저장하시겠습니까?`)) return;
+    const lat = selectedCoords.getLat();
+    const lng = selectedCoords.getLng();
 
-        try {
-            const res = await axios.post('/api/map/save', {
-                addr: selectedPlace.place_name,
-                road_address: selectedPlace.road_address_name || selectedPlace.address_name,
-                lat,
-                lng,
-                notice: noticeText
-            });
+    try {
+        console.log('Sending data:', {
+            addr: selectedPlace.place_name,
+            lat,
+            lng,
+            notice: noticeText
+        });
 
-            if (res.data.success) {
-                alert('✅ 지도가 성공적으로 저장되었습니다!');
-                // 저장 후 지도 보기 페이지로 이동할지 물어보기
-                if(confirm("저장된 지도를 바로 확인하시겠습니까?")) {
-                    router.push('/map/view');
-                }
-            } else {
-                alert('저장 실패: ' + res.data.message);
+        const res = await axios.post('/api/map/save', {
+            addr: selectedPlace.place_name,
+            lat,
+            lng,
+            notice: noticeText
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
             }
-        } catch (error) {
-            console.error(error);
-            alert('서버 저장 중 오류가 발생했습니다.');
+        });
+
+        console.log('API Response:', res.data);
+
+        if (res.data.success) {
+            alert('지도가 저장되었습니다!');
+            localStorage.setItem('modalNoticeText', noticeText);
+            router.push(`/map/view?addr=${encodeURIComponent(selectedPlace.place_name)}&lat=${lat}&lng=${lng}`);
+        } else {
+            alert('DB 저장에 실패했습니다: ' + (res.data.message || '알 수 없는 오류'));
         }
-    };
+    } catch (error: any) {
+        console.error('저장 오류:', error);
+        console.error('에러 상세:', error.response?.data);
+        alert('서버 통신 중 오류가 발생했습니다: ' + (error.response?.data?.message || error.message));
+    }
+};
 
     if (status === "loading") return <div className="text-center mt-5">Loading...</div>;
 

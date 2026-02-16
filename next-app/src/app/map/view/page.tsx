@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import Script from "next/script";
@@ -13,7 +13,7 @@ declare global {
     }
 }
 
-export default function MapViewPage() {
+function MapViewContent() {
     const { data: session, status } = useSession();
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -35,7 +35,6 @@ export default function MapViewPage() {
     }, [status, router]);
 
     const loadLocationData = async () => {
-        // URL 파라미터에서 데이터 가져오기
         const addr = searchParams.get('addr');
         const lat = searchParams.get('lat');
         const lng = searchParams.get('lng');
@@ -47,7 +46,6 @@ export default function MapViewPage() {
                 lng: parseFloat(lng)
             });
         } else {
-            // API에서 최근 저장된 데이터 가져오기
             try {
                 const res = await axios.get('/api/map/save');
                 if (res.data.success && res.data.location) {
@@ -58,7 +56,6 @@ export default function MapViewPage() {
             }
         }
 
-        // localStorage에서 notice 가져오기
         const savedNotice = localStorage.getItem('modalNoticeText');
         if (savedNotice) {
             setNoticeText(savedNotice);
@@ -176,7 +173,6 @@ export default function MapViewPage() {
                     ⏪ 돌아가기
                 </button>
 
-                {/* 안내사항 모달 */}
                 {showModal && (
                     <div className="modal-overlay" onClick={() => setShowModal(false)}>
                         <div className="modal-content" onClick={e => e.stopPropagation()}>
@@ -192,5 +188,13 @@ export default function MapViewPage() {
                 )}
             </div>
         </>
+    );
+}
+
+export default function MapViewPage() {
+    return (
+        <Suspense fallback={<div className="text-center mt-5">Loading...</div>}>
+            <MapViewContent />
+        </Suspense>
     );
 }
