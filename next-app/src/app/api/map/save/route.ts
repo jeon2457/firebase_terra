@@ -1,48 +1,40 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../../auth/[...nextauth]/route';
-import dbConnect from '@/lib/mongodb';
+import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import MapLocation from '@/models/MapLocation';
 
-export async function POST(req: NextRequest) {
-    const session = await getServerSession(authOptions);
-    if (!session || (session.user as any).user_level < 10) {
-        return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+// DB 연결 함수 (lib폴더에 있다면 import해서 쓰셔도 됩니다)
+const connectDB = async () => {
+  if (mongoose.connection.readyState >= 1) return;
+  await mongoose.connect(process.env.MONGODB_URI as string);
+};
+
+export async function POST(req: Request) {
+  try {
+    await connectDB();
+    const body = await req.json();
+    const { addr, road_address, lat, lng, notice } = body;
+
+    if (!addr || !lat || !lng) {
+      return NextResponse.json({ success: false, message: '필수 데이터 누락' }, { status: 400 });
     }
 
-    try {
-        await dbConnect();
-        const { addr, lat, lng, notice } = await req.json();
+    // _id: 1인 문서를 찾아 업데이트 (없으면 생성 - upsert)
+    await MapLocation.findOneAndUpdate(
+      { _id: 1 },
+      { 
+        addr, 
+        road_address, 
+        lat, 
+        lng, 
+        notice, 
+        updated_at: new Date() 
+      },
+      { upsert: true, new: true }
+    );
 
-        const newLocation = new MapLocation({
-            addr,
-            lat,
-            lng,
-            notice
-        });
-
-        await newLocation.save();
-
-        return NextResponse.json({ success: true, location: newLocation });
-    } catch (error) {
-        console.error('Map save error:', error);
-        return NextResponse.json({ success: false, message: 'Server Error' }, { status: 500 });
-    }
-}
-
-export async function GET(req: NextRequest) {
-    const session = await getServerSession(authOptions);
-    if (!session) {
-        return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
-    }
-
-    try {
-        await dbConnect();
-        const locations = await MapLocation.find().sort({ createdAt: -1 }).limit(1);
-        
-        return NextResponse.json({ success: true, location: locations[0] || null });
-    } catch (error) {
-        console.error('Map get error:', error);
-        return NextResponse.json({ success: false, message: 'Server Error' }, { status: 500 });
-    }
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error(error);
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+  }
 }
