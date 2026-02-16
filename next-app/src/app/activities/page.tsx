@@ -46,24 +46,24 @@ export default function ActivitiesPage() {
         },
 
 
-        // 아래 두 개는 주석 처리 (아직 페이지 없음)
-        // {
-        //     id: "opt_message",
-        //     value: "/invitation",
-        //     icon: "bi-chat-dots",
-        //     title: "경조사 문자메세지 보내기",
-        //     description: "각종 경조사 관련된 문자를 보낼 수 있습니다.",
-        //     bgColor: "#fafbfc"
-        // },
-        // {
-        //     id: "opt_vote",
-        //     value: "/vote",
-        //     icon: "bi-box-seam",
-        //     title: "투표하기/설문조사",
-        //     description: "투표하기/설문조사로 의사결정",
-        //     bgColor: "#fafbfc"
-        // },
         
+        {
+            id: "opt_message",
+            value: "/invitation",
+            icon: "bi-chat-dots",
+            title: "경조사 문자메세지 보내기",
+            description: "각종 경조사 관련된 문자를 보낼 수 있습니다.",
+            bgColor: "#fafbfc"
+        },
+        {
+            id: "opt_vote",
+            value: "/vote",
+            icon: "bi-box-seam",
+            title: "투표하기/설문조사",
+            description: "투표하기/설문조사로 의사결정",
+            bgColor: "#fafbfc"
+        },
+
 
         {
             id: "opt_kakao",
