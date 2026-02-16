@@ -241,12 +241,9 @@ export default function DashboardContent({ theme = "book" }: Props) {
         return false;
     };
 
-    const handleGoNext = async () => {
-        const selected = menuItems.find(m => m.path === selectedPage);
-        if (!selected) {
-            alert("펼쳐볼 책을 선택해주세요.");
-            return;
-        }
+    const openMenuPath = async (path: string) => {
+        const selected = menuItems.find(m => m.path === path);
+        if (!selected) return;
         if (selected.path === "#financial") {
             const success = await loadFinancialData();
             if (success) setShowFinancial(true);
@@ -255,6 +252,15 @@ export default function DashboardContent({ theme = "book" }: Props) {
         } else {
             router.push(selected.path);
         }
+    };
+
+    const handleGoNext = async () => {
+        const selected = menuItems.find(m => m.path === selectedPage);
+        if (!selected) {
+            alert("펼쳐볼 책을 선택해주세요.");
+            return;
+        }
+        await openMenuPath(selected.path);
     };
 
     if (status === "loading" || !session) {
@@ -422,6 +428,136 @@ export default function DashboardContent({ theme = "book" }: Props) {
           box-shadow: ${theme === "book" ? "inset 0 10px 20px rgba(0, 0, 0, 0.3), 0 15px 30px rgba(0, 0, 0, 0.2)" : theme === "glass" ? "0 25px 60px rgba(0,0,0,0.6)" : theme === "tech" ? "0 0 25px rgba(56, 189, 248, 0.18)" : "0 10px 25px rgba(0,0,0,0.07)"};
           border-bottom: ${theme === "book" ? "15px solid #5d4037" : "none"};
           border: ${theme === "glass" ? "1px solid rgba(255,255,255,0.10)" : theme === "tech" ? "1px solid rgba(56, 189, 248, 0.25)" : "1px solid rgba(0,0,0,0.06)"};
+        }
+
+        /* glass/tech header like PHP */
+        .space-title {
+          text-align: center;
+          font-weight: 900;
+          letter-spacing: 1px;
+          color: #fff;
+          margin: 18px 0 16px;
+          text-shadow: 0 2px 18px rgba(0,0,0,0.9);
+        }
+        .space-topbar {
+          max-width: 520px;
+          margin: 0 auto 26px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          padding: 10px 14px;
+          border-radius: 14px;
+          background: rgba(0,0,0,0.35);
+          border: 1px solid rgba(255,255,255,0.16);
+          box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+        }
+        .space-admin {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          color: rgba(255,255,255,0.92);
+          font-weight: 800;
+          font-size: 0.95rem;
+        }
+        .space-admin-badge {
+          width: 26px;
+          height: 26px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255,255,255,0.10);
+          border: 1px solid rgba(255,255,255,0.16);
+        }
+        .space-logout {
+          border: 0;
+          padding: 8px 14px;
+          border-radius: 999px;
+          font-weight: 900;
+          background: linear-gradient(180deg, #ff5b7a, #ff274f);
+          color: #fff;
+          box-shadow: 0 10px 20px rgba(255,39,79,0.25);
+        }
+
+        /* tech icon grid (colored rounded squares + labels) */
+        .tech-appgrid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 26px 22px;
+          max-width: 420px;
+          margin: 0 auto;
+          padding: 6px 0 20px;
+        }
+        .tech-app {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 10px;
+          cursor: pointer;
+          user-select: none;
+        }
+        .tech-app-icon {
+          width: 86px;
+          height: 86px;
+          border-radius: 22px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #fff;
+          box-shadow: 0 18px 35px rgba(0,0,0,0.45);
+        }
+        .tech-app-label {
+          color: rgba(255,255,255,0.95);
+          font-weight: 900;
+          text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+          text-align: center;
+          line-height: 1.25;
+        }
+
+        /* glass 2-column rounded translucent cards */
+        .glass-menugrid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 18px;
+          max-width: 560px;
+          margin: 0 auto;
+          padding: 6px 0 20px;
+        }
+        .glass-menu {
+          border-radius: 22px;
+          padding: 22px 16px;
+          cursor: pointer;
+          border: 1px solid rgba(255,255,255,0.14);
+          background: rgba(0,0,0,0.18);
+          box-shadow: 0 22px 50px rgba(0,0,0,0.55);
+          color: #fff;
+          text-align: center;
+          user-select: none;
+          transition: 0.2s ease;
+        }
+        .glass-menu:hover { transform: translateY(-4px); }
+        .glass-menu-icon {
+          width: 60px;
+          height: 60px;
+          border-radius: 18px;
+          margin: 0 auto 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255,255,255,0.06);
+          border: 1px solid rgba(255,255,255,0.10);
+        }
+        .glass-menu-label {
+          font-weight: 900;
+          text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+        }
+
+        @media (max-width: 520px) {
+          .glass-menugrid { max-width: 420px; }
+          .glass-menu { padding: 18px 14px; border-radius: 20px; }
+          .tech-appgrid { gap: 22px 18px; }
+          .tech-app-icon { width: 82px; height: 82px; }
         }
         .select-card {
           position: relative;
@@ -730,10 +866,27 @@ export default function DashboardContent({ theme = "book" }: Props) {
       `}</style>
 
             <div className="container wrap-container py-5">
-            <h2 className="section-title">회원관리 도서관{theme !== "book" ? ` (${theme})` : ""}</h2>
-            <div className="admin-info">
-                👤 관리자: <strong>{(session.user as any).id}</strong> (Level {(session.user as any).user_level})
-            </div>
+            {(theme === "glass" || theme === "tech") ? (
+                <>
+                    <div className="space-title">{theme === "tech" ? "TERRAONE" : "TERRAONE NEXUS"}</div>
+                    <div className="space-topbar">
+                        <div className="space-admin">
+                            <div className="space-admin-badge">
+                                <Users size={16} />
+                            </div>
+                            <div>관리자: <strong>{(session.user as any).id}</strong></div>
+                        </div>
+                        <button className="space-logout" onClick={() => signOut({ callbackUrl: "/login" })}>로그아웃</button>
+                    </div>
+                </>
+            ) : (
+                <>
+                    <h2 className="section-title">회원관리 도서관{theme !== "book" ? ` (${theme})` : ""}</h2>
+                    <div className="admin-info">
+                        👤 관리자: <strong>{(session.user as any).id}</strong> (Level {(session.user as any).user_level})
+                    </div>
+                </>
+            )}
 
             <div className="option-box">
                 {theme === "book" && (
@@ -792,50 +945,44 @@ export default function DashboardContent({ theme = "book" }: Props) {
                 )}
 
                 {theme === "glass" && (
-                    <div className="glass-grid">
+                    <div className="glass-menugrid">
                         {menuItems.map((item, idx) => (
-                            <div
-                                key={idx}
-                                className={`glass-card ${selectedPage === item.path ? 'active' : ''}`}
-                                onClick={() => setSelectedPage(item.path)}
-                            >
-                                <div className="glass-ico">{item.icon}</div>
-                                <div className="glass-title">{item.title}</div>
+                            <div key={idx} className="glass-menu" onClick={() => openMenuPath(item.path)}>
+                                <div className="glass-menu-icon">{item.icon}</div>
+                                <div className="glass-menu-label">{item.title}</div>
                             </div>
                         ))}
                     </div>
                 )}
 
                 {theme === "tech" && (
-                    <div className="tech-grid">
+                    <div className="tech-appgrid">
                         {menuItems.map((item, idx) => (
-                            <div
-                                key={idx}
-                                className={`tech-card ${selectedPage === item.path ? 'active' : ''}`}
-                                onClick={() => setSelectedPage(item.path)}
-                            >
-                                <div className="tech-ico">{item.icon}</div>
-                                <div className="tech-title">{item.title}</div>
+                            <div key={idx} className="tech-app" onClick={() => openMenuPath(item.path)}>
+                                <div className={`tech-app-icon icon-${item.color}`}>{item.icon}</div>
+                                <div className="tech-app-label">{item.title}</div>
                             </div>
                         ))}
                     </div>
                 )}
             </div>
 
-            <div className="text-center mt-4 d-flex flex-column gap-3 align-items-center">
-                <button className="btn btn-outline-secondary rounded-pill fw-bold" onClick={() => router.push("/theme")}
-                >
-                    <Palette className="me-2" size={18} /> 디자인 변경 / 테마 설정
-                </button>
-                <div className="d-flex flex-column flex-md-row gap-3">
-                    <button className="btn btn-primary btn-same shadow-lg d-flex align-items-center justify-content-center" onClick={handleGoNext}>
-                        <BookOpen className="me-2" size={20} /> 책 펼쳐보기
+            {(theme !== "glass" && theme !== "tech") && (
+                <div className="text-center mt-4 d-flex flex-column gap-3 align-items-center">
+                    <button className="btn btn-outline-secondary rounded-pill fw-bold" onClick={() => router.push("/theme")}
+                    >
+                        <Palette className="me-2" size={18} /> 디자인 변경 / 테마 설정
                     </button>
-                    <button className="btn btn-outline-danger btn-same shadow-sm d-flex align-items-center justify-content-center" onClick={() => signOut()}>
-                        <LogOut className="me-2" size={20} /> 서재 나가기
-                    </button>
+                    <div className="d-flex flex-column flex-md-row gap-3">
+                        <button className="btn btn-primary btn-same shadow-lg d-flex align-items-center justify-content-center" onClick={handleGoNext}>
+                            <BookOpen className="me-2" size={20} /> 책 펼쳐보기
+                        </button>
+                        <button className="btn btn-outline-danger btn-same shadow-sm d-flex align-items-center justify-content-center" onClick={() => signOut()}>
+                            <LogOut className="me-2" size={20} /> 서재 나가기
+                        </button>
+                    </div>
                 </div>
-            </div>
+            )}
 
             {showFinancial && (
                 <div className="custom-modal-overlay" onClick={() => setShowFinancial(false)}>
