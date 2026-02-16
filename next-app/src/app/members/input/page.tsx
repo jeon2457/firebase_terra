@@ -85,88 +85,161 @@ export default function MemberInputPage() {
     if (status === "loading") return <div className="text-center mt-5">Loading...</div>;
 
     return (
-        <div className="container py-5" style={{ maxWidth: "650px" }}>
+        <div className="page-wrap">
             <style jsx>{`
         :root {
-          --bg: #e0e5ec;
-          --shadow: #a3b1c6;
-          --light: #ffffff;
-          --primary: #4A90E2;
+          --panel-bg: #e6ebf2;
+          --panel-border: rgba(255, 255, 255, 0.6);
+          --title: #6c8cff;
+          --label: #3b3f45;
+          --muted: #7b8794;
+          --shadow-strong: rgba(0, 0, 0, 0.25);
+          --shadow-soft: rgba(0, 0, 0, 0.12);
+          --primary: #5f7cf5;
         }
-        .neumorphic-container {
-          background: var(--bg);
-          border-radius: 30px;
-          padding: 40px;
-          box-shadow: 15px 15px 30px var(--shadow), -15px -15px 30px var(--light);
+
+        .page-wrap {
+          min-height: 100vh;
+          padding: 24px 14px;
+          background: linear-gradient(180deg, #eff3f8 0%, #e2e8f0 100%);
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
         }
-        .section-title {
-          text-align: center;
-          color: #115ef7;
-          font-weight: 700;
-          margin-bottom: 40px;
-          padding: 15px;
-          background: var(--bg);
+
+        .panel {
+          width: 100%;
+          max-width: 520px;
+          background: var(--panel-bg);
+          border-radius: 28px;
+          padding: 22px 22px 26px;
+          border: 1px solid var(--panel-border);
+          box-shadow: 0 26px 60px var(--shadow-strong);
+        }
+
+        .header-box {
           border-radius: 20px;
-          box-shadow: inset 6px 6px 12px var(--shadow), inset -6px -6px 12px var(--light);
-          font-size: 1.6rem;
+          padding: 18px 16px;
+          text-align: center;
+          background: #e9eef5;
+          box-shadow: inset 6px 6px 14px rgba(0,0,0,0.10), inset -6px -6px 14px rgba(255,255,255,0.80);
+          margin-bottom: 18px;
         }
-        .form-control, .form-select {
-          border: none;
-          padding: 15px 20px;
-          font-size: 17px;
-          border-radius: 15px;
-          background: var(--bg);
-          box-shadow: 6px 6px 12px var(--shadow), -6px -6px 12px var(--light);
-          margin-bottom: 5px;
+
+        .title {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          justify-content: center;
+          font-weight: 900;
+          color: var(--title);
+          font-size: 1.7rem;
+          letter-spacing: -0.5px;
+          margin: 0;
         }
-        .form-control:focus, .form-select:focus {
-          box-shadow: inset 5px 5px 10px var(--shadow), inset -5px -5px 10px var(--light);
-          outline: none;
-          color: #4A90E2;
+
+        .subtitle {
+          margin-top: 8px;
+          font-weight: 900;
+          color: #e74c3c;
+          font-size: 0.9rem;
         }
+
         .label-text {
-          font-weight: bold;
-          color: #555;
-          margin-left: 10px;
+          font-weight: 800;
+          color: var(--label);
           margin-bottom: 8px;
           display: block;
+          font-size: 0.95rem;
         }
-        .asterisk::after {
-          content: " *";
-          color: #e74c3c;
-        }
-        .info-badge {
-          font-size: 0.8rem;
-          margin-left: 8px;
-          border-radius: 10px;
-          padding: 5px 10px;
-          background-color: #4984f8;
-          color: #f9fafc;
-          box-shadow: 2px 2px 5px var(--shadow), -2px -2px 5px var(--light);
-        }
-        .btn-main {
-          padding: 15px 40px;
+        .asterisk::after { content: " *"; color: #e74c3c; }
+
+        .form-control, .form-select {
           border: none;
-          border-radius: 20px;
-          font-size: 20px;
-          font-weight: bold;
-          transition: all 0.2s;
-          box-shadow: 6px 6px 12px var(--shadow), -6px -6px 12px var(--light);
+          padding: 14px 16px;
+          font-size: 16px;
+          border-radius: 14px;
+          background: #eef3f9;
+          box-shadow: inset 4px 4px 10px rgba(0,0,0,0.10), inset -4px -4px 10px rgba(255,255,255,0.80);
         }
-        .btn-main:active {
-          box-shadow: inset 6px 6px 12px var(--shadow), inset -6px -6px 12px var(--light);
-          transform: scale(0.98);
+        .form-control:focus, .form-select:focus {
+          outline: none;
+          box-shadow: inset 6px 6px 12px rgba(0,0,0,0.12), inset -6px -6px 12px rgba(255,255,255,0.85);
         }
         .auto-generated {
-          background-color: var(--bg);
-          box-shadow: inset 4px 4px 8px var(--shadow), inset -4px -4px 8px var(--light);
           cursor: not-allowed;
-          color: #888;
+          color: #7a7a7a;
+        }
+
+        .help-text {
+          color: var(--muted);
+          font-size: 0.85rem;
+          margin-top: 8px;
+          margin-left: 2px;
+        }
+
+        .divider {
+          height: 1px;
+          background: rgba(0,0,0,0.08);
+          border: none;
+          margin: 22px 0;
+        }
+
+        .btn-primary-wide {
+          width: 100%;
+          border: none;
+          border-radius: 16px;
+          padding: 14px 16px;
+          font-weight: 900;
+          font-size: 18px;
+          color: #ffffff;
+          background: #637fed;
+          box-shadow: 0 14px 28px rgba(99, 127, 237, 0.35), 0 8px 18px var(--shadow-soft);
+        }
+
+        .btn-primary-wide:active {
+          transform: translateY(1px);
+          box-shadow: 0 10px 20px rgba(99, 127, 237, 0.28), 0 6px 14px var(--shadow-soft);
+        }
+
+        .btn-secondary-wide {
+          width: 100%;
+          border: none;
+          border-radius: 16px;
+          padding: 14px 16px;
+          font-weight: 900;
+          font-size: 16px;
+          color: #6b7280;
+          background: #e9eef5;
+          box-shadow: 0 10px 22px var(--shadow-soft);
+        }
+
+        .btn-secondary-wide:active {
+          transform: translateY(1px);
+          box-shadow: 0 8px 18px var(--shadow-soft);
+        }
+
+        .btn-stack {
+          margin-top: 18px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        @media (max-width: 480px) {
+          .page-wrap { padding: 12px 10px; }
+          .panel { border-radius: 18px; padding: 16px 14px 18px; }
+          .title { font-size: 1.5rem; }
         }
       `}</style>
 
-            <div className="neumorphic-container">
-                <h2 className="section-title">모임회원 신규등록</h2>
+            <div className="panel">
+                <div className="header-box">
+                    <h2 className="title">
+                        <UserPlus size={20} /> 회원 신규등록
+                    </h2>
+                    <div className="subtitle">※ 관리자 전용 권한 시스템!</div>
+                </div>
 
                 <form onSubmit={handleSubmit}>
 
@@ -177,7 +250,7 @@ export default function MemberInputPage() {
                             name="id"
                             className="form-control"
                             required
-                            placeholder="영문, 숫자 조합"
+                            placeholder="접속 아이디 입력"
                             value={formData.id}
                             onChange={handleChange}
                         />
@@ -190,7 +263,7 @@ export default function MemberInputPage() {
                             name="password"
                             className="form-control"
                             required
-                            placeholder="영문, 숫자, 특수문자 조합"
+                            placeholder="초기 비밀번호 설정"
                             value={formData.password}
                             onChange={handleChange}
                         />
@@ -204,6 +277,7 @@ export default function MemberInputPage() {
                                 name="name"
                                 className="form-control"
                                 required
+                                placeholder="회원 이름"
                                 value={formData.name}
                                 onChange={handleChange}
                             />
@@ -230,7 +304,7 @@ export default function MemberInputPage() {
                             name="addr"
                             className="form-control"
                             required
-                            placeholder="예) 서울, 경기 등"
+                            placeholder="예: 서울, 김천, 부산 ..."
                             value={formData.addr}
                             onChange={handleChange}
                         />
@@ -238,23 +312,23 @@ export default function MemberInputPage() {
 
                     <div className="mb-4">
                         <label className="label-text">
-                            비고(직책)
-                            <span className="info-badge">회장/총무 입력 시 SMS_2 자동생성</span>
+                            직책/비고
                         </label>
                         <input
                             type="text"
                             name="remark"
                             className="form-control"
-                            placeholder="예) 회원, 총무, 회장 등"
+                            placeholder="회원, 총무, 회장 등"
+                            required
                             value={formData.remark}
                             onChange={handleChange}
                         />
                     </div>
 
-                    <hr style={{ margin: "35px 0", border: "none", height: "4px", background: "#e0e5ec", boxShadow: "inset 2px 2px 4px #a3b1c6, inset -2px -2px 4px #ffffff" }} />
+                    <hr className="divider" />
 
                     <div className="mb-4">
-                        <label className="label-text asterisk">SMS(Tel)</label>
+                        <label className="label-text">SMS 수신번호</label>
                         <input
                             type="text"
                             name="sms"
@@ -268,7 +342,7 @@ export default function MemberInputPage() {
 
                     <div className="mb-4">
                         <label className="label-text">
-                            SMS-2 단체
+                            SMS 수신번호 2
                             {isAutoSms2 && <span style={{ color: "#4A90E2", fontSize: "0.8rem", marginLeft: "10px" }}>[자동생성 예정]</span>}
                         </label>
                         <input
@@ -279,7 +353,7 @@ export default function MemberInputPage() {
                             onChange={handleChange}
                             readOnly={isAutoSms2}
                         />
-                        <small className="text-muted ms-2" style={{ fontSize: '0.8rem' }}>회장/총무가 아닌 경우 수동입력 가능</small>
+                        <div className="help-text">회장/총무가 아닌 경우 수동입력 가능</div>
                     </div>
 
                     <div className="mb-4">
@@ -294,7 +368,7 @@ export default function MemberInputPage() {
                         />
                     </div>
 
-                    <hr style={{ margin: "35px 0", border: "none", height: "4px", background: "#e0e5ec", boxShadow: "inset 2px 2px 4px #a3b1c6, inset -2px -2px 4px #ffffff" }} />
+                    <hr className="divider" />
 
                     <div className="mb-4">
                         <label className="label-text asterisk">회원 레벨</label>
@@ -312,27 +386,17 @@ export default function MemberInputPage() {
                         </select>
                     </div>
 
-                    <div className="d-flex justify-content-center gap-3 mt-5">
-                        <button type="submit" className="btn-main text-white" style={{ background: "#4A90E2" }}>
-                            입력하기
+                    <div className="btn-stack">
+                        <button type="submit" className="btn-primary-wide">
+                            등록 완료
                         </button>
-                        <Link href="/members" className="btn-main text-white text-decoration-none d-flex align-items-center justify-content-center" style={{ background: "#a3b1c6", borderRadius: "20px" }}>
-                            돌아가기
+                        <Link href="/members" className="btn-secondary-wide text-decoration-none d-flex align-items-center justify-content-center gap-2">
+                            <ArrowLeft size={18} /> 돌아가기
                         </Link>
                     </div>
 
                 </form>
             </div>
-            <style jsx>{`
-                @media (max-width: 768px) {
-                    .btn-main {
-                        padding: 10px 20px !important;
-                        font-size: 16px !important;
-                        min-width: 100px;
-                    }
-                }
-            `}</style>
-
         </div>
     );
 }
