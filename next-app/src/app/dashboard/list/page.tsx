@@ -26,5 +26,5 @@ export default function DashboardListPage() {
         });
     }, [status, router]);
 
-    return <DashboardContent themeLabel="list" />;
+    return <DashboardContent theme="list" />;
 }

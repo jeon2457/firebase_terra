@@ -26,5 +26,5 @@ export default function DashboardTechPage() {
         });
     }, [status, router]);
 
-    return <DashboardContent themeLabel="tech" />;
+    return <DashboardContent theme="tech" />;
 }

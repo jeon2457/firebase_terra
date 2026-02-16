@@ -26,5 +26,5 @@ export default function DashboardIconPage() {
         });
     }, [status, router]);
 
-    return <DashboardContent themeLabel="icon" />;
+    return <DashboardContent theme="icon" />;
 }

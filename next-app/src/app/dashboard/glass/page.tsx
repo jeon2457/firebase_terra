@@ -26,5 +26,5 @@ export default function DashboardGlassPage() {
         });
     }, [status, router]);
 
-    return <DashboardContent themeLabel="glass" />;
+    return <DashboardContent theme="glass" />;
 }

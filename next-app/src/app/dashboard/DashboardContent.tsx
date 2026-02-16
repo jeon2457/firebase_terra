@@ -47,10 +47,10 @@ ChartJS.register(
 );
 
 type Props = {
-    themeLabel?: string;
+    theme?: "book" | "icon" | "glass" | "list" | "tech";
 };
 
-export default function DashboardContent({ themeLabel }: Props) {
+export default function DashboardContent({ theme = "book" }: Props) {
     const { data: session, status } = useSession();
     const router = useRouter();
     const [selectedPage, setSelectedPage] = useState<string | null>(null);
@@ -185,12 +185,34 @@ export default function DashboardContent({ themeLabel }: Props) {
         { title: "시스템 매뉴얼", icon: <BookOpen />, color: "bg-manual", path: "/manual" },
     ];
 
+    const wrapStyle: React.CSSProperties =
+        theme === "glass"
+            ? {
+                minHeight: "100vh",
+                background: "linear-gradient(180deg, #000000 0%, #0b1220 55%, #000000 100%)",
+                padding: "30px 0",
+            }
+            : theme === "tech"
+                ? {
+                    minHeight: "100vh",
+                    background: "#000",
+                    padding: "30px 0",
+                }
+                : {
+                    minHeight: "100vh",
+                    background: "#f0f2f5",
+                    padding: "30px 0",
+                };
+
     return (
-        <div className="container py-5">
+        <div style={wrapStyle}>
             <style jsx>{`
+        .wrap-container {
+          max-width: 1100px;
+        }
         .section-title {
           text-align: center;
-          color: #2c3e50;
+          color: ${theme === "glass" || theme === "tech" ? "#e2e8f0" : "#2c3e50"};
           font-weight: 800;
           margin-bottom: 25px;
           text-transform: uppercase;
@@ -199,12 +221,13 @@ export default function DashboardContent({ themeLabel }: Props) {
         .admin-info {
           text-align: center;
           font-size: 14px;
-          color: #555;
+          color: ${theme === "glass" || theme === "tech" ? "rgba(255,255,255,0.85)" : "#555"};
           margin-bottom: 40px;
-          background: rgba(255, 255, 255, 0.8);
+          background: ${theme === "glass" || theme === "tech" ? "rgba(0,0,0,0.45)" : "rgba(255, 255, 255, 0.8)"};
           padding: 12px;
           border-radius: 10px;
-          border-bottom: 2px solid #ddd;
+          border: ${theme === "glass" || theme === "tech" ? "1px solid rgba(255,255,255,0.12)" : "none"};
+          border-bottom: ${theme === "glass" || theme === "tech" ? "1px solid rgba(255,255,255,0.12)" : "2px solid #ddd"};
         }
         .option-box {
           display: flex;
@@ -212,10 +235,11 @@ export default function DashboardContent({ themeLabel }: Props) {
           justify-content: flex-start;
           gap: 15px;
           padding: 20px 15px;
-          background: #8d6e63;
+          background: ${theme === "book" ? "#8d6e63" : theme === "glass" ? "rgba(255,255,255,0.06)" : theme === "tech" ? "rgba(0,0,0,0.35)" : "#ffffff"};
           border-radius: 5px;
-          box-shadow: inset 0 10px 20px rgba(0, 0, 0, 0.3), 0 15px 30px rgba(0, 0, 0, 0.2);
-          border-bottom: 15px solid #5d4037;
+          box-shadow: ${theme === "book" ? "inset 0 10px 20px rgba(0, 0, 0, 0.3), 0 15px 30px rgba(0, 0, 0, 0.2)" : theme === "glass" ? "0 25px 60px rgba(0,0,0,0.6)" : theme === "tech" ? "0 0 25px rgba(56, 189, 248, 0.18)" : "0 10px 25px rgba(0,0,0,0.07)"};
+          border-bottom: ${theme === "book" ? "15px solid #5d4037" : "none"};
+          border: ${theme === "glass" ? "1px solid rgba(255,255,255,0.10)" : theme === "tech" ? "1px solid rgba(56, 189, 248, 0.25)" : "1px solid rgba(0,0,0,0.06)"};
         }
         .select-card {
           position: relative;
@@ -289,6 +313,209 @@ export default function DashboardContent({ themeLabel }: Props) {
           font-weight: 700;
           border-radius: 30px;
         }
+
+        /* icon theme */
+        .icon-grid {
+          display: grid;
+          grid-template-columns: repeat(6, 1fr);
+          gap: 14px;
+          width: 100%;
+        }
+        .icon-item {
+          text-decoration: none;
+          cursor: pointer;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 6px;
+          border-radius: 14px;
+          border: 2px solid transparent;
+          transition: 0.15s ease;
+          user-select: none;
+        }
+        .icon-item.active {
+          background: rgba(13,110,253,0.10);
+          border-color: rgba(13,110,253,0.45);
+        }
+        .icon-box {
+          width: 72px;
+          height: 72px;
+          border-radius: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #fff;
+          box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+        }
+        .icon-label {
+          font-size: 12px;
+          font-weight: 800;
+          color: #111827;
+          text-align: center;
+          line-height: 1.2;
+          min-height: 30px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .icon-bg-tel { background: linear-gradient(180deg, #34AADC, #0076FF); }
+        .icon-bg-input { background: linear-gradient(180deg, #111827, #334155); }
+        .icon-bg-edit { background: linear-gradient(180deg, #ef4444, #b91c1c); }
+        .icon-bg-view { background: linear-gradient(180deg, #4CD964, #28A745); }
+        .icon-bg-upload { background: linear-gradient(180deg, #3b82f6, #1d4ed8); }
+        .icon-bg-scissors { background: linear-gradient(180deg, #a855f7, #6d28d9); }
+        .icon-bg-image { background: linear-gradient(180deg, #5856D6, #3F51B5); }
+        .icon-bg-card { background: linear-gradient(180deg, #14b8a6, #0f766e); }
+        .icon-bg-financial { background: linear-gradient(180deg, #FFD700, #FFA000); }
+        .icon-bg-excel { background: linear-gradient(180deg, #1D6F42, #43A047); }
+        .icon-bg-map { background: linear-gradient(180deg, #0ea5e9, #0369a1); }
+        .icon-bg-activities { background: linear-gradient(180deg, #fb923c, #ea580c); }
+        .icon-bg-manual { background: linear-gradient(180deg, #94a3b8, #475569); }
+
+        /* list theme */
+        .list-box {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        .list-item {
+          background: white;
+          border-radius: 14px;
+          padding: 16px 18px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          cursor: pointer;
+          border: 2px solid transparent;
+          box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+          user-select: none;
+        }
+        .list-item.active {
+          border-color: rgba(13,110,253,0.35);
+          background: rgba(13,110,253,0.06);
+        }
+        .list-left {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        .list-icon {
+          width: 44px;
+          height: 44px;
+          border-radius: 12px;
+          background: #eef2ff;
+          color: #4f46e5;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .list-title {
+          font-weight: 900;
+          color: #111827;
+        }
+        .list-sub {
+          font-size: 12px;
+          color: #6b7280;
+        }
+
+        /* glass theme */
+        .glass-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 16px;
+          width: 100%;
+        }
+        .glass-card {
+          border-radius: 18px;
+          padding: 18px 14px;
+          cursor: pointer;
+          border: 1px solid rgba(255,255,255,0.14);
+          background: rgba(255,255,255,0.05);
+          box-shadow: 0 20px 40px rgba(0,0,0,0.45);
+          color: #fff;
+          text-align: center;
+          user-select: none;
+          transition: 0.2s ease;
+        }
+        .glass-card:hover { transform: translateY(-4px); }
+        .glass-card.active {
+          border-color: rgba(255,255,255,0.30);
+          background: rgba(255,255,255,0.08);
+        }
+        .glass-ico {
+          width: 56px;
+          height: 56px;
+          margin: 0 auto 10px;
+          border-radius: 16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(0,0,0,0.35);
+          border: 1px solid rgba(255,255,255,0.10);
+        }
+        .glass-title { font-weight: 900; }
+
+        /* tech theme */
+        .tech-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+          gap: 16px;
+          width: 100%;
+        }
+        .tech-card {
+          border: 1px solid rgba(56, 189, 248, 0.45);
+          border-radius: 16px;
+          padding: 18px 14px;
+          height: 160px;
+          text-align: center;
+          cursor: pointer;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          background: transparent;
+          transition: all 0.25s;
+          user-select: none;
+        }
+        .tech-card:hover {
+          transform: translateY(-4px);
+          background: rgba(56, 189, 248, 0.08);
+          box-shadow: 0 0 25px rgba(56, 189, 248, 0.25);
+          border-color: #38bdf8;
+        }
+        .tech-card.active {
+          background: rgba(56, 189, 248, 0.12);
+          box-shadow: 0 0 25px rgba(56, 189, 248, 0.25);
+        }
+        .tech-ico {
+          width: 58px;
+          height: 58px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.08);
+          border: 1px solid rgba(255,255,255,0.1);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.5rem;
+          color: #38bdf8;
+        }
+        .tech-title {
+          color: #94a3b8;
+          font-weight: 900;
+          text-shadow: 1px 1px 5px rgba(0,0,0,0.8);
+        }
+
+        @media (max-width: 992px) {
+          .icon-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+        @media (max-width: 576px) {
+          .icon-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+          .icon-box { width: 66px; height: 66px; }
+          .icon-label { font-size: 11px; }
+        }
         .custom-modal-overlay {
           position: fixed;
           top: 0;
@@ -320,24 +547,97 @@ export default function DashboardContent({ themeLabel }: Props) {
         }
       `}</style>
 
-            <h2 className="section-title">회원관리 도서관{themeLabel ? ` (${themeLabel})` : ""}</h2>
+            <div className="container wrap-container py-5">
+            <h2 className="section-title">회원관리 도서관{theme !== "book" ? ` (${theme})` : ""}</h2>
             <div className="admin-info">
                 👤 관리자: <strong>{(session.user as any).id}</strong> (Level {(session.user as any).user_level})
             </div>
 
             <div className="option-box">
-                {menuItems.map((item, idx) => (
-                    <div
-                        key={idx}
-                        className={`select-card ${selectedPage === item.path ? 'active' : ''}`}
-                        onClick={() => setSelectedPage(item.path)}
-                    >
-                        <div className={`book-spine ${item.color}`}>
-                            <div className="mb-1">{item.icon}</div>
-                            <div className="book-title">{item.title}</div>
-                        </div>
+                {theme === "book" && (
+                    <>
+                        {menuItems.map((item, idx) => (
+                            <div
+                                key={idx}
+                                className={`select-card ${selectedPage === item.path ? 'active' : ''}`}
+                                onClick={() => setSelectedPage(item.path)}
+                            >
+                                <div className={`book-spine ${item.color}`}>
+                                    <div className="mb-1">{item.icon}</div>
+                                    <div className="book-title">{item.title}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </>
+                )}
+
+                {theme === "icon" && (
+                    <div className="icon-grid">
+                        {menuItems.map((item, idx) => (
+                            <div
+                                key={idx}
+                                className={`icon-item ${selectedPage === item.path ? 'active' : ''}`}
+                                onClick={() => setSelectedPage(item.path)}
+                            >
+                                <div className={`icon-box icon-${item.color}`}>
+                                    {item.icon}
+                                </div>
+                                <div className="icon-label">{item.title}</div>
+                            </div>
+                        ))}
                     </div>
-                ))}
+                )}
+
+                {theme === "list" && (
+                    <div className="list-box">
+                        {menuItems.map((item, idx) => (
+                            <div
+                                key={idx}
+                                className={`list-item ${selectedPage === item.path ? 'active' : ''}`}
+                                onClick={() => setSelectedPage(item.path)}
+                            >
+                                <div className="list-left">
+                                    <div className="list-icon">{item.icon}</div>
+                                    <div>
+                                        <div className="list-title">{item.title}</div>
+                                        <div className="list-sub">클릭해서 선택</div>
+                                    </div>
+                                </div>
+                                <div style={{ color: "#94a3b8", fontWeight: 900 }}>›</div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {theme === "glass" && (
+                    <div className="glass-grid">
+                        {menuItems.map((item, idx) => (
+                            <div
+                                key={idx}
+                                className={`glass-card ${selectedPage === item.path ? 'active' : ''}`}
+                                onClick={() => setSelectedPage(item.path)}
+                            >
+                                <div className="glass-ico">{item.icon}</div>
+                                <div className="glass-title">{item.title}</div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {theme === "tech" && (
+                    <div className="tech-grid">
+                        {menuItems.map((item, idx) => (
+                            <div
+                                key={idx}
+                                className={`tech-card ${selectedPage === item.path ? 'active' : ''}`}
+                                onClick={() => setSelectedPage(item.path)}
+                            >
+                                <div className="tech-ico">{item.icon}</div>
+                                <div className="tech-title">{item.title}</div>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
 
             <div className="text-center mt-4 d-flex flex-column gap-3 align-items-center">
@@ -439,6 +739,7 @@ export default function DashboardContent({ themeLabel }: Props) {
                     </div>
                 </div>
             )}
+            </div>
         </div>
     );
 }
