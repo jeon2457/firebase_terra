@@ -100,7 +100,7 @@ export default function GuestPage() {
                         className={`btn btn-outline-danger btn-lg ${styles.btnSame} shadow-sm`}
                         onClick={() => signOut({ callbackUrl: "/login" })}
                     >
-                        서재 나가기 (로그아웃)
+                        서재 나가기
                     </button>
                 </div>
             </div>
