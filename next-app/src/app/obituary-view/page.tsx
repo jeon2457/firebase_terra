@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 interface ObituaryData {
@@ -21,8 +21,7 @@ interface ObituaryData {
     createdAt: string;
 }
 
-export default function ObituaryViewPage() {
-    const { data: session, status } = useSession();
+function ObituaryViewContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const id = searchParams.get('id');
@@ -30,12 +29,6 @@ export default function ObituaryViewPage() {
     const [obituary, setObituary] = useState<ObituaryData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        if (status === "unauthenticated") {
-            router.push("/login");
-        }
-    }, [status, router]);
 
     useEffect(() => {
         if (id) {
@@ -97,7 +90,7 @@ ${obituary.message}
         }
     };
 
-    if (status === "loading" || loading) {
+    if (loading) {
         return (
             <div className="text-center mt-5">
                 <div className="spinner-border" role="status">
@@ -329,5 +322,26 @@ ${obituary.message}
                 </div>
             </div>
         </>
+    );
+}
+
+export default function ObituaryViewPage() {
+    const { data: session, status } = useSession();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (status === "unauthenticated") {
+            router.push("/login");
+        }
+    }, [status, router]);
+
+    if (status === "loading") {
+        return <div className="text-center mt-5">Loading...</div>;
+    }
+
+    return (
+        <Suspense fallback={<div className="text-center mt-5">Loading...</div>}>
+            <ObituaryViewContent />
+        </Suspense>
     );
 }
