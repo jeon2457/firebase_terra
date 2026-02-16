@@ -23,6 +23,8 @@ export default function MembersViewPage() {
     // Animation State
     const [cubeDeg, setCubeDeg] = useState(0);
 
+    const [isPageReady, setIsPageReady] = useState(false);
+
     useEffect(() => {
         if (status === "unauthenticated") {
             router.push("/login");
@@ -56,6 +58,13 @@ export default function MembersViewPage() {
             setCubeDeg(prev => prev - 90);
         }, 2000); // Slower rotate for better stability
         return () => clearInterval(cubeTimer);
+    }, []);
+
+    useEffect(() => {
+        const t = setTimeout(() => {
+            setIsPageReady(true);
+        }, 2500);
+        return () => clearTimeout(t);
     }, []);
 
     const fetchMembers = async () => {
@@ -99,160 +108,226 @@ export default function MembersViewPage() {
         <div className="wrapper">
             <style jsx global>{`
         body {
-          background-color: #000;
-          color: #fff;
-          font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+          background: linear-gradient(to right, #232526, #414345);
           margin: 0;
-          padding: 0;
+          padding: 3px 0;
+          font-family: 'Noto Sans KR', sans-serif;
+          color: #ffffff;
         }
       `}</style>
             <style jsx>{`
         .wrapper {
             width: 100%;
             min-height: 100vh;
-            background: #000;
+            background: transparent;
         }
+
+        a { text-decoration: none !important; }
+
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: #363434;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+            z-index: 9999;
+            inset: 0;
+        }
+        #loading-screen img {
+            width: 250px;
+            max-width: 80%;
+        }
+
+        #main-content {
+            display: ${isPageReady ? "block" : "none"};
+        }
+
+        /* Container */
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 0;
+        }
+
         /* Header */
         .header {
             width: 100%;
-            height: 55px;
-            background: #000;
-            color: #cea71b;
-            padding: 5px 20px;
+            max-width: 700px;
+            height: 3.5rem;
+            margin: 0 auto;
+            text-align: center;
+            color: #f4f4f4;
+            background-color: rgba(0, 0, 0);
+            padding: 0 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #333;
-            font-weight: bold;
-            position: sticky;
+            position: fixed;
             top: 0;
-            z-index: 1001;
+            left: 0;
+            right: 0;
+            z-index: 1000;
         }
-        .date-text { font-size: 16px; letter-spacing: 1px; color: #cea71b; }
-        .header-right { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; }
-        .time-text { font-size: 20px; letter-spacing: 2px; color: #4A9EFF; line-height: 1.1; }
+
+        .header-left { display: flex; align-items: center; gap: 10px; }
+        .date-text { color: #cea71bff; font-size: 1.5rem; }
+        .time-text { color: #4A9EFF; font-size: 1.5rem; line-height: 1.1; }
+        .header-right { display: flex; align-items: center; }
         .user-info-box {
-            font-size: 10px;
-            color: #fff;
+            font-size: 12px;
+            color: #E3EFFA !important;
             background: #333;
-            padding: 2px 8px;
+            padding: 4px 8px;
             border-radius: 5px;
-            margin-top: 3px;
             border: 1px solid #555;
+            white-space: nowrap;
         }
 
         /* Marquee Section (wrap2) */
         .wrap2 {
-            position: sticky;
-            top: 55px; /* Below Header */
-            z-index: 1000;
+            position: fixed;
+            top: 3.5rem;
+            left: 0;
+            right: 0;
+            z-index: 999;
             width: 100%;
-            height: 50px;
+            max-width: 700px;
+            margin: 0 auto;
+            overflow: hidden;
             background-image: url('/images/bg.gif');
-            background-size: auto;
-            background-repeat: repeat;
+            background-color: lightgray;
             background-position: center;
+            background-repeat: repeat-x;
+            background-size: contain;
+            height: 40px;
             display: flex;
             align-items: center;
-            overflow: hidden;
-            border-bottom: 1px solid #444;
+            padding: 0 103px 0 93px;
+            box-sizing: border-box;
         }
         
         /* 3D Cube */
-        .wrap1 {
+        .cube-container {
             position: absolute;
-            left: 5px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 50px;
-            height: 50px;
-            perspective: 500px;
-            z-index: 10;
+            top: 7px;
+            left: 10px;
+            z-index: 1001;
         }
-        .cube {
-            width: 100%;
-            height: 100%;
+
+        .wrap1 {
+            width: 25px;
+            height: 25px;
+            perspective: 500px;
+            transform-style: preserve-3d;
             position: relative;
+            padding: 0;
+        }
+
+        .cube {
+            width: 25px;
+            height: 25px;
+            position: absolute;
+            top: 0;
+            left: 0;
             transform-style: preserve-3d;
             transform: rotateX(${cubeDeg}deg);
             transition: transform 0.6s ease;
         }
         .cube img {
             position: absolute;
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
+            top: 3px;
+            left: -3px;
+            width: 25px;
+            height: 25px;
+            backface-visibility: hidden;
+            display: block;
         }
-        .cube img:nth-child(1) { transform: rotateX(0deg) translateZ(25px); }
-        .cube img:nth-child(2) { transform: rotateX(90deg) translateZ(25px); }
-        .cube img:nth-child(3) { transform: rotateX(180deg) translateZ(25px); }
-        .cube img:nth-child(4) { transform: rotateX(270deg) translateZ(25px); }
+        .cube img:nth-child(1) { transform: translateZ(12.5px); }
+        .cube img:nth-child(2) { transform: rotateX(90deg) translateZ(12.5px); }
+        .cube img:nth-child(3) { transform: rotateX(180deg) translateZ(12.5px); }
+        .cube img:nth-child(4) { transform: rotateX(270deg) translateZ(12.5px); }
 
         /* Marquee Text */
-        .billboard-container {
-            position: absolute;
-            left: 70px; /* Adjusted for Cube */
-            right: 0;
-            height: 100%;
+        .marquee-container {
+            width: 100%;
             overflow: hidden;
+            white-space: nowrap;
+            box-sizing: border-box;
             display: flex;
             align-items: center;
         }
-        .billboard {
-            white-space: nowrap;
+
+        .marquee {
             display: flex;
             align-items: center;
-            animation: marquee 20s linear infinite;
+            animation: marquee 15s linear infinite;
+            font-size: 18px;
+            color: #ffffff;
+            padding-left: 100%;
         }
         @keyframes marquee {
-            0% { transform: translateX(100%); }
+            0% { transform: translateX(0); }
+            10% { transform: translateX(-50px); }
+            90% { transform: translateX(calc(-100% + 50px)); }
             100% { transform: translateX(-100%); }
         }
         .custom-span {
-             color: #ccc; font-size: 20px; font-weight: bold; margin: 0 20px; text-shadow: 1px 1px 2px #000;
+            display: inline-block;
+            font-size: 18px;
+            line-height: 30px;
+            margin: 1px 20px 5px 17px;
+            padding: 0;
+            vertical-align: middle;
         }
 
         /* Table */
         .table-container {
-            margin-top: 0;
-            background: #333;
+            padding-top: calc(3.25rem + 30px);
+            padding-bottom: 2px;
         }
         .custom-table {
             width: 100%;
             border-collapse: collapse;
             table-layout: fixed;
+            border: 1px solid #eedca6;
+            max-width: 700px;
         }
         .custom-table thead th {
-             position: sticky;
-             top: 105px; /* Header 55 + Wrap2 50 */
-             background: url('/images/background_mable-1.jpg') center center / cover no-repeat !important; /* Fixed path */
-             color: #cea71b !important;
-             z-index: 990;
-             padding: 12px 8px;
-             text-align: center;
-             font-weight: bold;
-             border: 1px solid #555;
+            position: sticky;
+            height: 45px;
+            top: calc(3.5rem + 40px);
+            z-index: 998;
+            background: url('/images/background_mable-1.jpg') center center / cover no-repeat !important;
+            color: #cea71bff !important;
+            text-shadow: 0 0 10px rgba(240, 196, 32, 0.4), 1px 1px 2px #000;
+            font-weight: bold;
+            border-bottom: 1px solid #444;
+            border: 1px solid #eedca6 !important;
         }
         .custom-table tbody tr {
-             background-color: #333;
-             color: #fff;
-             border-bottom: 1px solid #555;
+            background-color: transparent;
+            color: #ffffff;
+            border: 1px solid #eedca6 !important;
         }
-        .custom-table tbody tr:hover { background: #444; }
+        .custom-table tbody tr:hover { background: rgba(255,255,255,0.06); }
         .custom-table td {
-             padding: 10px 8px;
-             text-align: center;
-             border: 1px solid #555;
-             vertical-align: middle;
-             word-break: break-word;
+            border: 1px solid #eedca6 !important;
+            text-align: center;
+            vertical-align: middle;
+            padding: 0.6rem 0;
+            word-break: break-word;
         }
         .name-link {
              font-size: 1.1rem; font-weight: 600; color: #ffffff !important; text-decoration: none !important;
         }
         .name-link:hover { color: #ffffff !important; text-decoration: none !important; }
         
-        .sms-icon { color: #4A9EFF; font-size: 24px; cursor: pointer; transition: transform 0.2s; }
-        .sms-icon:hover { transform: scale(1.2); }
+        .sms-icon { cursor: pointer; transition: transform 0.2s; }
+        .sms-icon:hover { transform: scale(1.15); }
 
         /* Address Toggle Logic */
         .address-header { cursor: pointer; color: #cea71b !important; }
@@ -261,25 +336,38 @@ export default function MembersViewPage() {
         
         /* Mobile Responsive */
         @media (max-width: 768px) {
-            .header { height: 60px; padding: 5px 10px; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; }
-            .date-text { font-size: 13px; width: 100%; text-align: left; }
-            .header-right { width: 100%; flex-direction: row; justify-content: center; position: relative; }
-            .time-text { font-size: 17px; }
-            .user-info-box { position: absolute; right: 0; bottom: 0; font-size: 8px; padding: 1px 5px; }
-            
-            .wrap2 { top: 60px; height: 33px; }
-            .wrap1 { width: 24px; height: 24px; left: 4px; }
-            .cube img { width: 24px; height: 24px; }
-            .cube img:nth-child(1) { transform: rotateX(0deg) translateZ(12px); }
-            .cube img:nth-child(2) { transform: rotateX(90deg) translateZ(12px); }
-            .cube img:nth-child(3) { transform: rotateX(180deg) translateZ(12px); }
-            .cube img:nth-child(4) { transform: rotateX(270deg) translateZ(12px); }
-            
-            .custom-table thead th { top: 93px; font-size: 12px; padding: 6px 2px; }
-            .custom-table td { font-size: 12px; padding: 6px 2px; }
-            
-            .billboard-container { left: 40px; }
-            .custom-span { font-size: 14px; }
+            .header {
+                max-width: 100%;
+                width: 100vw;
+                left: 0;
+                right: 0;
+                margin: 0;
+                height: 60px;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 5px 10px;
+            }
+
+            .header-left { gap: 6px; }
+            .date-text { font-size: 1.1rem; color: #f0c420; }
+            .time-text { font-size: 1.1rem; }
+            .user-info-box { font-size: 10px; padding: 2px 6px; }
+
+            .wrap2 { top: 3.5rem; padding: 5px 42px 0 60px; height: 40px; }
+            .cube-container { top: 50%; left: 1px; transform: translateY(-50%); }
+            .wrap1 { width: 22px; height: 22px; }
+            .cube { width: 22px; height: 22px; }
+            .cube img { width: 22px; height: 22px; top: 0; left: 0; }
+            .cube img:nth-child(1) { transform: translateZ(11px); }
+            .cube img:nth-child(2) { transform: rotateX(90deg) translateZ(11px); }
+            .cube img:nth-child(3) { transform: rotateX(180deg) translateZ(11px); }
+            .cube img:nth-child(4) { transform: rotateX(270deg) translateZ(11px); }
+
+            .custom-table thead th { font-size: 0.7em; color: #f0c420; }
+            .custom-table td { font-size: 12px; }
+
+            .custom-span { font-size: 14px; margin: 0 10px; line-height: 30px; }
             
             /* Column Widths Mobile */
             .col-no { width: 30px; }
@@ -308,90 +396,109 @@ export default function MembersViewPage() {
         }
       `}</style>
 
-            {/* Header */}
-            <div className="header">
-                <div className="date-text">{dateStr}</div>
-                <div className="header-right">
-                    <div className="time-text">{timeStr}</div>
-                    <div className="user-info-box">{userDisplayText}</div>
-                </div>
+            <div
+                id="loading-screen"
+                style={{ opacity: isPageReady ? 0 : 1, pointerEvents: isPageReady ? 'none' : 'auto' }}
+            >
+                <img src="/images/clova.png" alt="loading" />
             </div>
 
-            {/* Feature Section (Marquee / Cube) */}
-            <div className="wrap2">
-                <div className="wrap1">
-                    <div className="cube">
-                        <img src="/images/mail_1.png" alt="이메일" />
-                        <img src="/images/chat_1.png" alt="채팅" />
-                        <img src="/images/phone_1.png" alt="전화" />
-                        <img src="/images/sms_1.png" alt="문자" />
+            <div id="main-content">
+                <div className="container">
+                    {/* Header */}
+                    <div className="header">
+                        <div className="header-left">
+                            <span className="date-text">{dateStr}</span>
+                            <span className="time-text">{timeStr}</span>
+                        </div>
+                        <div className="header-right">
+                            <div className="user-info-box">{userDisplayText}</div>
+                        </div>
+                    </div>
+
+                    <div className="table-container">
+                        <div className="wrap2">
+                            <div className="cube-container">
+                                <div className="wrap1">
+                                    <div className="cube">
+                                        <img src="/images/mail_1.png" alt="이메일" />
+                                        <img src="/images/chat_1.png" alt="채팅" />
+                                        <img src="/images/phone_1.png" alt="전화" />
+                                        <img src="/images/sms_1.png" alt="문자" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="marquee-container">
+                                <div className="marquee">
+                                    <img src="/images/aa.gif" width="25" height="25" alt="" />
+                                    <img src="/images/dd.gif" width="25" height="25" alt="" />
+                                    <span className="custom-span">직지초35회 김천지부 동기연락망</span>
+                                    <img src="/images/dd.gif" width="25" height="25" alt="" />
+                                    <img src="/images/aa.gif" width="25" height="25" alt="" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <table className="custom-table">
+                            <thead>
+                                <tr>
+                                    <th className="col-no"><span>NO</span></th>
+                                    <th className="col-name"><span>이름</span></th>
+                                    <th className="col-tel"><span>전화번호</span></th>
+                                    <th className="col-addr address-header" onClick={handleToggleSecurity}>
+                                        <span className="addr-visible">거주지</span>
+                                    </th>
+                                    <th className="col-remark hide-mobile"><span>비고</span></th>
+                                    <th className="col-sms"><span>SMS</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {members.map((member, index) => (
+                                    <tr key={member._id}>
+                                        <td className="no_1">{index + 1}</td>
+                                        <td className="name_1">
+                                            <a href={`tel:${member.tel}`} className="name-link">
+                                                {member.name}
+                                            </a>
+                                        </td>
+                                        <td className="tel_1 member-tel-cell">
+                                            <a href={`tel:${member.tel}`} className="name-link">
+                                                {member.tel}
+                                            </a>
+                                        </td>
+                                        <td className="address_1">
+                                            {['회장', '총무'].some(role => member.remark?.includes(role)) ? (
+                                                <a
+                                                    href={`sms:${members
+                                                        .filter(m => m.tel && m.tel !== member.tel)
+                                                        .map(m => m.tel.replace(/-/g, ''))
+                                                        .join(',')}`}
+                                                    style={{ color: '#ffffff', textDecoration: 'none', cursor: 'pointer', fontWeight: 700 }}
+                                                    title="전체 회원에게 문자 보내기"
+                                                >
+                                                    {member.addr}
+                                                </a>
+                                            ) : (
+                                                member.addr
+                                            )}
+                                        </td>
+                                        <td className="remark_1 hide-mobile">{member.remark}</td>
+                                        <td className="sms_1">
+                                            <a href={`sms:${member.sms || member.tel}`}>
+                                                <img
+                                                    src="/images/sms-4.png"
+                                                    alt="SMS"
+                                                    className="max-small sms-icon"
+                                                />
+                                            </a>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-
-                <div className="billboard-container">
-                    <div className="billboard">
-                        <img src="/images/aa.gif" width="25" height="25" alt="" />
-                        <img src="/images/dd.gif" width="25" height="25" alt="" />
-                        <span className="custom-span">직지초35회 김천지부 동기연락망</span>
-                        <img src="/images/dd.gif" width="25" height="25" alt="" />
-                        <img src="/images/aa.gif" width="25" height="25" alt="" />
-                    </div>
-                </div>
-            </div>
-
-            {/* Table */}
-            <div className="table-container">
-                <table className="custom-table">
-                    <thead>
-                        <tr>
-                            <th className="col-no">NO</th>
-                            <th className="col-name">이름</th>
-                            <th className="col-tel">전화번호</th>
-                            <th className="col-addr address-header" onClick={handleToggleSecurity} style={{ color: '#cea71b' }}>
-                                <span className="addr-visible" style={{ color: '#cea71b' }}>거주지</span>
-                            </th>
-                            <th className="col-remark hide-mobile">비고</th>
-                            <th className="col-sms">SMS</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {members.map((member, index) => (
-                            <tr key={member._id}>
-                                <td>{index + 1}</td>
-                                <td>
-                                    <Link href={`tel:${member.tel}`} className="name-link" style={{ color: '#ffffff', textDecoration: 'none' }}>
-                                        {member.name}
-                                    </Link>
-                                </td>
-                                <td className="member-tel-cell">
-                                    <Link href={`tel:${member.tel}`} className="name-link" style={{ color: '#ffffff', textDecoration: 'none' }}>
-                                        {member.tel}
-                                    </Link>
-                                </td>
-                                <td>
-                                    {['회장', '총무'].some(role => member.remark?.includes(role)) ? (
-                                        <a
-                                            href={`sms:${members.filter(m => m.tel && m.tel !== member.tel).map(m => m.tel.replace(/-/g, '')).join(',')}`}
-                                            style={{ color: '#ffffff', textDecoration: 'none', cursor: 'pointer' }}
-                                            title="전체 회원에게 문자 보내기"
-                                        >
-                                            {member.addr}
-                                        </a>
-                                    ) : (
-                                        member.addr
-                                    )}
-                                </td>
-                                <td className="hide-mobile">{member.remark}</td>
-                                <td>
-                                    <Link href={`sms:${member.sms || member.tel}`}>
-                                        <img src="/images/sms-4.png" alt="SMS" className="sms-icon" style={{ width: '18px', height: '18px' }} />
-                                    </Link>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
 
             {/* Floating Action Button (Scroll to Top) */}
             <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 2000 }}>
@@ -406,6 +513,7 @@ export default function MembersViewPage() {
                 >
                     <i className="bi bi-arrow-up"></i>
                 </button>
+            </div>
             </div>
         </div>
     );
