@@ -322,7 +322,7 @@ export default function MembersViewPage() {
         /* [수동조절 위치] 첫 번째 데이터 행이 상단(sticky 헤더/전광판)에 가려질 때 아래 값을 조절하세요 */
         /* 예: 2px~12px 사이로 조절 */
         .custom-table tbody tr:first-child td {
-            padding-top: calc(0.44rem + 8px);
+            padding-top: calc(0.44rem + 12px);
         }
 
         .custom-table td {
