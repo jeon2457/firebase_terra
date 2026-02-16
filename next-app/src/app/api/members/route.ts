@@ -5,16 +5,24 @@ import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions);
     if (!session) return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
 
     try {
         await dbConnect();
-        const members = await User.find({ 
-            name: { $ne: '공용계정' },
-            tel: { $ne: '', $exists: true }
-        }).sort({ name: 1 });
+
+        const { searchParams } = new URL(req.url);
+        const includeSystem = searchParams.get("includeSystem") === "1";
+
+        const query = includeSystem
+            ? {}
+            : {
+                name: { $ne: '공용계정' },
+                tel: { $ne: '', $exists: true }
+            };
+
+        const members = await User.find(query).sort({ name: 1 });
         return NextResponse.json({ success: true, members: members });
     } catch (error) {
         return NextResponse.json({ success: false, message: "Server Error" }, { status: 500 });

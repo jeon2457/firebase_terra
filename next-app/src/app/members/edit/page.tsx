@@ -25,7 +25,7 @@ export default function MemberEditListPage() {
 
     const fetchMembers = async () => {
         try {
-            const res = await axios.get("/api/members");
+            const res = await axios.get("/api/members?includeSystem=1");
             if (res.data.success) {
                 setMembers(res.data.members);
             }
@@ -104,9 +104,11 @@ export default function MemberEditListPage() {
                                         />
                                     </td>
                                     <td>
-                                        {m.name === '공용계정' ? (
+                                        {m.name === '공용계정' || m.id === 'jikji35' ? (
                                             <span style={{ color: '#fd7e14', fontWeight: 'bold' }}>{m.name}</span>
-                                        ) : m.name}
+                                        ) : (
+                                            m.name
+                                        )}
                                     </td>
                                     <td>{m.tel}</td>
                                     <td>{m.addr}</td>
