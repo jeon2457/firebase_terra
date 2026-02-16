@@ -40,20 +40,16 @@ function MapViewContent() {
         const lat = searchParams.get('lat');
         const lng = searchParams.get('lng');
 
-        console.log('URL params:', { addr, lat, lng });
-
         if (addr && lat && lng) {
             const data = {
                 addr,
                 lat: parseFloat(lat),
                 lng: parseFloat(lng)
             };
-            console.log('Setting location data from URL:', data);
             setLocationData(data);
         } else {
             try {
                 const res = await axios.get('/api/map/save');
-                console.log('API response:', res.data);
                 if (res.data.success && res.data.location) {
                     setLocationData(res.data.location);
                 }
@@ -69,36 +65,28 @@ function MapViewContent() {
     };
 
     const handleKakaoLoad = () => {
-        console.log('Kakao script loaded');
         if (window.kakao && window.kakao.maps) {
             window.kakao.maps.load(() => {
-                console.log('Kakao maps loaded');
                 setKakaoLoaded(true);
             });
         }
     };
 
     useEffect(() => {
-        console.log('Effect triggered:', { kakaoLoaded, locationData, mapRef: mapRef.current });
         if (kakaoLoaded && locationData && !mapRef.current && mapContainerRef.current) {
-            console.log('Initializing map...');
             initializeMap();
         }
     }, [kakaoLoaded, locationData]);
 
     const initializeMap = () => {
         if (!kakaoLoaded || !window.kakao || !locationData) {
-            console.log('Cannot initialize map:', { kakaoLoaded, kakao: !!window.kakao, locationData });
             return;
         }
 
         const container = mapContainerRef.current;
         if (!container) {
-            console.log('Map container not found');
             return;
         }
-
-        console.log('Creating map with:', locationData);
 
         const options = {
             center: new window.kakao.maps.LatLng(locationData.lat, locationData.lng),
@@ -116,8 +104,6 @@ function MapViewContent() {
                 content: `<div style="width:150px;text-align:center;padding:6px 0;font-size:14px;">${locationData.addr}</div>`
             });
             infowindow.open(mapRef.current, markerRef.current);
-
-            console.log('Map initialized successfully');
         } catch (error) {
             console.error('Map initialization error:', error);
         }
@@ -131,8 +117,45 @@ function MapViewContent() {
 
     const openTmap = () => {
         if (!locationData) return;
-        const url = `tmap://route?goalname=${encodeURIComponent(locationData.addr)}&goalx=${locationData.lng}&goaly=${locationData.lat}`;
-        window.location.href = url;
+        
+        const tmapUrl = `tmap://route?goalname=${encodeURIComponent(locationData.addr)}&goalx=${locationData.lng}&goaly=${locationData.lat}`;
+        
+        // iframe으로 앱 실행 시도
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = tmapUrl;
+        document.body.appendChild(iframe);
+
+        // 2초 후 iframe 제거
+        setTimeout(() => {
+            if (document.body.contains(iframe)) {
+                document.body.removeChild(iframe);
+            }
+        }, 2000);
+
+        // 3초 후에도 페이지가 그대로면 앱이 없는 것으로 판단
+        setTimeout(() => {
+            if (document.visibilityState === 'visible') {
+                if (confirm('TMAP 앱이 설치되어 있지 않습니다.\n앱 스토어로 이동하시겠습니까?')) {
+                    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+                    
+                    if (isMobile) {
+                        if (isIOS) {
+                            window.open('https://apps.apple.com/kr/app/tmap/id431589174', '_blank');
+                        } else {
+                            window.open('https://play.google.com/store/apps/details?id=com.skt.tmap.ku', '_blank');
+                        }
+                    }
+                }
+            }
+        }, 3000);
+    };
+
+    const openNaverMap = () => {
+        if (!locationData) return;
+        const url = `https://map.naver.com/v5/search/${encodeURIComponent(locationData.addr)}`;
+        window.open(url, '_blank');
     };
 
     if (status === "loading") {
@@ -167,11 +190,41 @@ function MapViewContent() {
                         border-radius: 12px; 
                         border: none; 
                         cursor: pointer; 
-                        color: white; 
+                        color: white;
+                        transition: all 0.2s;
                     }
-                    .btn-kakao { background-color: #FEE500; color: #000; }
-                    .btn-tmap { background-color: #1E88E5; }
-                    .btn-notice { background-color: #FF6F00; }
+                    .btn-nav:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                    }
+                    .btn-nav:active {
+                        transform: translateY(0);
+                    }
+                    .btn-kakao { 
+                        background-color: #FEE500; 
+                        color: #000; 
+                    }
+                    .btn-kakao:hover {
+                        background-color: #FFD700;
+                    }
+                    .btn-tmap { 
+                        background-color: #1E88E5; 
+                    }
+                    .btn-tmap:hover {
+                        background-color: #1565C0;
+                    }
+                    .btn-naver { 
+                        background-color: #2DB400; 
+                    }
+                    .btn-naver:hover {
+                        background-color: #259600;
+                    }
+                    .btn-notice { 
+                        background-color: #FF6F00; 
+                    }
+                    .btn-notice:hover {
+                        background-color: #E65100;
+                    }
                     .modal-overlay { 
                         position: fixed; 
                         inset: 0; 
@@ -186,7 +239,9 @@ function MapViewContent() {
                         padding: 30px; 
                         border-radius: 15px; 
                         max-width: 500px; 
-                        width: 90%; 
+                        width: 90%;
+                        max-height: 80vh;
+                        overflow-y: auto;
                     }
                 `}</style>
 
@@ -196,8 +251,8 @@ function MapViewContent() {
 
                 {locationData ? (
                     <>
-                        <div style={{ background: 'white', padding: '15px', borderRadius: '12px', marginBottom: '15px' }}>
-                            <h4>📍 {locationData.addr}</h4>
+                        <div style={{ background: 'white', padding: '15px', borderRadius: '12px', marginBottom: '15px', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
+                            <h4 style={{ margin: '0 0 10px 0', color: '#333' }}>📍 {locationData.addr}</h4>
                             <small style={{ color: '#666' }}>
                                 좌표: {locationData.lat.toFixed(6)}, {locationData.lng.toFixed(6)}
                             </small>
@@ -211,16 +266,21 @@ function MapViewContent() {
                                 height: '400px', 
                                 borderRadius: '15px', 
                                 marginBottom: '20px',
-                                background: '#e9ecef'
+                                background: '#e9ecef',
+                                boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
                             }}
                         />
 
                         <button className="btn-nav btn-kakao" onClick={openKakaoMap}>
-                            카카오맵으로 보기
+                            🗺️ 카카오맵으로 보기
                         </button>
 
                         <button className="btn-nav btn-tmap" onClick={openTmap}>
-                            TMAP 실행
+                            📍 TMAP 실행
+                        </button>
+
+                        <button className="btn-nav btn-naver" onClick={openNaverMap}>
+                            🧭 네이버지도로 보기
                         </button>
 
                         {noticeText && (
@@ -229,15 +289,25 @@ function MapViewContent() {
                             </button>
                         )}
 
-                        <button className="btn-nav" style={{ backgroundColor: '#6c757d' }} onClick={() => router.push('/dashboard')}>
+                        <button 
+                            className="btn-nav" 
+                            style={{ backgroundColor: '#6c757d' }} 
+                            onClick={() => router.push('/dashboard')}
+                        >
                             ⏪ 돌아가기
                         </button>
                     </>
                 ) : (
-                    <div className="text-center mt-5">
-                        <p>저장된 지도 정보가 없습니다.</p>
-                        <button className="btn btn-primary" onClick={() => router.push('/map/create')}>
-                            지도 만들기
+                    <div className="text-center mt-5" style={{ padding: '40px', background: 'white', borderRadius: '15px' }}>
+                        <p style={{ fontSize: '18px', color: '#666', marginBottom: '20px' }}>
+                            저장된 지도 정보가 없습니다.
+                        </p>
+                        <button 
+                            className="btn btn-primary btn-lg" 
+                            onClick={() => router.push('/map/create')}
+                            style={{ padding: '12px 30px', fontSize: '16px' }}
+                        >
+                            📍 지도 만들기
                         </button>
                     </div>
                 )}
@@ -245,11 +315,26 @@ function MapViewContent() {
                 {showModal && (
                     <div className="modal-overlay" onClick={() => setShowModal(false)}>
                         <div className="modal-content" onClick={e => e.stopPropagation()}>
-                            <h4>📢 모임 안내</h4>
-                            <pre style={{ whiteSpace: 'pre-wrap', fontSize: '14px', lineHeight: '1.6' }}>
+                            <h4 style={{ marginBottom: '20px', color: '#FF6F00', fontWeight: 'bold' }}>
+                                📢 모임 안내
+                            </h4>
+                            <pre style={{ 
+                                whiteSpace: 'pre-wrap', 
+                                fontSize: '14px', 
+                                lineHeight: '1.8',
+                                background: '#f8f9fa',
+                                padding: '15px',
+                                borderRadius: '8px',
+                                border: '1px solid #e0e0e0',
+                                margin: '0 0 20px 0'
+                            }}>
                                 {noticeText}
                             </pre>
-                            <button className="btn btn-secondary w-100 mt-3" onClick={() => setShowModal(false)}>
+                            <button 
+                                className="btn btn-secondary w-100" 
+                                style={{ padding: '12px', fontSize: '16px', fontWeight: 'bold' }}
+                                onClick={() => setShowModal(false)}
+                            >
                                 닫기
                             </button>
                         </div>
