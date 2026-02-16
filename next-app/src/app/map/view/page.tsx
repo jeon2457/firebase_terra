@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, useRef, Suspense } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
-import Script from "next/script";
 
 declare global {
     interface Window {
@@ -28,7 +27,45 @@ function MapViewContent() {
     const mapRef = useRef<any>(null);
     const markerRef = useRef<any>(null);
     const mapContainerRef = useRef<HTMLDivElement>(null);
-    const initAttemptRef = useRef(0);
+    const scriptLoadedRef = useRef(false);
+
+    // 카카오 맵 스크립트 로드
+    useEffect(() => {
+        if (scriptLoadedRef.current) return;
+
+        const loadKakaoScript = () => {
+            // 이미 로드되어 있는지 확인
+            if (window.kakao && window.kakao.maps) {
+                console.log('Kakao maps already loaded');
+                window.kakao.maps.load(() => {
+                    setKakaoLoaded(true);
+                    scriptLoadedRef.current = true;
+                });
+                return;
+            }
+
+            // 스크립트 동적 로드
+            const script = document.createElement('script');
+            script.src = '//dapi.kakao.com/v2/maps/sdk.js?appkey=3409644aa1cb50eb41430562f5df97d2&libraries=services&autoload=false';
+            script.async = true;
+            script.onload = () => {
+                console.log('Kakao script loaded');
+                if (window.kakao && window.kakao.maps) {
+                    window.kakao.maps.load(() => {
+                        console.log('Kakao maps API ready');
+                        setKakaoLoaded(true);
+                        scriptLoadedRef.current = true;
+                    });
+                }
+            };
+            script.onerror = () => {
+                console.error('Failed to load Kakao maps script');
+            };
+            document.head.appendChild(script);
+        };
+
+        loadKakaoScript();
+    }, []);
 
     useEffect(() => {
         if (status === "unauthenticated") {
@@ -76,16 +113,6 @@ function MapViewContent() {
         }
     };
 
-    const handleKakaoLoad = () => {
-        console.log('Kakao script loaded');
-        if (window.kakao && window.kakao.maps) {
-            window.kakao.maps.load(() => {
-                console.log('Kakao maps API ready');
-                setKakaoLoaded(true);
-            });
-        }
-    };
-
     useEffect(() => {
         console.log('Init effect triggered:', { 
             kakaoLoaded, 
@@ -96,13 +123,12 @@ function MapViewContent() {
         });
 
         if (kakaoLoaded && locationData && !mapInitialized && !isLoading && mapContainerRef.current) {
-            initAttemptRef.current += 1;
-            console.log(`Attempting to initialize map (attempt ${initAttemptRef.current})...`);
+            console.log('Initializing map...');
             
             // 약간의 지연을 주어 DOM이 완전히 준비되도록 함
             const timer = setTimeout(() => {
                 initializeMap();
-            }, 100);
+            }, 200);
 
             return () => clearTimeout(timer);
         }
@@ -126,7 +152,7 @@ function MapViewContent() {
         }
 
         const container = mapContainerRef.current;
-        console.log('Initializing map with:', locationData);
+        console.log('Creating map with:', locationData);
 
         try {
             const options = {
@@ -210,210 +236,204 @@ function MapViewContent() {
     }
 
     return (
-        <>
-            <Script
-                src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3409644aa1cb50eb41430562f5df97d2&libraries=services&autoload=false"
-                strategy="afterInteractive"
-                onLoad={handleKakaoLoad}
-            />
+        <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', background: '#f0f2f5', minHeight: '100vh' }}>
+            <style jsx>{`
+                #map { 
+                    width: 100%; 
+                    height: 400px; 
+                    border-radius: 15px; 
+                    margin-bottom: 20px;
+                    background: #e9ecef;
+                }
+                .btn-nav { 
+                    display: block; 
+                    width: 100%; 
+                    max-width: 350px; 
+                    margin: 15px auto; 
+                    padding: 16px; 
+                    font-size: 18px; 
+                    font-weight: bold; 
+                    border-radius: 12px; 
+                    border: none; 
+                    cursor: pointer; 
+                    color: white;
+                    transition: all 0.2s;
+                }
+                .btn-nav:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                }
+                .btn-nav:active {
+                    transform: translateY(0);
+                }
+                .btn-kakao { 
+                    background-color: #FEE500; 
+                    color: #000; 
+                }
+                .btn-kakao:hover {
+                    background-color: #FFD700;
+                }
+                .btn-tmap { 
+                    background-color: #1E88E5; 
+                }
+                .btn-tmap:hover {
+                    background-color: #1565C0;
+                }
+                .btn-naver { 
+                    background-color: #2DB400; 
+                }
+                .btn-naver:hover {
+                    background-color: #259600;
+                }
+                .btn-notice { 
+                    background-color: #FF6F00; 
+                }
+                .btn-notice:hover {
+                    background-color: #E65100;
+                }
+                .modal-overlay { 
+                    position: fixed; 
+                    inset: 0; 
+                    background: rgba(0,0,0,0.5); 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    z-index: 1000; 
+                }
+                .modal-content { 
+                    background: white; 
+                    padding: 30px; 
+                    border-radius: 15px; 
+                    max-width: 500px; 
+                    width: 90%;
+                    max-height: 80vh;
+                    overflow-y: auto;
+                }
+                .loading-overlay {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(255,255,255,0.9);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 15px;
+                    z-index: 10;
+                }
+            `}</style>
 
-            <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', background: '#f0f2f5', minHeight: '100vh' }}>
-                <style jsx>{`
-                    #map { 
-                        width: 100%; 
-                        height: 400px; 
-                        border-radius: 15px; 
-                        margin-bottom: 20px;
-                        background: #e9ecef;
-                    }
-                    .btn-nav { 
-                        display: block; 
-                        width: 100%; 
-                        max-width: 350px; 
-                        margin: 15px auto; 
-                        padding: 16px; 
-                        font-size: 18px; 
-                        font-weight: bold; 
-                        border-radius: 12px; 
-                        border: none; 
-                        cursor: pointer; 
-                        color: white;
-                        transition: all 0.2s;
-                    }
-                    .btn-nav:hover {
-                        transform: translateY(-2px);
-                        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-                    }
-                    .btn-nav:active {
-                        transform: translateY(0);
-                    }
-                    .btn-kakao { 
-                        background-color: #FEE500; 
-                        color: #000; 
-                    }
-                    .btn-kakao:hover {
-                        background-color: #FFD700;
-                    }
-                    .btn-tmap { 
-                        background-color: #1E88E5; 
-                    }
-                    .btn-tmap:hover {
-                        background-color: #1565C0;
-                    }
-                    .btn-naver { 
-                        background-color: #2DB400; 
-                    }
-                    .btn-naver:hover {
-                        background-color: #259600;
-                    }
-                    .btn-notice { 
-                        background-color: #FF6F00; 
-                    }
-                    .btn-notice:hover {
-                        background-color: #E65100;
-                    }
-                    .modal-overlay { 
-                        position: fixed; 
-                        inset: 0; 
-                        background: rgba(0,0,0,0.5); 
-                        display: flex; 
-                        align-items: center; 
-                        justify-content: center; 
-                        z-index: 1000; 
-                    }
-                    .modal-content { 
-                        background: white; 
-                        padding: 30px; 
-                        border-radius: 15px; 
-                        max-width: 500px; 
-                        width: 90%;
-                        max-height: 80vh;
-                        overflow-y: auto;
-                    }
-                    .loading-overlay {
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        bottom: 0;
-                        background: rgba(255,255,255,0.9);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        border-radius: 15px;
-                        z-index: 10;
-                    }
-                `}</style>
+            <h2 style={{ textAlign: 'center', marginBottom: '15px', color: '#2c3e50' }}>
+                🗺️ 지도 보기
+            </h2>
 
-                <h2 style={{ textAlign: 'center', marginBottom: '15px', color: '#2c3e50' }}>
-                    🗺️ 지도 보기
-                </h2>
+            {locationData ? (
+                <>
+                    <div style={{ background: 'white', padding: '15px', borderRadius: '12px', marginBottom: '15px', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
+                        <h4 style={{ margin: '0 0 10px 0', color: '#333' }}>📍 {locationData.addr}</h4>
+                        <small style={{ color: '#666' }}>
+                            좌표: {locationData.lat.toFixed(6)}, {locationData.lng.toFixed(6)}
+                        </small>
+                    </div>
 
-                {locationData ? (
-                    <>
-                        <div style={{ background: 'white', padding: '15px', borderRadius: '12px', marginBottom: '15px', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
-                            <h4 style={{ margin: '0 0 10px 0', color: '#333' }}>📍 {locationData.addr}</h4>
-                            <small style={{ color: '#666' }}>
-                                좌표: {locationData.lat.toFixed(6)}, {locationData.lng.toFixed(6)}
-                            </small>
-                        </div>
-
-                        <div style={{ position: 'relative' }}>
-                            <div 
-                                id="map" 
-                                ref={mapContainerRef}
-                                style={{ 
-                                    width: '100%', 
-                                    height: '400px', 
-                                    borderRadius: '15px', 
-                                    marginBottom: '20px',
-                                    background: '#e9ecef',
-                                    boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
-                                }}
-                            />
-                            {!mapInitialized && kakaoLoaded && (
-                                <div className="loading-overlay">
-                                    <div className="text-center">
-                                        <div className="spinner-border text-primary" role="status">
-                                            <span className="visually-hidden">Loading...</span>
-                                        </div>
-                                        <p className="mt-2 text-muted">지도를 불러오는 중...</p>
+                    <div style={{ position: 'relative' }}>
+                        <div 
+                            id="map" 
+                            ref={mapContainerRef}
+                            style={{ 
+                                width: '100%', 
+                                height: '400px', 
+                                borderRadius: '15px', 
+                                marginBottom: '20px',
+                                background: '#e9ecef',
+                                boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
+                            }}
+                        />
+                        {(!mapInitialized || !kakaoLoaded) && (
+                            <div className="loading-overlay">
+                                <div className="text-center">
+                                    <div className="spinner-border text-primary" role="status">
+                                        <span className="visually-hidden">Loading...</span>
                                     </div>
+                                    <p className="mt-2 text-muted">
+                                        {!kakaoLoaded ? '카카오맵 로딩 중...' : '지도를 불러오는 중...'}
+                                    </p>
                                 </div>
-                            )}
-                        </div>
-
-                        <button className="btn-nav btn-kakao" onClick={openKakaoMap}>
-                            🗺️ 카카오맵으로 보기
-                        </button>
-
-                        <button className="btn-nav btn-tmap" onClick={openTmap}>
-                            📍 TMAP 실행
-                        </button>
-
-                        <button className="btn-nav btn-naver" onClick={openNaverMap}>
-                            🧭 네이버지도로 보기
-                        </button>
-
-                        {noticeText && (
-                            <button className="btn-nav btn-notice" onClick={() => setShowModal(true)}>
-                                📢 안내사항 보기
-                            </button>
+                            </div>
                         )}
+                    </div>
 
-                        <button 
-                            className="btn-nav" 
-                            style={{ backgroundColor: '#6c757d' }} 
-                            onClick={() => router.push('/dashboard')}
-                        >
-                            ⏪ 돌아가기
+                    <button className="btn-nav btn-kakao" onClick={openKakaoMap}>
+                        🗺️ 카카오맵으로 보기
+                    </button>
+
+                    <button className="btn-nav btn-tmap" onClick={openTmap}>
+                        📍 TMAP 실행
+                    </button>
+
+                    <button className="btn-nav btn-naver" onClick={openNaverMap}>
+                        🧭 네이버지도로 보기
+                    </button>
+
+                    {noticeText && (
+                        <button className="btn-nav btn-notice" onClick={() => setShowModal(true)}>
+                            📢 안내사항 보기
                         </button>
-                    </>
-                ) : (
-                    <div className="text-center mt-5" style={{ padding: '40px', background: 'white', borderRadius: '15px' }}>
-                        <p style={{ fontSize: '18px', color: '#666', marginBottom: '20px' }}>
-                            저장된 지도 정보가 없습니다.
-                        </p>
+                    )}
+
+                    <button 
+                        className="btn-nav" 
+                        style={{ backgroundColor: '#6c757d' }} 
+                        onClick={() => router.push('/dashboard')}
+                    >
+                        ⏪ 돌아가기
+                    </button>
+                </>
+            ) : (
+                <div className="text-center mt-5" style={{ padding: '40px', background: 'white', borderRadius: '15px' }}>
+                    <p style={{ fontSize: '18px', color: '#666', marginBottom: '20px' }}>
+                        저장된 지도 정보가 없습니다.
+                    </p>
+                    <button 
+                        className="btn btn-primary btn-lg" 
+                        onClick={() => router.push('/map/create')}
+                        style={{ padding: '12px 30px', fontSize: '16px' }}
+                    >
+                        📍 지도 만들기
+                    </button>
+                </div>
+            )}
+
+            {showModal && (
+                <div className="modal-overlay" onClick={() => setShowModal(false)}>
+                    <div className="modal-content" onClick={e => e.stopPropagation()}>
+                        <h4 style={{ marginBottom: '20px', color: '#FF6F00', fontWeight: 'bold' }}>
+                            📢 모임 안내
+                        </h4>
+                        <pre style={{ 
+                            whiteSpace: 'pre-wrap', 
+                            fontSize: '14px', 
+                            lineHeight: '1.8',
+                            background: '#f8f9fa',
+                            padding: '15px',
+                            borderRadius: '8px',
+                            border: '1px solid #e0e0e0',
+                            margin: '0 0 20px 0'
+                        }}>
+                            {noticeText}
+                        </pre>
                         <button 
-                            className="btn btn-primary btn-lg" 
-                            onClick={() => router.push('/map/create')}
-                            style={{ padding: '12px 30px', fontSize: '16px' }}
+                            className="btn btn-secondary w-100" 
+                            style={{ padding: '12px', fontSize: '16px', fontWeight: 'bold' }}
+                            onClick={() => setShowModal(false)}
                         >
-                            📍 지도 만들기
+                            닫기
                         </button>
                     </div>
-                )}
-
-                {showModal && (
-                    <div className="modal-overlay" onClick={() => setShowModal(false)}>
-                        <div className="modal-content" onClick={e => e.stopPropagation()}>
-                            <h4 style={{ marginBottom: '20px', color: '#FF6F00', fontWeight: 'bold' }}>
-                                📢 모임 안내
-                            </h4>
-                            <pre style={{ 
-                                whiteSpace: 'pre-wrap', 
-                                fontSize: '14px', 
-                                lineHeight: '1.8',
-                                background: '#f8f9fa',
-                                padding: '15px',
-                                borderRadius: '8px',
-                                border: '1px solid #e0e0e0',
-                                margin: '0 0 20px 0'
-                            }}>
-                                {noticeText}
-                            </pre>
-                            <button 
-                                className="btn btn-secondary w-100" 
-                                style={{ padding: '12px', fontSize: '16px', fontWeight: 'bold' }}
-                                onClick={() => setShowModal(false)}
-                            >
-                                닫기
-                            </button>
-                        </div>
-                    </div>
-                )}
-            </div>
-        </>
+                </div>
+            )}
+        </div>
     );
 }
 
