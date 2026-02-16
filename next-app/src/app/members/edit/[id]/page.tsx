@@ -119,19 +119,19 @@ export default function MemberEditFormPage() {
             <style jsx>{`
         :root {
           --panel-bg: #e6ebf2;
-          --panel-border: rgba(255, 255, 255, 0.35);
+          --panel-border: rgba(255, 255, 255, 0.6);
           --title: #6c8cff;
           --label: #3b3f45;
           --muted: #7b8794;
           --shadow-strong: rgba(0, 0, 0, 0.25);
           --shadow-soft: rgba(0, 0, 0, 0.12);
+          --primary: #5f7cf5;
         }
 
         .page-wrap {
           min-height: 100vh;
-          padding: 36px 16px;
-          background: radial-gradient(1200px 900px at 50% 10%, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0) 55%),
-            linear-gradient(180deg, #6a2be6 0%, #7330d8 40%, #5a24c6 100%);
+          padding: 24px 14px;
+          background: linear-gradient(180deg, #eff3f8 0%, #e2e8f0 100%);
           display: flex;
           justify-content: center;
           align-items: flex-start;
@@ -139,21 +139,40 @@ export default function MemberEditFormPage() {
 
         .panel {
           width: 100%;
-          max-width: 640px;
+          max-width: 520px;
           background: var(--panel-bg);
           border-radius: 28px;
-          padding: 28px 26px 30px;
+          padding: 22px 22px 26px;
           border: 1px solid var(--panel-border);
-          box-shadow: 0 28px 70px var(--shadow-strong);
+          box-shadow: 0 26px 60px var(--shadow-strong);
+        }
+
+        .header-box {
+          border-radius: 20px;
+          padding: 18px 16px;
+          text-align: center;
+          background: #e9eef5;
+          box-shadow: inset 6px 6px 14px rgba(0,0,0,0.10), inset -6px -6px 14px rgba(255,255,255,0.80);
+          margin-bottom: 18px;
         }
 
         .section-title {
-          text-align: center;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
           color: var(--title);
           font-weight: 900;
-          margin-bottom: 22px;
-          font-size: 2rem;
+          margin: 0;
+          font-size: 1.7rem;
           letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+          margin-top: 8px;
+          font-weight: 900;
+          color: #e74c3c;
+          font-size: 0.9rem;
         }
 
         .label-text {
@@ -205,61 +224,62 @@ export default function MemberEditFormPage() {
           color: #7a7a7a;
         }
 
-        .btn-row {
-          display: flex;
-          justify-content: center;
-          gap: 12px;
-          margin-top: 22px;
-          flex-wrap: wrap;
+        .btn-primary-wide {
+          width: 100%;
+          border: none;
+          border-radius: 16px;
+          padding: 14px 16px;
+          font-weight: 900;
+          font-size: 18px;
+          color: #ffffff;
+          background: #637fed;
+          box-shadow: 0 14px 28px rgba(99, 127, 237, 0.35), 0 8px 18px var(--shadow-soft);
         }
 
-        .btn-soft {
-          min-width: 140px;
-          padding: 12px 18px;
-          border-radius: 14px;
+        .btn-primary-wide:active {
+          transform: scale(0.99);
+          box-shadow:
+            inset 4px 4px 10px rgba(0,0,0,0.18),
+            inset -4px -4px 10px rgba(255,255,255,0.22);
+        }
+
+        .btn-secondary-wide {
+          width: 100%;
           border: none;
+          border-radius: 16px;
+          padding: 14px 16px;
           font-weight: 900;
           font-size: 16px;
+          color: #6b7280;
+          background: #e9eef5;
           box-shadow: 0 10px 22px var(--shadow-soft);
         }
 
-        .btn-save {
-          background: #d9e6ff;
-          color: #4c74ff;
+        .btn-secondary-wide:active {
+          transform: scale(0.99);
+          box-shadow:
+            inset 6px 6px 14px rgba(0,0,0,0.12),
+            inset -6px -6px 14px rgba(255,255,255,0.85);
         }
 
-        .btn-cancel {
-          background: #e9eef5;
-          color: #2f3640;
-        }
-
-        .btn-list {
-          margin: 18px auto 0;
+        .btn-stack {
+          margin-top: 18px;
           display: flex;
-          justify-content: center;
-        }
-
-        .btn-list a {
-          width: 220px;
-          text-align: center;
-          padding: 12px 18px;
-          border-radius: 14px;
-          background: #e9eef5;
-          color: #4c74ff;
-          font-weight: 900;
-          box-shadow: 0 10px 22px var(--shadow-soft);
+          flex-direction: column;
+          gap: 12px;
         }
 
         @media (max-width: 480px) {
-          .page-wrap { padding: 16px 10px; }
-          .panel { border-radius: 18px; padding: 18px 16px 20px; }
-          .section-title { font-size: 1.7rem; margin-bottom: 16px; }
-          .btn-soft { min-width: 128px; }
-          .btn-list a { width: 100%; }
+          .page-wrap { padding: 12px 10px; }
+          .panel { border-radius: 18px; padding: 16px 14px 18px; }
+          .section-title { font-size: 1.5rem; }
         }
       `}</style>
             <div className="panel">
-                <h2 className="section-title">회원 정보 수정</h2>
+                <div className="header-box">
+                    <h2 className="section-title">회원 정보 수정</h2>
+                    <div className="subtitle">※ 관리자 전용 권한 시스템!</div>
+                </div>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label className="label-text asterisk">아이디</label>
@@ -326,13 +346,10 @@ export default function MemberEditFormPage() {
                         </select>
                     </div>
 
-                    <div className="btn-row">
-                        <button type="submit" className="btn-soft btn-save">정보 저장</button>
-                        <button type="button" className="btn-soft btn-cancel" onClick={() => router.push("/members/edit")}>취소</button>
-                    </div>
-
-                    <div className="btn-list">
-                        <Link href="/members/edit" className="text-decoration-none">◀◀ 회원목록으로</Link>
+                    <div className="btn-stack">
+                        <button type="submit" className="btn-primary-wide">정보 저장</button>
+                        <button type="button" className="btn-secondary-wide" onClick={() => router.push("/members/edit")}>취소</button>
+                        <Link href="/members/edit" className="btn-secondary-wide text-decoration-none d-flex align-items-center justify-content-center">◀◀ 회원목록으로</Link>
                     </div>
                 </form>
             </div>
