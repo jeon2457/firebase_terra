@@ -322,7 +322,7 @@ export default function MembersViewPage() {
             border: 1px solid #eedca6 !important;
             text-align: center;
             vertical-align: middle;
-            padding: 0.28rem 0;
+            padding: 0.44rem 0;
             word-break: break-word;
             line-height: 1.1;
         }
@@ -375,28 +375,28 @@ export default function MembersViewPage() {
             .cube img:nth-child(4) { transform: rotateX(270deg) translateZ(11px); }
 
             .custom-table thead th { font-size: 0.7em; color: #f0c420; }
-            .custom-table td { font-size: 12px; padding: 0.22rem 0; }
+            .custom-table td { font-size: 12px; padding: 0.32rem 0; }
 
             .custom-span { font-size: 14px; margin: 0 10px; line-height: 30px; }
             
             /* Column Widths Mobile */
-            .col-no { width: 30px; }
-            .col-name { width: 70px; }
-            .col-tel { width: auto; }
-            .col-addr { width: 50px; }
+            .col-no { width: 6%; }
+            .col-name { width: 22%; }
+            .col-tel { width: 47%; }
+            .col-addr { width: 17%; }
             .col-remark { display: none; } /* Hide remark on mobile */
-            .col-sms { width: 40px; }
+            .col-sms { width: 12%; }
             .hide-mobile { display: none; }
         }
 
         /* PC Column Widths */
         @media (min-width: 769px) {
-             .col-no { width: 5%; }
-             .col-name { width: 15%; }
-             .col-tel { width: 20%; white-space: nowrap; }
-             .col-addr { width: 30%; }
-             .col-remark { width: 10%; }
-             .col-sms { width: 10%; }
+             .col-no { width: 1.56rem; }
+             .col-name { width: 6rem; }
+             .col-tel { width: 10.5rem; white-space: nowrap; }
+             .col-addr { width: 2.8rem; }
+             .col-remark { width: 3.75rem; }
+             .col-sms { width: 3.75rem; }
         }
 
         /* Phone cell specific style to prevent wrapping and ensure consistency */
