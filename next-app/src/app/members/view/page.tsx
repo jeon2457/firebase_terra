@@ -307,6 +307,10 @@ export default function MembersViewPage() {
             font-weight: bold;
             border-bottom: 1px solid #444;
             border: 1px solid #eedca6 !important;
+            text-align: center;
+            vertical-align: middle;
+            padding: 0;
+            font-size: 0.9em;
         }
         .custom-table tbody tr {
             background-color: transparent;
@@ -318,8 +322,9 @@ export default function MembersViewPage() {
             border: 1px solid #eedca6 !important;
             text-align: center;
             vertical-align: middle;
-            padding: 0.6rem 0;
+            padding: 0.28rem 0;
             word-break: break-word;
+            line-height: 1.1;
         }
         .name-link {
              font-size: 1.1rem; font-weight: 600; color: #ffffff !important; text-decoration: none !important;
@@ -328,6 +333,11 @@ export default function MembersViewPage() {
         
         .sms-icon { cursor: pointer; transition: transform 0.2s; }
         .sms-icon:hover { transform: scale(1.15); }
+
+        .max-small {
+            width: 1.15rem;
+            height: 1.15rem;
+        }
 
         /* Address Toggle Logic */
         .address-header { cursor: pointer; color: #cea71b !important; }
@@ -365,7 +375,7 @@ export default function MembersViewPage() {
             .cube img:nth-child(4) { transform: rotateX(270deg) translateZ(11px); }
 
             .custom-table thead th { font-size: 0.7em; color: #f0c420; }
-            .custom-table td { font-size: 12px; }
+            .custom-table td { font-size: 12px; padding: 0.22rem 0; }
 
             .custom-span { font-size: 14px; margin: 0 10px; line-height: 30px; }
             
