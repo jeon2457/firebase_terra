@@ -431,7 +431,6 @@ ${wedInfo}${contact}`;
                 )}
 
                 <div style={{ marginTop: '30px', textAlign: 'center' }}>
-
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '20px' }}>
                         <button
                             className="btn"
@@ -446,9 +445,9 @@ ${wedInfo}${contact}`;
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 gap: '8px',
-                                cursor: 'not-implemented'
+                                cursor: 'pointer'
                             }}
-                            onClick={() => alert('이 기능은 추후 구현 예정입니다.')}
+                            onClick={() => router.push('/obituary-sms')}
                         >
                             <span style={{ fontSize: '24px' }}>🌼</span>
                             <span>부고장 문자로보내기</span>
@@ -503,6 +502,7 @@ ${wedInfo}${contact}`;
                         ⏪ 돌아가기
                     </button>
                 </div>
+
             </div>
 
             {scrollToTopVisible && (
