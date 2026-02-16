@@ -115,65 +115,225 @@ export default function MemberEditFormPage() {
     if (status === "loading" || loading) return <div className="text-center mt-5">Loading...</div>;
 
     return (
-        <div className="container py-5" style={{ maxWidth: "650px" }}>
+        <div className="page-wrap">
             <style jsx>{`
-        :root { --bg: #e0e5ec; --shadow: #a3b1c6; --light: #ffffff; --primary: #ffc107; }
-        .neumorphic-container {
-          background: var(--bg);
-          border-radius: 30px;
-          padding: 40px;
-          box-shadow: 15px 15px 30px var(--shadow), -15px -15px 30px var(--light);
+        :root {
+          --panel-bg: #e6ebf2;
+          --panel-border: rgba(255, 255, 255, 0.35);
+          --title: #6c8cff;
+          --label: #3b3f45;
+          --muted: #7b8794;
+          --shadow-strong: rgba(0, 0, 0, 0.25);
+          --shadow-soft: rgba(0, 0, 0, 0.12);
         }
+
+        .page-wrap {
+          min-height: 100vh;
+          padding: 36px 16px;
+          background: radial-gradient(1200px 900px at 50% 10%, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0) 55%),
+            linear-gradient(180deg, #6a2be6 0%, #7330d8 40%, #5a24c6 100%);
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+        }
+
+        .panel {
+          width: 100%;
+          max-width: 640px;
+          background: var(--panel-bg);
+          border-radius: 28px;
+          padding: 28px 26px 30px;
+          border: 1px solid var(--panel-border);
+          box-shadow: 0 28px 70px var(--shadow-strong);
+        }
+
         .section-title {
           text-align: center;
-          color: #d39e00;
-          font-weight: 700;
-          margin-bottom: 40px;
-          padding: 15px;
-          background: var(--bg);
-          border-radius: 20px;
-          box-shadow: inset 6px 6px 12px var(--shadow), inset -6px -6px 12px var(--light);
-          font-size: 1.6rem;
+          color: var(--title);
+          font-weight: 900;
+          margin-bottom: 22px;
+          font-size: 2rem;
+          letter-spacing: -0.5px;
         }
+
+        .label-text {
+          font-weight: 800;
+          color: var(--label);
+          margin-bottom: 8px;
+          display: block;
+          font-size: 0.95rem;
+        }
+
+        .help-text {
+          color: var(--muted);
+          font-size: 0.85rem;
+          margin-top: 8px;
+          margin-left: 2px;
+        }
+
+        .asterisk::after { content: " *"; color: #e74c3c; }
+
         .form-control, .form-select {
           border: none;
-          padding: 15px 20px;
-          font-size: 17px;
-          border-radius: 15px;
-          background: var(--bg);
-          box-shadow: 6px 6px 12px var(--shadow), -6px -6px 12px var(--light);
-          margin-bottom: 5px;
+          padding: 14px 16px;
+          font-size: 16px;
+          border-radius: 14px;
+          background: #eef3f9;
+          box-shadow: inset 4px 4px 10px rgba(0,0,0,0.10), inset -4px -4px 10px rgba(255,255,255,0.80);
         }
+
+        .form-control:disabled {
+          opacity: 1;
+          color: #2f3640;
+          background: #eef3f9;
+        }
+
         .form-control:focus, .form-select:focus {
-          box-shadow: inset 5px 5px 10px var(--shadow), inset -5px -5px 10px var(--light);
           outline: none;
-          color: #d39e00;
+          box-shadow: inset 6px 6px 12px rgba(0,0,0,0.12), inset -6px -6px 12px rgba(255,255,255,0.85);
         }
-        .label-text { font-weight: bold; color: #555; margin-left: 10px; margin-bottom: 8px; display: block; }
-        .asterisk::after { content: " *"; color: #e74c3c; }
-        .info-badge { font-size: 0.8rem; margin-left: 8px; border-radius: 10px; padding: 5px 10px; background-color: #ffc107; color: #333; box-shadow: 2px 2px 5px var(--shadow), -2px -2px 5px var(--light); }
-        .btn-main { padding: 15px 40px; border: none; border-radius: 20px; font-size: 20px; font-weight: bold; transition: all 0.2s; box-shadow: 6px 6px 12px var(--shadow), -6px -6px 12px var(--light); }
-        .btn-main:active { box-shadow: inset 6px 6px 12px var(--shadow), inset -6px -6px 12px var(--light); transform: scale(0.98); }
-        .auto-generated { background-color: var(--bg); box-shadow: inset 4px 4px 8px var(--shadow), inset -4px -4px 8px var(--light); cursor: not-allowed; color: #888; }
+
+        .divider {
+          height: 1px;
+          background: rgba(0,0,0,0.08);
+          border: none;
+          margin: 22px 0;
+        }
+
+        .auto-generated {
+          cursor: not-allowed;
+          color: #7a7a7a;
+        }
+
+        .btn-row {
+          display: flex;
+          justify-content: center;
+          gap: 12px;
+          margin-top: 22px;
+          flex-wrap: wrap;
+        }
+
+        .btn-soft {
+          min-width: 140px;
+          padding: 12px 18px;
+          border-radius: 14px;
+          border: none;
+          font-weight: 900;
+          font-size: 16px;
+          box-shadow: 0 10px 22px var(--shadow-soft);
+        }
+
+        .btn-save {
+          background: #d9e6ff;
+          color: #4c74ff;
+        }
+
+        .btn-cancel {
+          background: #e9eef5;
+          color: #2f3640;
+        }
+
+        .btn-list {
+          margin: 18px auto 0;
+          display: flex;
+          justify-content: center;
+        }
+
+        .btn-list a {
+          width: 220px;
+          text-align: center;
+          padding: 12px 18px;
+          border-radius: 14px;
+          background: #e9eef5;
+          color: #4c74ff;
+          font-weight: 900;
+          box-shadow: 0 10px 22px var(--shadow-soft);
+        }
+
+        @media (max-width: 480px) {
+          .page-wrap { padding: 16px 10px; }
+          .panel { border-radius: 18px; padding: 18px 16px 20px; }
+          .section-title { font-size: 1.7rem; margin-bottom: 16px; }
+          .btn-soft { min-width: 128px; }
+          .btn-list a { width: 100%; }
+        }
       `}</style>
-            <div className="neumorphic-container">
+            <div className="panel">
                 <h2 className="section-title">회원 정보 수정</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="mb-4"><label className="label-text asterisk">아이디</label><input type="text" className="form-control" value={formData.id} readOnly disabled /></div>
-                    <div className="mb-4"><label className="label-text">비밀번호 (변경 시 입력)</label><input type="password" name="password" className="form-control" placeholder="변경할 때만 입력하세요" value={formData.password} onChange={handleChange} /></div>
-                    <div className="row">
-                        <div className="col-md-6 mb-4"><label className="label-text asterisk">이름</label><input type="text" name="name" className="form-control" required value={formData.name} onChange={handleChange} /></div>
-                        <div className="col-md-6 mb-4"><label className="label-text asterisk">전화번호</label><input type="text" name="tel" className="form-control" maxLength={13} required value={formData.tel} onChange={handleChange} /></div>
+                    <div className="mb-4">
+                        <label className="label-text asterisk">아이디</label>
+                        <input type="text" className="form-control" value={formData.id} readOnly disabled />
                     </div>
-                    <div className="mb-4"><label className="label-text asterisk">거주지</label><input type="text" name="addr" className="form-control" required value={formData.addr} onChange={handleChange} /></div>
-                    <div className="mb-4"><label className="label-text">비고(직책) <span className="info-badge">회장/총무 시 자동계산</span></label><input type="text" name="remark" className="form-control" value={formData.remark} onChange={handleChange} /></div>
-                    <hr style={{ margin: "35px 0", border: "none", height: "4px", background: "#e0e5ec", boxShadow: "inset 2px 2px 4px #a3b1c6, inset -2px -2px 4px #ffffff" }} />
-                    <div className="mb-4"><label className="label-text asterisk">SMS(Tel)</label><input type="text" name="sms" className="form-control" required maxLength={13} value={formData.sms} onChange={handleChange} /></div>
-                    <div className="mb-4"><label className="label-text">SMS-2 단체</label><input type="text" name="sms_2" className={`form-control ${isAutoSms2 ? 'auto-generated' : ''}`} value={formData.sms_2} onChange={handleChange} readOnly={isAutoSms2} /></div>
-                    <div className="mb-4"><label className="label-text">이메일</label><input type="email" name="email" className="form-control" value={formData.email} onChange={handleChange} /></div>
-                    <hr style={{ margin: "35px 0", border: "none", height: "4px", background: "#e0e5ec", boxShadow: "inset 2px 2px 4px #a3b1c6, inset -2px -2px 4px #ffffff" }} />
-                    <div className="mb-4"><label className="label-text asterisk">회원 레벨</label><select name="user_level" className="form-select" required value={formData.user_level} onChange={handleChange}><option value="1">게스트 (1)</option><option value="2">정회원 (2)</option><option value="5">Premium (5)</option><option value="10">관리자 (10)</option></select></div>
-                    <div className="d-flex justify-content-center gap-3 mt-5"><button type="submit" className="btn-main text-dark" style={{ background: "#ffc107" }}>수정 저장</button><Link href="/members/edit" className="btn-main text-secondary text-decoration-none d-flex align-items-center" style={{ background: "#e0e5ec" }}>돌아가기</Link></div>
+
+                    <div className="mb-4">
+                        <label className="label-text">비밀번호</label>
+                        <input
+                            type="password"
+                            name="password"
+                            className="form-control"
+                            placeholder="변경할 때만 입력하세요"
+                            value={formData.password}
+                            onChange={handleChange}
+                        />
+                        <div className="help-text">※ 비워두면 기존 비밀번호가 유지됩니다.</div>
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="label-text asterisk">이름</label>
+                        <input type="text" name="name" className="form-control" required value={formData.name} onChange={handleChange} />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="label-text asterisk">전화번호</label>
+                        <input type="text" name="tel" className="form-control" maxLength={13} required value={formData.tel} onChange={handleChange} />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="label-text asterisk">거주지</label>
+                        <input type="text" name="addr" className="form-control" required value={formData.addr} onChange={handleChange} />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="label-text">비고(직책)</label>
+                        <input type="text" name="remark" className="form-control" value={formData.remark} onChange={handleChange} />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="label-text">SMS 수신번호 1</label>
+                        <input type="text" name="sms" className="form-control" required maxLength={13} value={formData.sms} onChange={handleChange} />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="label-text">SMS 수신번호 2</label>
+                        <input type="text" name="sms_2" className={`form-control ${isAutoSms2 ? 'auto-generated' : ''}`} value={formData.sms_2} onChange={handleChange} readOnly={isAutoSms2} />
+                    </div>
+
+                    <hr className="divider" />
+
+                    <div className="mb-4">
+                        <label className="label-text">이메일</label>
+                        <input type="email" name="email" className="form-control" value={formData.email} onChange={handleChange} />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="label-text asterisk">회원 등급(레벨)</label>
+                        <select name="user_level" className="form-select" required value={formData.user_level} onChange={handleChange}>
+                            <option value="1">게스트 (1)</option>
+                            <option value="2">정회원 (2)</option>
+                            <option value="5">Premium (5)</option>
+                            <option value="10">관리자 (10)</option>
+                        </select>
+                    </div>
+
+                    <div className="btn-row">
+                        <button type="submit" className="btn-soft btn-save">정보 저장</button>
+                        <button type="button" className="btn-soft btn-cancel" onClick={() => router.push("/members/edit")}>취소</button>
+                    </div>
+
+                    <div className="btn-list">
+                        <Link href="/members/edit" className="text-decoration-none">◀◀ 회원목록으로</Link>
+                    </div>
                 </form>
             </div>
         </div>
