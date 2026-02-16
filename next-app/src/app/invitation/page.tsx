@@ -431,6 +431,70 @@ ${wedInfo}${contact}`;
                 )}
 
                 <div style={{ marginTop: '30px', textAlign: 'center' }}>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '20px' }}>
+                        <button
+                            className="btn"
+                            style={{
+                                padding: '18px',
+                                background: 'white',
+                                border: '2px solid #e5e7eb',
+                                borderRadius: '12px',
+                                fontSize: '16px',
+                                fontWeight: '600',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '8px',
+                                cursor: 'not-implemented'
+                            }}
+                            onClick={() => alert('이 기능은 추후 구현 예정입니다.')}
+                        >
+                            <span style={{ fontSize: '24px' }}>🌼</span>
+                            <span>부고장 문자로보내기</span>
+                        </button>
+
+                        <button
+                            className="btn"
+                            style={{
+                                padding: '18px',
+                                background: 'white',
+                                border: '2px solid #e5e7eb',
+                                borderRadius: '12px',
+                                fontSize: '16px',
+                                fontWeight: '600',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '8px'
+                            }}
+                            onClick={() => alert('이 기능은 추후 구현 예정입니다.')}
+                        >
+                            <span style={{ fontSize: '24px' }}>💍</span>
+                            <span>청첩장 문자로보내기</span>
+                        </button>
+
+                        <button
+                            className="btn"
+                            style={{
+                                padding: '18px',
+                                background: 'white',
+                                border: '2px solid #e5e7eb',
+                                borderRadius: '12px',
+                                fontSize: '16px',
+                                fontWeight: '600',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '8px'
+                            }}
+                            onClick={() => router.push('/obituary-create')}
+                        >
+                            <span style={{ fontSize: '24px' }}>🌼</span>
+                            <span>부고장 홈페이지로 만들기</span>
+                        </button>
+                    </div>
+
                     <button
                         className="btn"
                         style={{ padding: '14px 30px', fontSize: '16px' }}
