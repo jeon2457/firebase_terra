@@ -2,7 +2,7 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {
     Phone,
@@ -55,12 +55,178 @@ export default function DashboardContent({ theme = "book" }: Props) {
     const router = useRouter();
     const [selectedPage, setSelectedPage] = useState<string | null>(null);
 
+    const spaceCanvasRef = useRef<HTMLCanvasElement | null>(null);
+
     const [showFinancial, setShowFinancial] = useState(false);
     const [financialData, setFinancialData] = useState<{ income: any[], expense: any[] } | null>(null);
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
     const [showExcel, setShowExcel] = useState(false);
     const [excelConfig, setExcelConfig] = useState({ year: new Date().getFullYear(), type: 'all' });
+
+    useEffect(() => {
+        if (theme !== "glass" && theme !== "tech") return;
+        const canvas = spaceCanvasRef.current;
+        if (!canvas) return;
+
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        let w = 0;
+        let h = 0;
+        let dpr = 1;
+        let animationId = 0;
+
+        const starCount = 300;
+        const speed = 1.0;
+
+        const maxMeteors = 3;
+        const meteorSpawnChancePerFrame = theme === "tech" ? 0.02 : 0.015;
+
+        let stars: Array<{ x: number; y: number; z: number; px: number; py: number }> = [];
+
+        let meteors: Array<{
+            x: number;
+            y: number;
+            vx: number;
+            vy: number;
+            life: number;
+            maxLife: number;
+            length: number;
+            headRadius: number;
+            alpha: number;
+        }> = [];
+
+        const initSpace = () => {
+            w = window.innerWidth;
+            h = window.innerHeight;
+            dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+            canvas.width = Math.floor(w * dpr);
+            canvas.height = Math.floor(h * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            stars = [];
+            for (let i = 0; i < starCount; i++) {
+                stars.push({
+                    x: Math.random() * w - w / 2,
+                    y: Math.random() * h - h / 2,
+                    z: Math.random() * w,
+                    px: 0,
+                    py: 0,
+                });
+            }
+        };
+
+        const drawSpace = () => {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
+            ctx.fillRect(0, 0, w, h);
+
+            ctx.save();
+            ctx.translate(w / 2, h / 2);
+
+            for (let i = 0; i < starCount; i++) {
+                const s = stars[i];
+                const x = s.x / (s.z / w);
+                const y = s.y / (s.z / w);
+
+                if (s.px !== 0) {
+                    ctx.strokeStyle = `rgba(255, 255, 255, ${Math.min(1, 1.5 - s.z / w)})`;
+                    ctx.lineWidth = Math.max(0.8, (1 - s.z / w) * 3);
+                    ctx.lineCap = "round";
+                    ctx.beginPath();
+                    ctx.moveTo(s.px, s.py);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                }
+
+                s.px = x;
+                s.py = y;
+                s.z -= speed;
+
+                if (s.z <= 0) {
+                    s.x = Math.random() * w - w / 2;
+                    s.y = Math.random() * h - h / 2;
+                    s.z = w;
+                    s.px = 0;
+                    s.py = 0;
+                }
+            }
+
+            ctx.restore();
+
+            if (meteors.length < maxMeteors && Math.random() < meteorSpawnChancePerFrame) {
+                const startX = Math.random() * w;
+                const startY = -40 - Math.random() * 120;
+                const baseSpeed = 12 + Math.random() * 10;
+                const angle = (Math.PI * (115 + Math.random() * 20)) / 180;
+                const vx = Math.cos(angle) * baseSpeed;
+                const vy = Math.sin(angle) * baseSpeed;
+
+                meteors.push({
+                    x: startX,
+                    y: startY,
+                    vx,
+                    vy,
+                    life: 0,
+                    maxLife: 45 + Math.floor(Math.random() * 35),
+                    length: 260 + Math.random() * 220,
+                    headRadius: 2.2 + Math.random() * 2.8,
+                    alpha: 0.95,
+                });
+            }
+
+            if (meteors.length) {
+                ctx.save();
+                ctx.globalCompositeOperation = "lighter";
+
+                for (const m of meteors) {
+                    m.life += 1;
+                    m.x += m.vx;
+                    m.y += m.vy;
+
+                    const progress = m.life / m.maxLife;
+                    const fade = Math.max(0, 1 - progress);
+                    const a = m.alpha * fade;
+
+                    const tx = m.x - m.vx;
+                    const ty = m.y - m.vy;
+                    const lx = tx - (m.vx * m.length) / 18;
+                    const ly = ty - (m.vy * m.length) / 18;
+
+                    const grad = ctx.createLinearGradient(tx, ty, lx, ly);
+                    grad.addColorStop(0, `rgba(255,255,255,${a})`);
+                    grad.addColorStop(0.12, `rgba(160,220,255,${a * 0.65})`);
+                    grad.addColorStop(1, `rgba(0,0,0,0)`);
+
+                    ctx.strokeStyle = grad;
+                    ctx.lineWidth = 2.2;
+                    ctx.lineCap = "round";
+                    ctx.beginPath();
+                    ctx.moveTo(tx, ty);
+                    ctx.lineTo(lx, ly);
+                    ctx.stroke();
+
+                    ctx.fillStyle = `rgba(255,255,255,${a})`;
+                    ctx.beginPath();
+                    ctx.arc(tx, ty, m.headRadius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                meteors = meteors.filter(m => m.life < m.maxLife && m.x < w + 200 && m.y < h + 200);
+                ctx.restore();
+            }
+
+            animationId = requestAnimationFrame(drawSpace);
+        };
+
+        initSpace();
+        drawSpace();
+
+        window.addEventListener("resize", initSpace);
+        return () => {
+            window.removeEventListener("resize", initSpace);
+            if (animationId) cancelAnimationFrame(animationId);
+        };
+    }, [theme]);
 
     const loadFinancialData = async () => {
         try {
@@ -206,9 +372,25 @@ export default function DashboardContent({ theme = "book" }: Props) {
 
     return (
         <div style={wrapStyle}>
+            {(theme === "glass" || theme === "tech") && (
+                <canvas
+                    ref={spaceCanvasRef}
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        zIndex: 0,
+                        pointerEvents: "none",
+                    }}
+                />
+            )}
             <style jsx>{`
         .wrap-container {
           max-width: 1100px;
+          position: relative;
+          z-index: 1;
         }
         .section-title {
           text-align: center;
@@ -235,7 +417,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
           justify-content: flex-start;
           gap: 15px;
           padding: 20px 15px;
-          background: ${theme === "book" ? "#8d6e63" : theme === "glass" ? "rgba(255,255,255,0.06)" : theme === "tech" ? "rgba(0,0,0,0.35)" : "#ffffff"};
+          background: ${theme === "book" ? "#8d6e63" : theme === "glass" ? "rgba(255,255,255,0.02)" : theme === "tech" ? "rgba(0,0,0,0.12)" : "#ffffff"};
           border-radius: 5px;
           box-shadow: ${theme === "book" ? "inset 0 10px 20px rgba(0, 0, 0, 0.3), 0 15px 30px rgba(0, 0, 0, 0.2)" : theme === "glass" ? "0 25px 60px rgba(0,0,0,0.6)" : theme === "tech" ? "0 0 25px rgba(56, 189, 248, 0.18)" : "0 10px 25px rgba(0,0,0,0.07)"};
           border-bottom: ${theme === "book" ? "15px solid #5d4037" : "none"};
@@ -432,7 +614,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
           padding: 18px 14px;
           cursor: pointer;
           border: 1px solid rgba(255,255,255,0.14);
-          background: rgba(255,255,255,0.05);
+          background: rgba(255,255,255,0.02);
           box-shadow: 0 20px 40px rgba(0,0,0,0.45);
           color: #fff;
           text-align: center;
@@ -476,7 +658,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
           align-items: center;
           justify-content: center;
           gap: 12px;
-          background: transparent;
+          background: rgba(0,0,0,0.08);
           transition: all 0.25s;
           user-select: none;
         }
