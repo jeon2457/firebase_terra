@@ -180,7 +180,8 @@ function MapViewContent() {
 
     const openKakaoMap = () => {
         if (!locationData) return;
-        const url = `https://map.kakao.com/link/map/${encodeURIComponent(locationData.addr)},${locationData.lat},${locationData.lng}`;
+        // /link/map/ → /link/to/ 로 변경 (도착지로 바로 설정)
+        const url = `https://map.kakao.com/link/to/${encodeURIComponent(locationData.addr)},${locationData.lat},${locationData.lng}`;
         window.open(url, '_blank');
     };
 
