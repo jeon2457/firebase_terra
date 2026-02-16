@@ -3,11 +3,13 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./guest.module.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 export default function GuestPage() {
     const { data: session, status } = useSession();
+    const router = useRouter();
     const [displayName, setDisplayName] = useState("사용자");
 
     useEffect(() => {
@@ -23,6 +25,23 @@ export default function GuestPage() {
             setDisplayName(name);
         }
     }, [session]);
+
+    useEffect(() => {
+        const routeByTheme = async () => {
+            if (status !== "authenticated") return;
+            try {
+                const res = await fetch("/api/theme", { method: "GET" });
+                const data = await res.json();
+                const theme = data?.theme;
+                if (theme && theme !== "book") {
+                    router.replace(`/guest/${theme}`);
+                }
+            } catch {
+                // ignore
+            }
+        };
+        routeByTheme();
+    }, [status, router]);
 
     if (status === "loading") {
         return <div className="text-center mt-5">Loading...</div>;
