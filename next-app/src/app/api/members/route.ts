@@ -11,8 +11,11 @@ export async function GET() {
 
     try {
         await dbConnect();
-        const members = await User.find({}).sort({ name: 1 });
-        return NextResponse.json({ success: true, members });
+        const members = await User.find({ 
+            name: { $ne: '공용계정' },
+            tel: { $ne: '', $exists: true }
+        }).sort({ name: 1 });
+        return NextResponse.json({ success: true, data: members });
     } catch (error) {
         return NextResponse.json({ success: false, message: "Server Error" }, { status: 500 });
     }

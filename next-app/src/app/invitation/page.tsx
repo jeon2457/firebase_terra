@@ -447,7 +447,7 @@ ${wedInfo}${contact}`;
                                 gap: '8px',
                                 cursor: 'pointer'
                             }}
-                            onClick={() => router.push('/obituary-sms')}
+                            onClick={() => router.push('/sms-obituary')}
                         >
                             <span style={{ fontSize: '24px' }}>🌼</span>
                             <span>부고장 문자로보내기</span>
@@ -467,7 +467,7 @@ ${wedInfo}${contact}`;
                                 justifyContent: 'center',
                                 gap: '8px'
                             }}
-                            onClick={() => alert('이 기능은 추후 구현 예정입니다.')}
+                            onClick={() => router.push('/sms-wedding')}
                         >
                             <span style={{ fontSize: '24px' }}>💍</span>
                             <span>청첩장 문자로보내기</span>
