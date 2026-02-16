@@ -220,10 +220,13 @@ function MapViewContent() {
     };
 
     const openNaverMap = () => {
-        if (!locationData) return;
-        const url = `https://map.naver.com/v5/search/${encodeURIComponent(locationData.addr)}`;
-        window.open(url, '_blank');
-    };
+    if (!locationData) return;
+    // 바로 도착지로 설정된 길찾기 URL
+    // 형식: /directions/-/위도,경도,장소명/
+    // - 는 현재 위치(출발지)를 의미
+    const url = `https://map.naver.com/v5/directions/-/${locationData.lat},${locationData.lng},${encodeURIComponent(locationData.addr)}/`;
+    window.open(url, '_blank');
+};
 
     if (status === "loading" || isLoading) {
         return (
