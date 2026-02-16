@@ -72,6 +72,13 @@ export async function PUT(req: NextRequest) {
         const data = await req.json();
         const { _id, password, ...updateData } = data;
 
+        if (updateData.id) {
+            const existing = await User.findOne({ id: updateData.id, _id: { $ne: _id } }).select("_id");
+            if (existing) {
+                return NextResponse.json({ success: false, message: "이미 사용중인 아이디입니다." }, { status: 409 });
+            }
+        }
+
         if (password) {
             updateData.password = await bcrypt.hash(password, 10);
         }

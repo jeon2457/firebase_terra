@@ -283,7 +283,7 @@ export default function MemberEditFormPage() {
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label className="label-text asterisk">아이디</label>
-                        <input type="text" className="form-control" value={formData.id} readOnly disabled />
+                        <input type="text" name="id" className="form-control" value={formData.id} onChange={handleChange} required />
                     </div>
 
                     <div className="mb-4">
