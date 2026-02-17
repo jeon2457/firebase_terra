@@ -1039,7 +1039,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
                         <button className="btn btn-primary btn-same shadow-lg d-flex align-items-center justify-content-center" onClick={handleGoNext}>
                             <BookOpen className="me-2" size={20} /> 책 펼쳐보기
                         </button>
-                        <button className="btn btn-outline-danger btn-same shadow-sm d-flex align-items-center justify-content-center" onClick={() => signOut()}>
+                        <button className="btn btn-outline-danger btn-same shadow-sm d-flex align-items-center justify-content-center" onClick={() => signOut({ callbackUrl: "/login" })}>
                             <LogOut className="me-2" size={20} /> 서재 나가기
                         </button>
                     </div>
