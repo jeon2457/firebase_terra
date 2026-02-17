@@ -88,11 +88,14 @@ export default function GuestListPage() {
           display: flex;
           align-items: center;
           justify-content: space-between;
+          flex-wrap: nowrap;
           cursor: pointer;
           border: 2px solid transparent;
           box-shadow: 0 6px 14px rgba(0,0,0,0.06);
           user-select: none;
           transition: all 0.2s ease;
+          text-decoration: none;
+          color: inherit;
         }
         .list-item:hover {
           transform: translateY(-2px);
@@ -102,6 +105,8 @@ export default function GuestListPage() {
           display: flex;
           align-items: center;
           gap: 12px;
+          flex: 1;
+          min-width: 0;
         }
         .list-icon {
           width: 48px;
@@ -150,6 +155,8 @@ export default function GuestListPage() {
           font-weight: 900;
           display: inline-flex;
           align-items: center;
+          flex-shrink: 0;
+          margin-left: 12px;
         }
 
         @media (max-width: 480px) {

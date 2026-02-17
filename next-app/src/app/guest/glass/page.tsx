@@ -130,14 +130,14 @@ export default function GuestGlassPage() {
         }
         .glass-menu:hover { transform: translateY(-4px); }
         .glass-menu-icon {
-          width: 56px;
-          height: 56px;
-          margin: 0 auto 10px;
-          border-radius: 16px;
+          width: 60px;
+          height: 60px;
+          margin: 0 auto 12px;
+          border-radius: 18px;
           display: flex;
           align-items: center;
           justify-content: center;
-          background: rgba(0,0,0,0.35);
+          background: rgba(255,255,255,0.06);
           border: 1px solid rgba(255,255,255,0.10);
           color: #fff;
         }
@@ -145,15 +145,13 @@ export default function GuestGlassPage() {
           font-size: 1.5rem;
           line-height: 1;
         }
-        .glass-menu-label { font-weight: 900; }
-        .icon-bg-tel { background: linear-gradient(180deg, #5AC8FA, #007AFF); }
-        .icon-bg-account { background: linear-gradient(180deg, #FF9500, #FF5E00); }
-        .icon-bg-camera { background: linear-gradient(180deg, #4CD964, #28A745); }
-        .icon-bg-pass { background: linear-gradient(180deg, #FFCC00, #FBC02D); color: #222; }
-        .icon-bg-pass i { color: #222; }
-        .icon-bg-financial { background: linear-gradient(180deg, #FFD700, #FFA000); color: #222; }
-        .icon-bg-financial i { color: #222; }
-        .icon-bg-excel { background: linear-gradient(180deg, #1D6F42, #43A047); }
+        .glass-menu-label { font-weight: 900; text-shadow: 0 2px 10px rgba(0,0,0,0.9); }
+        .glass-menu-icon.glass-icon-bg-tel { color: #FF9500 !important; }
+        .glass-menu-icon.glass-icon-bg-view { color: #34C759 !important; }
+        .glass-menu-icon.glass-icon-bg-image { color: #5856D6 !important; }
+        .glass-menu-icon.glass-icon-bg-card { color: #5AC8FA !important; }
+        .glass-menu-icon.glass-icon-bg-financial { color: #FFCC00 !important; }
+        .glass-menu-icon.glass-icon-bg-excel { color: #30D158 !important; }
 
         @media (max-width: 768px) {
           .glass-menugrid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
@@ -188,32 +186,32 @@ export default function GuestGlassPage() {
 
                 <div className="glass-menugrid">
                     <div className="glass-menu" onClick={() => router.push("/members/view")}>
-                        <div className="glass-menu-icon icon-bg-tel"><i className="bi bi-people-fill" /></div>
+                        <div className="glass-menu-icon glass-icon-bg-tel"><i className="bi bi-people-fill" /></div>
                         <div className="glass-menu-label">연락망 보기</div>
                     </div>
 
                     <div className="glass-menu" onClick={() => router.push("/account/view")}>
-                        <div className="glass-menu-icon icon-bg-account"><i className="bi bi-eye" /></div>
+                        <div className="glass-menu-icon glass-icon-bg-view"><i className="bi bi-eye" /></div>
                         <div className="glass-menu-label">사용내역 열람</div>
                     </div>
 
                     <div className="glass-menu" onClick={() => router.push("/receipt/view")}>
-                        <div className="glass-menu-icon icon-bg-camera"><i className="bi bi-image" /></div>
+                        <div className="glass-menu-icon glass-icon-bg-image"><i className="bi bi-image" /></div>
                         <div className="glass-menu-label">영수증 열람</div>
                     </div>
 
                     <div className="glass-menu" onClick={() => alert("준비중입니다.")}>
-                        <div className="glass-menu-icon icon-bg-pass"><i className="bi bi-credit-card" /></div>
+                        <div className="glass-menu-icon glass-icon-bg-card"><i className="bi bi-credit-card" /></div>
                         <div className="glass-menu-label">월회비 현황</div>
                     </div>
 
                     <div className="glass-menu" onClick={() => alert("준비중입니다.")}>
-                        <div className="glass-menu-icon icon-bg-financial"><i className="bi bi-pie-chart-fill" /></div>
+                        <div className="glass-menu-icon glass-icon-bg-financial"><i className="bi bi-pie-chart-fill" /></div>
                         <div className="glass-menu-label">재무 대시보드</div>
                     </div>
 
                     <div className="glass-menu" onClick={() => alert("준비중입니다.")}>
-                        <div className="glass-menu-icon icon-bg-excel"><i className="bi bi-file-earmark-excel-fill" /></div>
+                        <div className="glass-menu-icon glass-icon-bg-excel"><i className="bi bi-file-earmark-excel-fill" /></div>
                         <div className="glass-menu-label">엑셀 리포트</div>
                     </div>
                 </div>
