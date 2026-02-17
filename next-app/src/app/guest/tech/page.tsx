@@ -50,11 +50,11 @@ export default function GuestTechPage() {
     }
 
     const Card = ({ href, icon, color, title }: { href: string; icon: string; color: string; title: string }) => (
-        <Link href={href} className="card">
-            <div className="icon" style={{ backgroundColor: color }}>
+        <Link href={href} className="tech-app">
+            <div className="tech-app-icon" style={{ backgroundColor: color }}>
                 <i className={`bi ${icon}`} style={{ color: "#fff" }} />
             </div>
-            <div className="title">{title}</div>
+            <div className="tech-app-label">{title}</div>
         </Link>
     );
 
@@ -71,62 +71,81 @@ export default function GuestTechPage() {
           max-width: 1000px;
           margin: 0 auto;
         }
-        .header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 22px;
-          padding-bottom: 16px;
-          border-bottom: 1px solid rgba(56, 189, 248, 0.3);
-        }
-        .page-title {
-          font-size: 1.6rem;
-          font-weight: 800;
-          background: linear-gradient(90deg, #38bdf8, #818cf8);
-          -webkit-background-clip: text;
-          background-clip: text;
-          -webkit-text-fill-color: transparent;
-          margin: 0;
-        }
-        .badge {
-          background: rgba(15, 23, 42, 0.5);
-          padding: 8px 14px;
-          border-radius: 20px;
-          font-size: 0.9rem;
+        .space-title {
+          text-align: center;
+          font-weight: 900;
+          letter-spacing: 1px;
           color: #fff;
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          margin: 18px 0 16px;
+          text-shadow: 0 2px 18px rgba(0,0,0,0.9);
         }
-        .grid {
+        .space-topbar {
+          max-width: 520px;
+          margin: 0 auto 26px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          padding: 10px 14px;
+          border-radius: 14px;
+          background: rgba(0,0,0,0.35);
+          border: 1px solid rgba(255,255,255,0.16);
+          box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+        }
+        .space-admin {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          color: rgba(255,255,255,0.92);
+          font-weight: 800;
+          font-size: 0.95rem;
+        }
+        .space-admin-badge {
+          width: 26px;
+          height: 26px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255,255,255,0.10);
+          border: 1px solid rgba(255,255,255,0.16);
+        }
+        .space-logout {
+          border: 0;
+          padding: 8px 14px;
+          border-radius: 999px;
+          font-weight: 900;
+          background: linear-gradient(180deg, #ff5b7a, #ff274f);
+          color: #fff;
+          box-shadow: 0 10px 20px rgba(255,39,79,0.25);
+        }
+        .tech-appgrid {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
           gap: 26px 22px;
           max-width: 420px;
           margin: 0 auto;
+          padding: 6px 0 20px;
         }
-        .card {
-          position: relative;
-          text-align: center;
-          cursor: pointer;
-          text-decoration: none;
+        .tech-app {
           display: flex;
           flex-direction: column;
           align-items: center;
-          justify-content: center;
-          gap: 12px;
-          background: transparent;
-          transition: all 0.2s ease;
+          gap: 10px;
+          cursor: pointer;
+          text-decoration: none;
           user-select: none;
         }
-        .card:hover { transform: translateY(-2px); }
-        .icon {
+        .tech-app-icon {
           width: 86px;
           height: 86px;
           border-radius: 22px;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 2rem;
+          color: #fff;
           box-shadow: 0 18px 35px rgba(0,0,0,0.45);
+          font-size: 2rem;
         }
         .icon i {
           display: flex;
@@ -138,10 +157,12 @@ export default function GuestTechPage() {
           position: relative;
           z-index: 1;
         }
-        .title {
+        .tech-app-label {
           color: rgba(255,255,255,0.95);
           font-weight: 900;
           text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+          text-align: center;
+          line-height: 1.25;
         }
         .controls {
           margin-top: 26px;
@@ -160,37 +181,48 @@ export default function GuestTechPage() {
         }
 
         @media (max-width: 768px) {
-          .grid { 
+          .tech-appgrid { 
             grid-template-columns: repeat(2, 1fr);
             gap: 18px;
           }
-          .icon { 
+          .tech-app-icon { 
             width: 72px; 
             height: 72px; 
             font-size: 1.8rem;
           }
         }
         @media (max-width: 480px) {
-          .grid { 
+          .tech-appgrid { 
             grid-template-columns: repeat(2, 1fr);
             gap: 14px;
           }
-          .icon { 
+          .tech-app-icon { 
             width: 64px; 
             height: 64px; 
             font-size: 1.6rem;
           }
-          .title { font-size: 0.92rem; }
+          .tech-app-label { font-size: 0.92rem; }
         }
       `}</style>
 
             <div className="container">
-                <div className="header">
-                    <h1 className="page-title">GUEST MENU</h1>
-                    <div className="badge">{displayName}</div>
+                <div className="space-title">GUEST MENU</div>
+                <div className="space-topbar">
+                    <div className="space-admin">
+                        <div className="space-admin-badge">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <div>사용자: <strong>{displayName}</strong></div>
+                    </div>
+                    <button className="space-logout" onClick={() => signOut({ callbackUrl: "/login" })}>로그아웃</button>
                 </div>
 
-                <div className="grid">
+                <div className="tech-appgrid">
                     <Card href="/members/view" icon="bi-people-fill" color="#1f7bff" title="연락망 보기" />
                     <Card href="/account/view" icon="bi-eye" color="#3b3b3f" title="사용내역 열람" />
                     <Card href="/account/edit" icon="bi-pencil-fill" color="#d9423b" title="사용내역 편집" />
