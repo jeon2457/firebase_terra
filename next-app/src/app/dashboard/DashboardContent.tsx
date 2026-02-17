@@ -553,19 +553,19 @@ export default function DashboardContent({ theme = "book" }: Props) {
           font-weight: 900;
           text-shadow: 0 2px 10px rgba(0,0,0,0.9);
         }
-        .glass-menu-icon.glass-icon-tel { color: #FF9500 !important; }
-        .glass-menu-icon.glass-icon-input { color: #4A90E2 !important; }
-        .glass-menu-icon.glass-icon-edit { color: #FF3B30 !important; }
-        .glass-menu-icon.glass-icon-view { color: #34C759 !important; }
-        .glass-menu-icon.glass-icon-upload { color: #007AFF !important; }
-        .glass-menu-icon.glass-icon-scissors { color: #AF52DE !important; }
-        .glass-menu-icon.glass-icon-image { color: #5856D6 !important; }
-        .glass-menu-icon.glass-icon-card { color: #5AC8FA !important; }
-        .glass-menu-icon.glass-icon-financial { color: #FFCC00 !important; }
-        .glass-menu-icon.glass-icon-excel { color: #30D158 !important; }
-        .glass-menu-icon.glass-icon-map { color: #00C7BE !important; }
-        .glass-menu-icon.glass-icon-activities { color: #FF9500 !important; }
-        .glass-menu-icon.glass-icon-manual { color: #8E8E93 !important; }
+        .glass-menu-icon.glass-icon-bg-tel { color: #FF9500 !important; }
+        .glass-menu-icon.glass-icon-bg-input { color: #4A90E2 !important; }
+        .glass-menu-icon.glass-icon-bg-edit { color: #FF3B30 !important; }
+        .glass-menu-icon.glass-icon-bg-view { color: #34C759 !important; }
+        .glass-menu-icon.glass-icon-bg-upload { color: #007AFF !important; }
+        .glass-menu-icon.glass-icon-bg-scissors { color: #AF52DE !important; }
+        .glass-menu-icon.glass-icon-bg-image { color: #5856D6 !important; }
+        .glass-menu-icon.glass-icon-bg-card { color: #5AC8FA !important; }
+        .glass-menu-icon.glass-icon-bg-financial { color: #FFCC00 !important; }
+        .glass-menu-icon.glass-icon-bg-excel { color: #30D158 !important; }
+        .glass-menu-icon.glass-icon-bg-map { color: #00C7BE !important; }
+        .glass-menu-icon.glass-icon-bg-activities { color: #FF9500 !important; }
+        .glass-menu-icon.glass-icon-bg-manual { color: #8E8E93 !important; }
 
         /* Glass theme design button */
         .glass-theme-btn {
