@@ -49,56 +49,76 @@ export default function GuestListPage() {
         return null;
     }
 
-    const Item = ({ href, icon, title, desc }: { href: string; icon: string; title: string; desc: string; }) => (
-        <Link href={href} className="item">
-            <div className="icon"><i className={`bi ${icon}`} /></div>
-            <div className="text">
-                <div className="t">{title}</div>
-                <div className="d">{desc}</div>
-            </div>
-        </Link>
-    );
-
     return (
         <div className="wrap">
             <style jsx>{`
-        .wrap { min-height: 100vh; background: #f7f9fc; padding: 20px 14px 50px; }
-        .container { max-width: 650px; margin: 0 auto; }
-        .header { background: white; padding: 12px 20px; border-radius: 12px; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 22px; }
-        .list { display: flex; flex-direction: column; gap: 14px; }
-        .item { 
+        .wrap { 
+          min-height: 100vh; 
+          background: #f7f9fc; 
+          padding: 20px 14px 50px; 
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        .container { 
+          max-width: 650px; 
+          margin: 0 auto; 
+          width: 100%;
+          box-sizing: border-box;
+        }
+        .header { 
           background: white; 
-          border-radius: 15px; 
-          padding: 20px 24px; 
+          padding: 12px 20px; 
+          border-radius: 12px; 
           display: flex; 
-          align-items: center; 
-          gap: 18px; 
-          cursor: pointer; 
-          transition: all 0.2s ease; 
-          border: 2px solid transparent; 
-          box-shadow: 0 4px 6px rgba(0,0,0,0.03); 
-          text-decoration: none; 
-        }
-        .item:hover { 
-          transform: translateY(-2px); 
-          box-shadow: 0 6px 15px rgba(0,0,0,0.08); 
-        }
-        .icon { 
-          width: 48px; 
-          height: 48px; 
-          border-radius: 10px; 
-          display: flex; 
-          align-items: center; 
           justify-content: center; 
-          font-size: 1.6rem; 
-          background: #eef2ff; 
+          align-items: center; 
+          gap: 10px; 
+          box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+          margin-bottom: 22px; 
+        }
+        .list-box {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        .list-item {
+          background: white;
+          border-radius: 14px;
+          padding: 16px 18px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          cursor: pointer;
+          border: 2px solid transparent;
+          box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+          user-select: none;
+          transition: all 0.2s ease;
+        }
+        .list-item:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 18px rgba(0,0,0,0.1);
+        }
+        .list-left {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        .list-icon {
+          width: 48px;
+          height: 48px;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.6rem;
+          background: #eef2ff;
           color: #4f46e5;
           padding: 0;
           margin: 0;
           position: relative;
           flex-shrink: 0;
         }
-        .icon i {
+        .list-icon i {
           display: flex;
           align-items: center;
           justify-content: center;
@@ -108,15 +128,29 @@ export default function GuestListPage() {
           position: relative;
           z-index: 1;
         }
-        .t { font-weight: 800; font-size: 1.05rem; color: #2c3e50; margin-bottom: 2px; }
-        .d { font-size: 0.85rem; color: #8898aa; }
-        .btn-exec { margin-top: 22px; width: 100%; padding: 14px 16px; border-radius: 30px; font-weight: 900; }
+        .list-title { 
+          font-weight: 800; 
+          font-size: 1.05rem; 
+          color: #2c3e50; 
+          margin-bottom: 2px; 
+        }
+        .list-sub { 
+          font-size: 0.85rem; 
+          color: #8898aa; 
+        }
+        .btn-exec { 
+          margin-top: 22px; 
+          width: 100%; 
+          padding: 14px 16px; 
+          border-radius: 30px; 
+          font-weight: 900; 
+        }
 
         @media (max-width: 480px) {
-          .icon { width: 44px; height: 44px; font-size: 1.4rem; }
-          .item { padding: 16px 18px; gap: 14px; }
-          .t { font-size: 1rem; }
-          .d { font-size: 0.8rem; }
+          .list-icon { width: 44px; height: 44px; font-size: 1.4rem; }
+          .list-item { padding: 16px 18px; gap: 14px; }
+          .list-title { font-size: 1rem; }
+          .list-sub { font-size: 0.8rem; }
         }
       `}</style>
 
@@ -125,13 +159,78 @@ export default function GuestListPage() {
                     👤 사용자: <strong>{displayName}</strong>
                 </div>
 
-                <div className="list">
-                    <Item href="/members/view" icon="bi-people-fill" title="연락망 보기" desc="동기 연락처 정보 확인" />
-                    <Item href="/account/view" icon="bi-eye" title="사용내역 열람" desc="모임 사용 내역 상세 보기" />
-                    <Item href="/receipt/view" icon="bi-image" title="영수증 열람" desc="지출 영수증 사진 모아보기" />
-                    <Item href="#" icon="bi-credit-card" title="회비 현황" desc="월회비 및 입금 현황 확인" />
-                    <Item href="#" icon="bi-pie-chart-fill" title="재무 대시보드" desc="연도별 수입/지출 차트 분석" />
-                    <Item href="#" icon="bi-file-earmark-excel-fill" title="엑셀 리포트" desc="회계장부 엑셀 다운로드" />
+                <div className="list-box">
+                    <Link href="/members/view" className="list-item">
+                        <div className="list-left">
+                            <div className="list-icon"><i className="bi bi-people-fill" /></div>
+                            <div>
+                                <div className="list-title">연락망 보기</div>
+                                <div className="list-sub">동기 연락처 정보 확인</div>
+                            </div>
+                        </div>
+                        <div style={{ color: "#94a3b8", fontWeight: 900 }}>›</div>
+                    </Link>
+
+                    <Link href="/account/view" className="list-item">
+                        <div className="list-left">
+                            <div className="list-icon"><i className="bi bi-eye" /></div>
+                            <div>
+                                <div className="list-title">사용내역 열람</div>
+                                <div className="list-sub">모임 사용 내역 상세 보기</div>
+                            </div>
+                        </div>
+                        <div style={{ color: "#94a3b8", fontWeight: 900 }}>›</div>
+                    </Link>
+
+                    <Link href="/receipt/view" className="list-item">
+                        <div className="list-left">
+                            <div className="list-icon"><i className="bi bi-image" /></div>
+                            <div>
+                                <div className="list-title">영수증 열람</div>
+                                <div className="list-sub">지출 영수증 사진 모아보기</div>
+                            </div>
+                        </div>
+                        <div style={{ color: "#94a3b8", fontWeight: 900 }}>›</div>
+                    </Link>
+
+                    <div className="list-item" onClick={() => alert("준비중입니다.")}
+                        role="button" tabIndex={0}
+                        onKeyDown={(e) => { if (e.key === "Enter") alert("준비중입니다."); }}>
+                        <div className="list-left">
+                            <div className="list-icon"><i className="bi bi-credit-card" /></div>
+                            <div>
+                                <div className="list-title">회비 현황</div>
+                                <div className="list-sub">월회비 및 입금 현황 확인</div>
+                            </div>
+                        </div>
+                        <div style={{ color: "#94a3b8", fontWeight: 900 }}>›</div>
+                    </div>
+
+                    <div className="list-item" onClick={() => alert("준비중입니다.")}
+                        role="button" tabIndex={0}
+                        onKeyDown={(e) => { if (e.key === "Enter") alert("준비중입니다."); }}>
+                        <div className="list-left">
+                            <div className="list-icon"><i className="bi bi-pie-chart-fill" /></div>
+                            <div>
+                                <div className="list-title">재무 대시보드</div>
+                                <div className="list-sub">연도별 수입/지출 차트 분석</div>
+                            </div>
+                        </div>
+                        <div style={{ color: "#94a3b8", fontWeight: 900 }}>›</div>
+                    </div>
+
+                    <div className="list-item" onClick={() => alert("준비중입니다.")}
+                        role="button" tabIndex={0}
+                        onKeyDown={(e) => { if (e.key === "Enter") alert("준비중입니다."); }}>
+                        <div className="list-left">
+                            <div className="list-icon"><i className="bi bi-file-earmark-excel-fill" /></div>
+                            <div>
+                                <div className="list-title">엑셀 리포트</div>
+                                <div className="list-sub">회계장부 엑셀 다운로드</div>
+                            </div>
+                        </div>
+                        <div style={{ color: "#94a3b8", fontWeight: 900 }}>›</div>
+                    </div>
                 </div>
 
                 <button className="btn btn-primary btn-exec" onClick={() => signOut({ callbackUrl: "/login" })}>

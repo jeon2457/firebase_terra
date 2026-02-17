@@ -196,7 +196,7 @@ export default function GuestIconPage() {
 
                     <Link href="/account/view" className="card">
                         <div className="icon bg-view"><i className="bi bi-eye" /></div>
-                        <div className="label">내역 열람</div>
+                        <div className="label">사용내역 열람</div>
                     </Link>
 
                     <Link href="/receipt/view" className="card">

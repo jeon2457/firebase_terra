@@ -245,13 +245,13 @@ export default function GuestGlassPage() {
                     </Link>
 
                     <Link href="/account/view" className="card">
-                        <div className="icon bg-account"><i className="bi bi-file-earmark-text" /></div>
-                        <div className="label">내역서 보기</div>
+                        <div className="icon bg-account"><i className="bi bi-eye" /></div>
+                        <div className="label">사용내역 열람</div>
                     </Link>
 
                     <Link href="/receipt/view" className="card">
-                        <div className="icon bg-camera"><i className="bi bi-camera-fill" /></div>
-                        <div className="label">영수증 보기</div>
+                        <div className="icon bg-camera"><i className="bi bi-image" /></div>
+                        <div className="label">영수증 열람</div>
                     </Link>
 
                     <div className="card" onClick={() => alert("준비중입니다.")}

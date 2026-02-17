@@ -211,8 +211,8 @@ export default function GuestTechPage() {
                 <div className="grid">
                     <Card href="/members/view" icon="bi-people-fill" color="#4ade80" title="연락망 보기" />
                     <Card href="/account/view" icon="bi-eye" color="#60a5fa" title="사용내역 열람" />
-                    <Card href="/receipt/view" icon="bi-images" color="#c084fc" title="영수증 열람" />
-                    <Card href="#" icon="bi-credit-card-2-front" color="#fbbf24" title="회비 현황" />
+                    <Card href="/receipt/view" icon="bi-image" color="#c084fc" title="영수증 열람" />
+                    <Card href="#" icon="bi-credit-card" color="#fbbf24" title="회비 현황" />
                     <Card href="#" icon="bi-pie-chart-fill" color="#f59e0b" title="재무 대시보드" />
                     <Card href="#" icon="bi-file-earmark-excel-fill" color="#10b981" title="엑셀 리포트" />
                 </div>
