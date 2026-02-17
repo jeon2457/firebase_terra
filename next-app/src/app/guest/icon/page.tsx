@@ -60,6 +60,7 @@ export default function GuestIconPage() {
         .container {
           max-width: 650px;
           margin: 0 auto;
+          width: 100%;
         }
         .title {
           text-align: center;
@@ -80,8 +81,9 @@ export default function GuestIconPage() {
         .grid {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
-          gap: 10px 14px;
-          justify-items: center;
+          gap: 12px 16px;
+          justify-items: stretch;
+          align-items: start;
         }
         .card {
           width: 100%;
@@ -137,23 +139,44 @@ export default function GuestIconPage() {
         .bg-financial i { color: #222; }
         .bg-excel { background: linear-gradient(180deg, #1D6F42, #43A047); }
 
-        @media (max-width: 480px) {
-          .grid { grid-template-columns: repeat(3, 1fr); gap: 10px 10px; }
-          .icon { 
-            width: 66px; 
-            height: 66px; 
-            font-size: 1.9rem;
-            border-radius: 16px;
+        @media (max-width: 768px) {
+          .container { max-width: 100%; padding: 0 10px; }
+          .grid { 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 10px 12px;
           }
-          .label { font-size: 11px; min-height: 24px; }
+          .icon { 
+            width: 65px; 
+            height: 65px; 
+            font-size: 1.8rem;
+            border-radius: 15px;
+          }
+          .label { font-size: 10px; min-height: 22px; }
         }
-        @media (max-width: 380px) {
-          .grid { grid-template-columns: repeat(2, 1fr); gap: 8px 8px; }
+        @media (max-width: 480px) {
+          .container { padding: 0 5px; }
+          .grid { 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 8px 10px;
+          }
           .icon { 
             width: 60px; 
             height: 60px; 
-            font-size: 1.7rem;
+            font-size: 1.6rem;
             border-radius: 14px;
+          }
+          .label { font-size: 9px; min-height: 20px; }
+        }
+        @media (max-width: 380px) {
+          .grid { 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 12px 12px;
+          }
+          .icon { 
+            width: 65px; 
+            height: 65px; 
+            font-size: 1.7rem;
+            border-radius: 13px;
           }
           .label { font-size: 10px; min-height: 22px; }
         }

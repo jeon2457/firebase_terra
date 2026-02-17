@@ -65,10 +65,12 @@ export default function GuestGlassPage() {
           border-radius: 36px;
           border: 1px solid rgba(255,255,255,0.12);
           background: rgba(255,255,255,0.02);
-          padding: 30px 18px;
+          padding: 30px 20px;
           box-shadow: 0 25px 60px rgba(0,0,0,0.8);
           backdrop-filter: blur(0px);
           -webkit-backdrop-filter: blur(0px);
+          width: 100%;
+          box-sizing: border-box;
         }
         .title {
           text-align: center;
@@ -91,7 +93,9 @@ export default function GuestGlassPage() {
         .grid {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
-          gap: 24px 18px;
+          gap: 20px 16px;
+          justify-items: stretch;
+          align-items: start;
         }
         .card {
           text-decoration: none;
@@ -99,24 +103,30 @@ export default function GuestGlassPage() {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 12px;
-          padding: 8px;
+          justify-content: center;
+          gap: 10px;
+          padding: 10px;
+          background: rgba(255,255,255,0.03);
+          border-radius: 20px;
+          border: 1px solid rgba(255,255,255,0.08);
+          min-height: 140px;
         }
         .icon {
-          width: 86px;
-          height: 86px;
-          border-radius: 22px;
+          width: 80px;
+          height: 80px;
+          border-radius: 20px;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 2.4rem;
+          font-size: 2.2rem;
           color: #fff;
-          box-shadow: 0 10px 22px rgba(0,0,0,0.6);
+          box-shadow: 0 8px 20px rgba(0,0,0,0.5);
           position: relative;
           overflow: hidden;
           padding: 0;
           margin: 0;
           border: 2px solid transparent;
+          flex-shrink: 0;
         }
         .icon i {
           display: flex;
@@ -156,27 +166,69 @@ export default function GuestGlassPage() {
         .bg-financial i { color: #222; }
         .bg-excel { background: linear-gradient(180deg, #1D6F42, #43A047); }
 
-        @media (max-width: 480px) {
-          .panel { padding: 24px 14px; border-radius: 32px; }
-          .grid { gap: 18px 12px; }
-          .card { padding: 6px; gap: 10px; }
-          .icon { 
-            width: 78px; 
-            height: 78px; 
-            font-size: 2.2rem;
-            border-radius: 20px;
+        @media (max-width: 768px) {
+          .wrap { padding: 30px 10px 40px; }
+          .panel { 
+            max-width: 100%; 
+            padding: 25px 15px;
+            border-radius: 30px;
           }
-          .label { font-size: 12px; }
-        }
-        @media (max-width: 380px) {
-          .card { padding: 4px; gap: 8px; }
+          .grid { 
+            gap: 16px 12px;
+          }
+          .card { 
+            padding: 8px;
+            min-height: 130px;
+          }
           .icon { 
             width: 70px; 
             height: 70px; 
             font-size: 2rem;
+            border-radius: 18px;
+          }
+          .label { font-size: 12px; }
+        }
+        @media (max-width: 480px) {
+          .wrap { padding: 25px 8px 35px; }
+          .panel { 
+            padding: 20px 12px;
+            border-radius: 25px;
+          }
+          .grid { 
+            gap: 14px 10px;
+          }
+          .card { 
+            padding: 6px;
+            min-height: 120px;
+          }
+          .icon { 
+            width: 65px; 
+            height: 65px; 
+            font-size: 1.8rem;
+            border-radius: 16px;
           }
           .label { font-size: 11px; }
-          .grid { gap: 14px 10px; }
+        }
+        @media (max-width: 380px) {
+          .wrap { padding: 20px 5px 30px; }
+          .panel { 
+            padding: 18px 10px;
+            border-radius: 22px;
+          }
+          .grid { 
+            gap: 12px 8px;
+          }
+          .card { 
+            padding: 5px;
+            min-height: 110px;
+          }
+          .icon { 
+            width: 60px; 
+            height: 60px; 
+            font-size: 1.6rem;
+            border-radius: 14px;
+          }
+          .label { font-size: 10px; }
         }
       `}</style>
 
