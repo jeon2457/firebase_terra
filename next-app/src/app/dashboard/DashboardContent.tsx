@@ -552,6 +552,19 @@ export default function DashboardContent({ theme = "book" }: Props) {
           font-weight: 900;
           text-shadow: 0 2px 10px rgba(0,0,0,0.9);
         }
+        .glass-icon-tel { color: #FF9500; }
+        .glass-icon-input { color: #4A90E2; }
+        .glass-icon-edit { color: #FF3B30; }
+        .glass-icon-view { color: #34C759; }
+        .glass-icon-upload { color: #007AFF; }
+        .glass-icon-scissors { color: #AF52DE; }
+        .glass-icon-image { color: #5856D6; }
+        .glass-icon-card { color: #5AC8FA; }
+        .glass-icon-financial { color: #FFCC00; }
+        .glass-icon-excel { color: #30D158; }
+        .glass-icon-map { color: #00C7BE; }
+        .glass-icon-activities { color: #FF9500; }
+        .glass-icon-manual { color: #8E8E93; }
 
         @media (max-width: 520px) {
           .glass-menugrid { max-width: 420px; }
@@ -948,7 +961,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
                     <div className="glass-menugrid">
                         {menuItems.map((item, idx) => (
                             <div key={idx} className="glass-menu" onClick={() => openMenuPath(item.path)}>
-                                <div className="glass-menu-icon">{item.icon}</div>
+                                <div className={`glass-menu-icon glass-icon-${item.color}`}>{item.icon}</div>
                                 <div className="glass-menu-label">{item.title}</div>
                             </div>
                         ))}
