@@ -566,6 +566,54 @@ export default function DashboardContent({ theme = "book" }: Props) {
         .glass-icon-activities { color: #FF9500; }
         .glass-icon-manual { color: #8E8E93; }
 
+        /* Glass theme design button */
+        .glass-theme-btn {
+          background: rgba(255,255,255,0.08);
+          border: 1px solid rgba(255,255,255,0.20);
+          color: rgba(255,255,255,0.95);
+          padding: 12px 24px;
+          border-radius: 999px;
+          font-weight: 800;
+          font-size: 0.95rem;
+          backdrop-filter: blur(10px);
+          box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+        }
+        .glass-theme-btn:hover {
+          background: rgba(255,255,255,0.15);
+          border-color: rgba(255,255,255,0.35);
+          transform: translateY(-2px);
+          box-shadow: 0 22px 50px rgba(0,0,0,0.45);
+        }
+
+        /* Tech theme design button */
+        .tech-theme-btn {
+          background: linear-gradient(180deg, rgba(56, 189, 248, 0.15), rgba(56, 189, 248, 0.08));
+          border: 1px solid rgba(56, 189, 248, 0.45);
+          color: #38bdf8;
+          padding: 12px 24px;
+          border-radius: 999px;
+          font-weight: 800;
+          font-size: 0.95rem;
+          backdrop-filter: blur(10px);
+          box-shadow: 0 0 25px rgba(56, 189, 248, 0.18);
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+        }
+        .tech-theme-btn:hover {
+          background: linear-gradient(180deg, rgba(56, 189, 248, 0.25), rgba(56, 189, 248, 0.15));
+          border-color: #38bdf8;
+          transform: translateY(-2px);
+          box-shadow: 0 0 35px rgba(56, 189, 248, 0.35);
+        }
+
         @media (max-width: 520px) {
           .glass-menugrid { max-width: 420px; }
           .glass-menu { padding: 18px 14px; border-radius: 20px; }
@@ -994,6 +1042,28 @@ export default function DashboardContent({ theme = "book" }: Props) {
                             <LogOut className="me-2" size={20} /> 서재 나가기
                         </button>
                     </div>
+                </div>
+            )}
+
+            {theme === "glass" && (
+                <div className="text-center mt-4 d-flex flex-column gap-3 align-items-center">
+                    <button 
+                        className="glass-theme-btn"
+                        onClick={() => router.push("/theme")}
+                    >
+                        <Palette className="me-2" size={18} /> 디자인 변경 / 테마 설정
+                    </button>
+                </div>
+            )}
+
+            {theme === "tech" && (
+                <div className="text-center mt-4 d-flex flex-column gap-3 align-items-center">
+                    <button 
+                        className="tech-theme-btn"
+                        onClick={() => router.push("/theme")}
+                    >
+                        <Palette className="me-2" size={18} /> 디자인 변경 / 테마 설정
+                    </button>
                 </div>
             )}
 
