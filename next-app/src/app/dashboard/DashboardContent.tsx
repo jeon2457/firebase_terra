@@ -1054,7 +1054,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
                 )}
             </div>
 
-            {(theme !== "glass" && theme !== "tech") && (
+            {(session?.user as any)?.user_level >= 10 && (theme !== "glass" && theme !== "tech") && (
                 <div className="text-center mt-4 d-flex flex-column gap-3 align-items-center">
                     <button className="btn btn-outline-secondary rounded-pill fw-bold" onClick={() => router.push("/theme")}
                     >
@@ -1071,24 +1071,18 @@ export default function DashboardContent({ theme = "book" }: Props) {
                 </div>
             )}
 
-            {theme === "glass" && (
+            {(session?.user as any)?.user_level >= 10 && theme === "glass" && (
                 <div className="text-center mt-4 d-flex flex-column gap-3 align-items-center">
-                    <button 
-                        className="glass-theme-btn"
-                        onClick={() => router.push("/theme")}
-                    >
-                        <Palette className="me-2" size={18} /> 디자인 변경 / 테마 설정
+                    <button className="glass-theme-btn" onClick={() => router.push("/theme")}>
+                        <Palette className="me-2" size={18} /> 디자인 변경 / 테마설정
                     </button>
                 </div>
             )}
 
-            {theme === "tech" && (
+            {(session?.user as any)?.user_level >= 10 && theme === "tech" && (
                 <div className="text-center mt-4 d-flex flex-column gap-3 align-items-center">
-                    <button 
-                        className="tech-theme-btn"
-                        onClick={() => router.push("/theme")}
-                    >
-                        <Palette className="me-2" size={18} /> 디자인 변경 / 테마 설정
+                    <button className="tech-theme-btn" onClick={() => router.push("/theme")}>
+                        <Palette className="me-2" size={18} /> 디자인 변경 / 테마설정
                     </button>
                 </div>
             )}

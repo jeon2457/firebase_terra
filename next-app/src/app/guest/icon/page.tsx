@@ -83,6 +83,8 @@ export default function GuestIconPage() {
           grid-template-columns: repeat(3, 1fr);
           gap: 16px 18px;
           justify-items: center;
+          margin-top: 40px;
+          padding-top: 20px;
         }
         .icon-item {
           display: flex;
