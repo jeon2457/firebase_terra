@@ -145,6 +145,12 @@ export default function GuestListPage() {
           border-radius: 30px; 
           font-weight: 900; 
         }
+        .list-arrow {
+          color: #94a3b8;
+          font-weight: 900;
+          display: inline-flex;
+          align-items: center;
+        }
 
         @media (max-width: 480px) {
           .list-icon { width: 44px; height: 44px; font-size: 1.4rem; }
@@ -168,7 +174,7 @@ export default function GuestListPage() {
                                 <div className="list-sub">동기 연락처 정보 확인</div>
                             </div>
                         </div>
-                        <div style={{ color: "#94a3b8", fontWeight: 900 }}>&gt;</div>
+                        <i className="bi bi-chevron-right list-arrow" aria-hidden="true" role="presentation" />
                     </Link>
 
                     <Link href="/account/view" className="list-item">
@@ -179,7 +185,7 @@ export default function GuestListPage() {
                                 <div className="list-sub">모임 사용 내역 상세 보기</div>
                             </div>
                         </div>
-                        <div style={{ color: "#94a3b8", fontWeight: 900 }}>&gt;</div>
+                        <i className="bi bi-chevron-right list-arrow" aria-hidden="true" role="presentation" />
                     </Link>
 
                     <Link href="/receipt/view" className="list-item">
@@ -190,7 +196,7 @@ export default function GuestListPage() {
                                 <div className="list-sub">지출 영수증 사진 모아보기</div>
                             </div>
                         </div>
-                        <div style={{ color: "#94a3b8", fontWeight: 900 }}>&gt;</div>
+                        <i className="bi bi-chevron-right list-arrow" aria-hidden="true" role="presentation" />
                     </Link>
 
                     <div className="list-item" onClick={() => alert("준비중입니다.")}
@@ -203,7 +209,7 @@ export default function GuestListPage() {
                                 <div className="list-sub">월회비 및 입금 현황 확인</div>
                             </div>
                         </div>
-                        <div style={{ color: "#94a3b8", fontWeight: 900 }}>&gt;</div>
+                        <i className="bi bi-chevron-right list-arrow" aria-hidden="true" role="presentation" />
                     </div>
 
                     <div className="list-item" onClick={() => alert("준비중입니다.")}
@@ -216,7 +222,7 @@ export default function GuestListPage() {
                                 <div className="list-sub">연도별 수입/지출 차트 분석</div>
                             </div>
                         </div>
-                        <div style={{ color: "#94a3b8", fontWeight: 900 }}>&gt;</div>
+                        <i className="bi bi-chevron-right list-arrow" aria-hidden="true" role="presentation" />
                     </div>
 
                     <div className="list-item" onClick={() => alert("준비중입니다.")}
@@ -229,7 +235,7 @@ export default function GuestListPage() {
                                 <div className="list-sub">회계장부 엑셀 다운로드</div>
                             </div>
                         </div>
-                        <div style={{ color: "#94a3b8", fontWeight: 900 }}>&gt;</div>
+                        <i className="bi bi-chevron-right list-arrow" aria-hidden="true" role="presentation" />
                     </div>
                 </div>
 

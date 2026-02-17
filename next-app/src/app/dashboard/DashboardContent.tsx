@@ -1000,7 +1000,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
                                         <div className="list-sub">클릭해서 선택</div>
                                     </div>
                                 </div>
-                                <div style={{ color: "#94a3b8", fontWeight: 900 }}>›</div>
+                                <i className="bi bi-chevron-right" aria-hidden="true" role="presentation" style={{ color: "#94a3b8", fontWeight: 900 }} />
                             </div>
                         ))}
                     </div>
