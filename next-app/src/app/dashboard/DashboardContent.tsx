@@ -971,6 +971,14 @@ export default function DashboardContent({ theme = "book" }: Props) {
                     <h2 className="section-title">회원관리 도서관{theme !== "book" ? ` (${theme})` : ""}</h2>
                     <div className="admin-info">
                         👤 내 정보: <strong>{userDisplayName}</strong> (Level {(session?.user as any)?.user_level || 0})
+                        {(theme === "list" && (session?.user as any)?.user_level < 10) && (
+                            <button
+                                className="btn btn-sm btn-outline-secondary ms-2"
+                                onClick={() => signOut({ callbackUrl: "/login" })}
+                            >
+                                로그아웃
+                            </button>
+                        )}
                     </div>
                 </>
             )}
