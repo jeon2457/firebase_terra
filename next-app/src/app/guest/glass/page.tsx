@@ -54,232 +54,161 @@ export default function GuestGlassPage() {
             <style jsx>{`
         .wrap {
           min-height: 100vh;
-          background: radial-gradient(1000px 800px at 50% 0%, rgba(255,255,255,0.08), rgba(0,0,0,0) 60%),
-            linear-gradient(180deg, #000000 0%, #0b1220 55%, #000000 100%);
-          padding: 36px 14px 40px;
+          background: linear-gradient(180deg, #000000 0%, #0b1220 55%, #000000 100%);
+          padding: 30px 0;
           color: #fff;
         }
-        .panel {
-          max-width: 600px;
-          margin: 0 auto;
-          border-radius: 36px;
-          border: 1px solid rgba(255,255,255,0.12);
-          background: rgba(255,255,255,0.02);
-          padding: 30px 20px;
-          box-shadow: 0 25px 60px rgba(0,0,0,0.8);
-          backdrop-filter: blur(0px);
-          -webkit-backdrop-filter: blur(0px);
-          width: 100%;
-          box-sizing: border-box;
-        }
-        .title {
-          text-align: center;
-          font-weight: 900;
-          letter-spacing: 2px;
-          margin-bottom: 14px;
-          font-size: 1.8rem;
-          text-shadow: 0 2px 12px rgba(0,0,0,0.8);
-        }
-        .info {
-          text-align: center;
-          font-size: 13px;
-          color: rgba(255,255,255,0.85);
-          margin-bottom: 22px;
-          background: rgba(0,0,0,0.5);
-          padding: 10px;
-          border-radius: 50px;
-          border: 1px solid rgba(255,255,255,0.1);
-        }
-        .grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 20px 16px;
-          justify-items: stretch;
-          align-items: start;
-        }
-        .card {
-          text-decoration: none;
-          cursor: pointer;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 10px;
-          padding: 10px;
-          background: rgba(255,255,255,0.03);
-          border-radius: 20px;
-          border: 1px solid rgba(255,255,255,0.08);
-          min-height: 140px;
-        }
-        .icon {
-          width: 80px;
-          height: 80px;
-          border-radius: 20px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 2.2rem;
-          color: #fff;
-          box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-          position: relative;
-          overflow: hidden;
-          padding: 0;
-          margin: 0;
-          border: 2px solid transparent;
-          flex-shrink: 0;
-        }
-        .icon i {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 100%;
-          height: 100%;
-          line-height: 1;
+        .wrap-container {
+          max-width: 1100px;
           position: relative;
           z-index: 1;
         }
-        .icon:after {
-          content: '';
-          position: absolute;
-          top: -50%;
-          left: -50%;
-          width: 200%;
-          height: 200%;
-          background: linear-gradient(45deg, transparent, rgba(255,255,255,0.10), transparent);
-          transform: rotate(45deg);
-          transition: 0.6s;
+        .space-title {
+          text-align: center;
+          font-weight: 900;
+          letter-spacing: 1px;
+          color: #e2e8f0;
+          margin: 18px 0 16px;
+          text-shadow: 0 2px 18px rgba(0,0,0,0.9);
         }
-        .card:hover .icon:after { left: 100%; }
-        .label {
-          font-size: 13px;
+        .space-topbar {
+          max-width: 520px;
+          margin: 0 auto 26px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background: rgba(255,255,255,0.03);
+          padding: 12px 18px;
+          border-radius: 16px;
+          border: 1px solid rgba(255,255,255,0.16);
+          box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+        }
+        .space-admin {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          color: rgba(255,255,255,0.9);
           font-weight: 800;
+          font-size: 0.95rem;
+        }
+        .space-admin-badge {
+          width: 26px;
+          height: 26px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255,255,255,0.10);
+          border: 1px solid rgba(255,255,255,0.16);
+        }
+        .space-logout {
+          border: 0;
+          padding: 8px 14px;
+          border-radius: 999px;
+          font-weight: 900;
+          background: linear-gradient(180deg, #ff5b7a, #ff274f);
+          color: #fff;
+          box-shadow: 0 10px 20px rgba(255,39,79,0.25);
+        }
+        .glass-menugrid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 16px;
+          width: 100%;
+        }
+        .glass-menu {
+          border-radius: 18px;
+          padding: 18px 14px;
+          cursor: pointer;
+          border: 1px solid rgba(255,255,255,0.14);
+          background: rgba(255,255,255,0.02);
+          box-shadow: 0 20px 40px rgba(0,0,0,0.45);
           color: #fff;
           text-align: center;
-          text-shadow: 0 2px 8px rgba(0,0,0,1);
+          user-select: none;
+          transition: 0.2s ease;
         }
-        .bg-tel { background: linear-gradient(180deg, #5AC8FA, #007AFF); }
-        .bg-account { background: linear-gradient(180deg, #FF9500, #FF5E00); }
-        .bg-camera { background: linear-gradient(180deg, #4CD964, #28A745); }
-        .bg-pass { background: linear-gradient(180deg, #FFCC00, #FBC02D); color: #222; }
-        .bg-pass i { color: #222; }
-        .bg-financial { background: linear-gradient(180deg, #FFD700, #FFA000); color: #222; }
-        .bg-financial i { color: #222; }
-        .bg-excel { background: linear-gradient(180deg, #1D6F42, #43A047); }
+        .glass-menu:hover { transform: translateY(-4px); }
+        .glass-menu-icon {
+          width: 56px;
+          height: 56px;
+          margin: 0 auto 10px;
+          border-radius: 16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(0,0,0,0.35);
+          border: 1px solid rgba(255,255,255,0.10);
+        }
+        .glass-menu-label { font-weight: 900; }
+        .icon-bg-tel { background: linear-gradient(180deg, #5AC8FA, #007AFF); }
+        .icon-bg-account { background: linear-gradient(180deg, #FF9500, #FF5E00); }
+        .icon-bg-camera { background: linear-gradient(180deg, #4CD964, #28A745); }
+        .icon-bg-pass { background: linear-gradient(180deg, #FFCC00, #FBC02D); color: #222; }
+        .icon-bg-pass i { color: #222; }
+        .icon-bg-financial { background: linear-gradient(180deg, #FFD700, #FFA000); color: #222; }
+        .icon-bg-financial i { color: #222; }
+        .icon-bg-excel { background: linear-gradient(180deg, #1D6F42, #43A047); }
 
         @media (max-width: 768px) {
-          .wrap { padding: 30px 10px 40px; }
-          .panel { 
-            max-width: 100%; 
-            padding: 25px 15px;
-            border-radius: 30px;
-          }
-          .grid { 
-            gap: 16px 12px;
-          }
-          .card { 
-            padding: 8px;
-            min-height: 130px;
-          }
-          .icon { 
-            width: 70px; 
-            height: 70px; 
-            font-size: 2rem;
-            border-radius: 18px;
-          }
-          .label { font-size: 12px; }
+          .glass-menugrid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+          .glass-menu { padding: 16px 12px; }
+          .glass-menu-icon { width: 50px; height: 50px; font-size: 1.4rem; }
         }
         @media (max-width: 480px) {
-          .wrap { padding: 25px 8px 35px; }
-          .panel { 
-            padding: 20px 12px;
-            border-radius: 25px;
-          }
-          .grid { 
-            gap: 14px 10px;
-          }
-          .card { 
-            padding: 6px;
-            min-height: 120px;
-          }
-          .icon { 
-            width: 65px; 
-            height: 65px; 
-            font-size: 1.8rem;
-            border-radius: 16px;
-          }
-          .label { font-size: 11px; }
-        }
-        @media (max-width: 380px) {
-          .wrap { padding: 20px 5px 30px; }
-          .panel { 
-            padding: 18px 10px;
-            border-radius: 22px;
-          }
-          .grid { 
-            gap: 12px 8px;
-          }
-          .card { 
-            padding: 5px;
-            min-height: 110px;
-          }
-          .icon { 
-            width: 60px; 
-            height: 60px; 
-            font-size: 1.6rem;
-            border-radius: 14px;
-          }
-          .label { font-size: 10px; }
+          .glass-menugrid { gap: 12px; }
+          .glass-menu { padding: 14px 10px; }
+          .glass-menu-icon { width: 45px; height: 45px; font-size: 1.3rem; }
         }
       `}</style>
 
-            <div className="panel">
-                <div className="title">메뉴 선택</div>
-                <div className="info">
-                    👤 <span style={{ color: "#4cd964" }}><strong>{displayName}</strong></span>
+            <div className="container wrap-container py-5">
+                <div className="space-title">TERRAONE NEXUS</div>
+                <div className="space-topbar">
+                    <div className="space-admin">
+                        <div className="space-admin-badge">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <div>사용자: <strong>{displayName}</strong></div>
+                    </div>
+                    <button className="space-logout" onClick={() => signOut({ callbackUrl: "/login" })}>로그아웃</button>
                 </div>
 
-                <div className="grid">
-                    <Link href="/members/view" className="card">
-                        <div className="icon bg-tel"><i className="bi bi-people-fill" /></div>
-                        <div className="label">연락망 보기</div>
-                    </Link>
-
-                    <Link href="/account/view" className="card">
-                        <div className="icon bg-account"><i className="bi bi-eye" /></div>
-                        <div className="label">사용내역 열람</div>
-                    </Link>
-
-                    <Link href="/receipt/view" className="card">
-                        <div className="icon bg-camera"><i className="bi bi-image" /></div>
-                        <div className="label">영수증 열람</div>
-                    </Link>
-
-                    <div className="card" onClick={() => alert("준비중입니다.")}
-                        role="button" tabIndex={0}
-                        onKeyDown={(e) => { if (e.key === "Enter") alert("준비중입니다."); }}>
-                        <div className="icon bg-pass"><i className="bi bi-credit-card" /></div>
-                        <div className="label">월회비 현황</div>
+                <div className="glass-menugrid">
+                    <div className="glass-menu" onClick={() => router.push("/members/view")}>
+                        <div className="glass-menu-icon icon-bg-tel">👥</div>
+                        <div className="glass-menu-label">연락망 보기</div>
                     </div>
 
-                    <div className="card" onClick={() => alert("준비중입니다.")}
-                        role="button" tabIndex={0}
-                        onKeyDown={(e) => { if (e.key === "Enter") alert("준비중입니다."); }}>
-                        <div className="icon bg-financial"><i className="bi bi-pie-chart-fill" /></div>
-                        <div className="label">재무 대시보드</div>
+                    <div className="glass-menu" onClick={() => router.push("/account/view")}>
+                        <div className="glass-menu-icon icon-bg-account">👁️</div>
+                        <div className="glass-menu-label">사용내역 열람</div>
                     </div>
 
-                    <div className="card" onClick={() => alert("준비중입니다.")}
-                        role="button" tabIndex={0}
-                        onKeyDown={(e) => { if (e.key === "Enter") alert("준비중입니다."); }}>
-                        <div className="icon bg-excel"><i className="bi bi-file-earmark-excel-fill" /></div>
-                        <div className="label">엑셀 리포트</div>
+                    <div className="glass-menu" onClick={() => router.push("/receipt/view")}>
+                        <div className="glass-menu-icon icon-bg-camera">📷</div>
+                        <div className="glass-menu-label">영수증 열람</div>
                     </div>
-                </div>
 
-                <div className="text-center" style={{ marginTop: 28 }}>
-                    <button className="btn btn-outline-danger btn-lg" style={{ borderRadius: 20, fontWeight: 800 }} onClick={() => signOut({ callbackUrl: "/login" })}>
-                        로그아웃
-                    </button>
+                    <div className="glass-menu" onClick={() => alert("준비중입니다.")}>
+                        <div className="glass-menu-icon icon-bg-pass">💳</div>
+                        <div className="glass-menu-label">월회비 현황</div>
+                    </div>
+
+                    <div className="glass-menu" onClick={() => alert("준비중입니다.")}>
+                        <div className="glass-menu-icon icon-bg-financial">📊</div>
+                        <div className="glass-menu-label">재무 대시보드</div>
+                    </div>
+
+                    <div className="glass-menu" onClick={() => alert("준비중입니다.")}>
+                        <div className="glass-menu-icon icon-bg-excel">📊</div>
+                        <div className="glass-menu-label">엑셀 리포트</div>
+                    </div>
                 </div>
             </div>
         </div>
