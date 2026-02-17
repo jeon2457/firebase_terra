@@ -139,6 +139,11 @@ export default function GuestGlassPage() {
           justify-content: center;
           background: rgba(0,0,0,0.35);
           border: 1px solid rgba(255,255,255,0.10);
+          color: #fff;
+        }
+        .glass-menu-icon i {
+          font-size: 1.5rem;
+          line-height: 1;
         }
         .glass-menu-label { font-weight: 900; }
         .icon-bg-tel { background: linear-gradient(180deg, #5AC8FA, #007AFF); }
@@ -154,11 +159,13 @@ export default function GuestGlassPage() {
           .glass-menugrid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
           .glass-menu { padding: 16px 12px; }
           .glass-menu-icon { width: 50px; height: 50px; font-size: 1.4rem; }
+          .glass-menu-icon i { font-size: 1.3rem; }
         }
         @media (max-width: 480px) {
           .glass-menugrid { gap: 12px; }
           .glass-menu { padding: 14px 10px; }
           .glass-menu-icon { width: 45px; height: 45px; font-size: 1.3rem; }
+          .glass-menu-icon i { font-size: 1.2rem; }
         }
       `}</style>
 
@@ -181,32 +188,32 @@ export default function GuestGlassPage() {
 
                 <div className="glass-menugrid">
                     <div className="glass-menu" onClick={() => router.push("/members/view")}>
-                        <div className="glass-menu-icon icon-bg-tel">👥</div>
+                        <div className="glass-menu-icon icon-bg-tel"><i className="bi bi-people-fill" /></div>
                         <div className="glass-menu-label">연락망 보기</div>
                     </div>
 
                     <div className="glass-menu" onClick={() => router.push("/account/view")}>
-                        <div className="glass-menu-icon icon-bg-account">👁️</div>
+                        <div className="glass-menu-icon icon-bg-account"><i className="bi bi-eye" /></div>
                         <div className="glass-menu-label">사용내역 열람</div>
                     </div>
 
                     <div className="glass-menu" onClick={() => router.push("/receipt/view")}>
-                        <div className="glass-menu-icon icon-bg-camera">📷</div>
+                        <div className="glass-menu-icon icon-bg-camera"><i className="bi bi-image" /></div>
                         <div className="glass-menu-label">영수증 열람</div>
                     </div>
 
                     <div className="glass-menu" onClick={() => alert("준비중입니다.")}>
-                        <div className="glass-menu-icon icon-bg-pass">💳</div>
+                        <div className="glass-menu-icon icon-bg-pass"><i className="bi bi-credit-card" /></div>
                         <div className="glass-menu-label">월회비 현황</div>
                     </div>
 
                     <div className="glass-menu" onClick={() => alert("준비중입니다.")}>
-                        <div className="glass-menu-icon icon-bg-financial">📊</div>
+                        <div className="glass-menu-icon icon-bg-financial"><i className="bi bi-pie-chart-fill" /></div>
                         <div className="glass-menu-label">재무 대시보드</div>
                     </div>
 
                     <div className="glass-menu" onClick={() => alert("준비중입니다.")}>
-                        <div className="glass-menu-icon icon-bg-excel">📊</div>
+                        <div className="glass-menu-icon icon-bg-excel"><i className="bi bi-file-earmark-excel-fill" /></div>
                         <div className="glass-menu-label">엑셀 리포트</div>
                     </div>
                 </div>
