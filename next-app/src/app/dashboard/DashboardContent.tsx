@@ -2,7 +2,7 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {
     Phone,
@@ -356,6 +356,31 @@ export default function DashboardContent({ theme = "book" }: Props) {
         { title: "데이터베이스 백업", icon: <Database />, color: "bg-activities", path: "/backup" },
         { title: "시스템 매뉴얼", icon: <BookOpen />, color: "bg-manual", path: "/manual" },
     ];
+
+    const guestSpecificPaths = [
+        "/members",
+        "/account/view",
+        "/account/edit",
+        "/receipt/view",
+        "/receipt/upload",
+        "/fee/status",
+    ];
+
+    const filteredMenuItems = (session?.user as any)?.user_level >= 10
+        ? menuItems
+        : menuItems.filter(item => guestSpecificPaths.includes(item.path));
+
+    const userDisplayName = useMemo(() => {
+        if (!session?.user) return "사용자";
+        const user = session.user as any;
+        let name = user.name || "사용자";
+        if (user.user_level >= 10) {
+            name += " (관리자)";
+        } else {
+            name += " 님";
+        }
+        return name;
+    }, [session]);
 
     const wrapStyle: React.CSSProperties =
         theme === "glass"
@@ -936,7 +961,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
                             <div className="space-admin-badge">
                                 <Users size={16} />
                             </div>
-                            <div>관리자: <strong>{(session.user as any).id}</strong></div>
+                            <span>{userDisplayName}</span>
                         </div>
                         <button className="space-logout" onClick={() => signOut({ callbackUrl: "/login" })}>로그아웃</button>
                     </div>
@@ -945,7 +970,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
                 <>
                     <h2 className="section-title">회원관리 도서관{theme !== "book" ? ` (${theme})` : ""}</h2>
                     <div className="admin-info">
-                        👤 관리자: <strong>{(session.user as any).id}</strong> (Level {(session.user as any).user_level})
+                        👤 내 정보: <strong>{userDisplayName}</strong> (Level {(session?.user as any)?.user_level || 0})
                     </div>
                 </>
             )}
@@ -953,7 +978,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
             <div className="option-box">
                 {theme === "book" && (
                     <>
-                        {menuItems.map((item, idx) => (
+                        {filteredMenuItems.map((item, idx) => (
                             <div
                                 key={idx}
                                 className={`select-card ${selectedPage === item.path ? 'active' : ''}`}
@@ -970,7 +995,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
 
                 {theme === "icon" && (
                     <div className="icon-grid">
-                        {menuItems.map((item, idx) => (
+                        {filteredMenuItems.map((item, idx) => (
                             <div
                                 key={idx}
                                 className={`icon-item ${selectedPage === item.path ? 'active' : ''}`}
@@ -987,7 +1012,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
 
                 {theme === "list" && (
                     <div className="list-box">
-                        {menuItems.map((item, idx) => (
+                        {filteredMenuItems.map((item, idx) => (
                             <div
                                 key={idx}
                                 className={`list-item ${selectedPage === item.path ? 'active' : ''}`}
@@ -1008,7 +1033,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
 
                 {theme === "glass" && (
                     <div className="glass-menugrid">
-                        {menuItems.map((item, idx) => (
+                        {filteredMenuItems.map((item, idx) => (
                             <div key={idx} className="glass-menu" onClick={() => openMenuPath(item.path)}>
                                 <div className={`glass-menu-icon glass-icon-${item.color}`}>{item.icon}</div>
                                 <div className="glass-menu-label">{item.title}</div>
@@ -1019,7 +1044,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
 
                 {theme === "tech" && (
                     <div className="tech-appgrid">
-                        {menuItems.map((item, idx) => (
+                        {filteredMenuItems.map((item, idx) => (
                             <div key={idx} className="tech-app" onClick={() => openMenuPath(item.path)}>
                                 <div className={`tech-app-icon icon-${item.color}`}>{item.icon}</div>
                                 <div className="tech-app-label">{item.title}</div>
