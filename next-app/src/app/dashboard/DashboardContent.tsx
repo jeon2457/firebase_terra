@@ -547,24 +547,25 @@ export default function DashboardContent({ theme = "book" }: Props) {
           justify-content: center;
           background: rgba(255,255,255,0.06);
           border: 1px solid rgba(255,255,255,0.10);
+          color: #fff;
         }
         .glass-menu-label {
           font-weight: 900;
           text-shadow: 0 2px 10px rgba(0,0,0,0.9);
         }
-        .glass-icon-tel { color: #FF9500; }
-        .glass-icon-input { color: #4A90E2; }
-        .glass-icon-edit { color: #FF3B30; }
-        .glass-icon-view { color: #34C759; }
-        .glass-icon-upload { color: #007AFF; }
-        .glass-icon-scissors { color: #AF52DE; }
-        .glass-icon-image { color: #5856D6; }
-        .glass-icon-card { color: #5AC8FA; }
-        .glass-icon-financial { color: #FFCC00; }
-        .glass-icon-excel { color: #30D158; }
-        .glass-icon-map { color: #00C7BE; }
-        .glass-icon-activities { color: #FF9500; }
-        .glass-icon-manual { color: #8E8E93; }
+        .glass-menu-icon.glass-icon-tel { color: #FF9500 !important; }
+        .glass-menu-icon.glass-icon-input { color: #4A90E2 !important; }
+        .glass-menu-icon.glass-icon-edit { color: #FF3B30 !important; }
+        .glass-menu-icon.glass-icon-view { color: #34C759 !important; }
+        .glass-menu-icon.glass-icon-upload { color: #007AFF !important; }
+        .glass-menu-icon.glass-icon-scissors { color: #AF52DE !important; }
+        .glass-menu-icon.glass-icon-image { color: #5856D6 !important; }
+        .glass-menu-icon.glass-icon-card { color: #5AC8FA !important; }
+        .glass-menu-icon.glass-icon-financial { color: #FFCC00 !important; }
+        .glass-menu-icon.glass-icon-excel { color: #30D158 !important; }
+        .glass-menu-icon.glass-icon-map { color: #00C7BE !important; }
+        .glass-menu-icon.glass-icon-activities { color: #FF9500 !important; }
+        .glass-menu-icon.glass-icon-manual { color: #8E8E93 !important; }
 
         /* Glass theme design button */
         .glass-theme-btn {
