@@ -58,7 +58,7 @@ export default function GuestIconPage() {
           padding: 26px 14px 40px;
         }
         .container {
-          max-width: 650px;
+          max-width: 700px;
           margin: 0 auto;
           width: 100%;
         }
@@ -78,94 +78,58 @@ export default function GuestIconPage() {
           padding: 10px;
           border-radius: 20px;
         }
-        .grid {
+        .icon-grid {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 12px 16px;
-          justify-items: stretch;
-          align-items: start;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 16px 18px;
+          justify-items: center;
         }
-        .card {
-          width: 100%;
+        .icon-item {
           display: flex;
           flex-direction: column;
           align-items: center;
+          gap: 10px;
           cursor: pointer;
           text-decoration: none;
-          padding: 6px;
+          user-select: none;
         }
-        .icon {
-          width: 72px;
-          height: 72px;
-          border-radius: 18px;
+        .icon-box {
+          width: 82px;
+          height: 82px;
+          border-radius: 20px;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 2rem;
           color: #fff;
-          box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-          margin-bottom: 8px;
-          padding: 0;
-          position: relative;
+          font-size: 1.9rem;
+          box-shadow: 0 18px 35px rgba(0,0,0,0.45);
         }
-        .icon i {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 100%;
-          height: 100%;
-          line-height: 1;
-          position: relative;
-          z-index: 1;
-        }
-        .label {
-          font-size: 12px;
-          font-weight: 600;
+        .icon-label {
           color: #333;
+          font-weight: 800;
           text-align: center;
-          line-height: 1.2;
-          min-height: 28px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          word-break: keep-all;
+          line-height: 1.25;
         }
-        .bg-tel { background: linear-gradient(180deg, #34AADC, #0076FF); }
-        .bg-view { background: linear-gradient(180deg, #4CD964, #28A745); }
-        .bg-image { background: linear-gradient(180deg, #5856D6, #3F51B5); }
-        .bg-card { background: linear-gradient(180deg, #FFCC00, #FBC02D); color: #222; }
-        .bg-card i { color: #222; }
-        .bg-financial { background: linear-gradient(180deg, #FFD700, #FFA000); color: #222; }
-        .bg-financial i { color: #222; }
-        .bg-excel { background: linear-gradient(180deg, #1D6F42, #43A047); }
+        .icon-bg-tel { background: linear-gradient(180deg, #34AADC, #0076FF); }
+        .icon-bg-view { background: linear-gradient(180deg, #4CD964, #28A745); }
+        .icon-bg-edit { background: linear-gradient(180deg, #ef4444, #b91c1c); }
+        .icon-bg-image { background: linear-gradient(180deg, #5856D6, #3F51B5); }
+        .icon-bg-upload { background: linear-gradient(180deg, #3b82f6, #1d4ed8); }
+        .icon-bg-card { background: linear-gradient(180deg, #14b8a6, #0f766e); }
+        .icon-bg-financial { background: linear-gradient(180deg, #FFD700, #FFA000); color: #222; }
+        .icon-bg-excel { background: linear-gradient(180deg, #1D6F42, #43A047); }
 
         @media (max-width: 768px) {
           .container { max-width: 100%; padding: 0 10px; }
-          .grid { 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 10px 12px;
-          }
-          .icon { 
-            width: 65px; 
-            height: 65px; 
-            font-size: 1.8rem;
-            border-radius: 15px;
-          }
-          .label { font-size: 10px; min-height: 22px; }
+          .icon-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+          .icon-box { width: 72px; height: 72px; font-size: 1.7rem; border-radius: 18px; }
+          .icon-label { font-size: 12px; }
         }
         @media (max-width: 480px) {
           .container { padding: 0 5px; }
-          .grid { 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 8px 10px;
-          }
-          .icon { 
-            width: 60px; 
-            height: 60px; 
-            font-size: 1.6rem;
-            border-radius: 14px;
-          }
-          .label { font-size: 9px; min-height: 20px; }
+          .icon-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+          .icon-box { width: 64px; height: 64px; font-size: 1.6rem; border-radius: 16px; }
+          .icon-label { font-size: 11px; }
         }
         @media (max-width: 380px) {
           .grid { 
@@ -188,41 +152,40 @@ export default function GuestIconPage() {
                     👤 내 정보: <strong>{displayName}</strong> (Level {(session?.user as any)?.user_level || 0})
                 </div>
 
-                <div className="grid">
-                    <Link href="/members/view" className="card">
-                        <div className="icon bg-tel"><i className="bi bi-people-fill" /></div>
-                        <div className="label">연락망 보기</div>
+                <div className="icon-grid">
+                    <Link href="/members/view" className="icon-item">
+                        <div className="icon-box icon-bg-tel"><i className="bi bi-people-fill" /></div>
+                        <div className="icon-label">연락망 보기</div>
                     </Link>
-
-                    <Link href="/account/view" className="card">
-                        <div className="icon bg-view"><i className="bi bi-eye" /></div>
-                        <div className="label">사용내역 열람</div>
+                    <Link href="/account/view" className="icon-item">
+                        <div className="icon-box icon-bg-view"><i className="bi bi-eye" /></div>
+                        <div className="icon-label">사용내역 열람</div>
                     </Link>
-
-                    <Link href="/receipt/view" className="card">
-                        <div className="icon bg-image"><i className="bi bi-image" /></div>
-                        <div className="label">영수증 열람</div>
+                    <Link href="/account/edit" className="icon-item">
+                        <div className="icon-box icon-bg-edit"><i className="bi bi-pencil-fill" /></div>
+                        <div className="icon-label">사용내역 편집</div>
                     </Link>
-
-                    <div className="card" onClick={() => alert("준비중입니다.")}
-                        role="button" tabIndex={0}
-                        onKeyDown={(e) => { if (e.key === "Enter") alert("준비중입니다."); }}>
-                        <div className="icon bg-card"><i className="bi bi-credit-card" /></div>
-                        <div className="label">회비 현황</div>
+                    <Link href="/receipt/view" className="icon-item">
+                        <div className="icon-box icon-bg-image"><i className="bi bi-image" /></div>
+                        <div className="icon-label">영수증 열람</div>
+                    </Link>
+                    <Link href="/receipt/upload" className="icon-item">
+                        <div className="icon-box icon-bg-upload"><i className="bi bi-upload" /></div>
+                        <div className="icon-label">영수증 업로드</div>
+                    </Link>
+                    <Link href="/fee/status" className="icon-item">
+                        <div className="icon-box icon-bg-card"><i className="bi bi-credit-card" /></div>
+                        <div className="icon-label">회비 현황</div>
+                    </Link>
+                    <div className="icon-item" onClick={() => alert("준비중입니다.")} role="button" tabIndex={0}
+                         onKeyDown={(e) => { if (e.key === "Enter") alert("준비중입니다."); }}>
+                        <div className="icon-box icon-bg-financial"><i className="bi bi-pie-chart-fill" /></div>
+                        <div className="icon-label">재무 대시보드</div>
                     </div>
-
-                    <div className="card" onClick={() => alert("준비중입니다.")}
-                        role="button" tabIndex={0}
-                        onKeyDown={(e) => { if (e.key === "Enter") alert("준비중입니다."); }}>
-                        <div className="icon bg-financial"><i className="bi bi-pie-chart-fill" /></div>
-                        <div className="label">재무 대시보드</div>
-                    </div>
-
-                    <div className="card" onClick={() => alert("준비중입니다.")}
-                        role="button" tabIndex={0}
-                        onKeyDown={(e) => { if (e.key === "Enter") alert("준비중입니다."); }}>
-                        <div className="icon bg-excel"><i className="bi bi-file-earmark-excel-fill" /></div>
-                        <div className="label">엑셀 리포트</div>
+                    <div className="icon-item" onClick={() => alert("준비중입니다.")} role="button" tabIndex={0}
+                         onKeyDown={(e) => { if (e.key === "Enter") alert("준비중입니다."); }}>
+                        <div className="icon-box icon-bg-excel"><i className="bi bi-file-earmark-excel-fill" /></div>
+                        <div className="icon-label">엑셀 리포트</div>
                     </div>
                 </div>
 

@@ -51,8 +51,8 @@ export default function GuestTechPage() {
 
     const Card = ({ href, icon, color, title }: { href: string; icon: string; color: string; title: string }) => (
         <Link href={href} className="card">
-            <div className="icon" style={{ color }}>
-                <i className={`bi ${icon}`} />
+            <div className="icon" style={{ backgroundColor: color }}>
+                <i className={`bi ${icon}`} style={{ color: "#fff" }} />
             </div>
             <div className="title">{title}</div>
         </Link>
@@ -98,15 +98,13 @@ export default function GuestTechPage() {
         }
         .grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-          gap: 18px;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 26px 22px;
+          max-width: 420px;
+          margin: 0 auto;
         }
         .card {
           position: relative;
-          border: 1px solid rgba(56, 189, 248, 0.45);
-          border-radius: 16px;
-          padding: 22px 14px;
-          height: 170px;
           text-align: center;
           cursor: pointer;
           text-decoration: none;
@@ -114,29 +112,21 @@ export default function GuestTechPage() {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: 14px;
+          gap: 12px;
           background: transparent;
-          transition: all 0.25s;
+          transition: all 0.2s ease;
+          user-select: none;
         }
-        .card:hover {
-          transform: translateY(-4px);
-          background: rgba(56, 189, 248, 0.08);
-          box-shadow: 0 0 25px rgba(56, 189, 248, 0.3);
-          border-color: #38bdf8;
-        }
+        .card:hover { transform: translateY(-2px); }
         .icon {
-          width: 60px;
-          height: 60px;
-          border-radius: 50%;
-          background: rgba(255,255,255,0.08);
-          border: 1px solid rgba(255,255,255,0.1);
+          width: 86px;
+          height: 86px;
+          border-radius: 22px;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 1.8rem;
-          padding: 0;
-          margin: 0;
-          position: relative;
+          font-size: 2rem;
+          box-shadow: 0 18px 35px rgba(0,0,0,0.45);
         }
         .icon i {
           display: flex;
@@ -149,9 +139,9 @@ export default function GuestTechPage() {
           z-index: 1;
         }
         .title {
-          color: #94a3b8;
-          font-weight: 700;
-          text-shadow: 1px 1px 5px rgba(0,0,0,0.8);
+          color: rgba(255,255,255,0.95);
+          font-weight: 900;
+          text-shadow: 0 2px 10px rgba(0,0,0,0.9);
         }
         .controls {
           margin-top: 26px;
@@ -171,34 +161,26 @@ export default function GuestTechPage() {
 
         @media (max-width: 768px) {
           .grid { 
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 14px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
           }
           .icon { 
-            width: 54px; 
-            height: 54px; 
-            font-size: 1.6rem;
-          }
-          .card { 
-            height: 150px;
-            padding: 18px 12px;
+            width: 72px; 
+            height: 72px; 
+            font-size: 1.8rem;
           }
         }
         @media (max-width: 480px) {
           .grid { 
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
+            gap: 14px;
           }
           .icon { 
-            width: 50px; 
-            height: 50px; 
-            font-size: 1.5rem;
+            width: 64px; 
+            height: 64px; 
+            font-size: 1.6rem;
           }
-          .card { 
-            height: 140px;
-            padding: 16px 10px;
-          }
-          .title { font-size: 0.9rem; }
+          .title { font-size: 0.92rem; }
         }
       `}</style>
 
@@ -209,12 +191,14 @@ export default function GuestTechPage() {
                 </div>
 
                 <div className="grid">
-                    <Card href="/members/view" icon="bi-people-fill" color="#4ade80" title="연락망 보기" />
-                    <Card href="/account/view" icon="bi-eye" color="#60a5fa" title="사용내역 열람" />
-                    <Card href="/receipt/view" icon="bi-image" color="#c084fc" title="영수증 열람" />
-                    <Card href="#" icon="bi-credit-card" color="#fbbf24" title="회비 현황" />
-                    <Card href="#" icon="bi-pie-chart-fill" color="#f59e0b" title="재무 대시보드" />
-                    <Card href="#" icon="bi-file-earmark-excel-fill" color="#10b981" title="엑셀 리포트" />
+                    <Card href="/members/view" icon="bi-people-fill" color="#1f7bff" title="연락망 보기" />
+                    <Card href="/account/view" icon="bi-eye" color="#3b3b3f" title="사용내역 열람" />
+                    <Card href="/account/edit" icon="bi-pencil-fill" color="#d9423b" title="사용내역 편집" />
+                    <Card href="/receipt/view" icon="bi-image" color="#5c6ac4" title="영수증 열람" />
+                    <Card href="/receipt/upload" icon="bi-upload" color="#1f7bff" title="영수증 업로드" />
+                    <Card href="/fee/status" icon="bi-credit-card" color="#16a085" title="회비 현황" />
+                    <Card href="#" icon="bi-pie-chart-fill" color="#FFB300" title="재무 대시보드" />
+                    <Card href="#" icon="bi-file-earmark-excel-fill" color="#1D6F42" title="엑셀 리포트" />
                 </div>
 
                 <div className="controls">
