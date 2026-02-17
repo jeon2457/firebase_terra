@@ -90,7 +90,7 @@ export default function GuestIconPage() {
           align-items: center;
           gap: 10px;
           cursor: pointer;
-          text-decoration: none;
+          text-decoration: none !important;
           user-select: none;
         }
         .icon-box {
