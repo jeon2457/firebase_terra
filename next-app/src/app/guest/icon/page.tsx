@@ -90,6 +90,7 @@ export default function GuestIconPage() {
           align-items: center;
           cursor: pointer;
           text-decoration: none;
+          padding: 6px;
         }
         .icon {
           width: 72px;
@@ -101,7 +102,19 @@ export default function GuestIconPage() {
           font-size: 2rem;
           color: #fff;
           box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-          margin-bottom: 6px;
+          margin-bottom: 8px;
+          padding: 0;
+          position: relative;
+        }
+        .icon i {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
+          line-height: 1;
+          position: relative;
+          z-index: 1;
         }
         .label {
           font-size: 12px;
@@ -126,8 +139,23 @@ export default function GuestIconPage() {
 
         @media (max-width: 480px) {
           .grid { grid-template-columns: repeat(3, 1fr); gap: 10px 10px; }
-          .icon { width: 66px; height: 66px; font-size: 1.9rem; }
-          .label { font-size: 11px; }
+          .icon { 
+            width: 66px; 
+            height: 66px; 
+            font-size: 1.9rem;
+            border-radius: 16px;
+          }
+          .label { font-size: 11px; min-height: 24px; }
+        }
+        @media (max-width: 380px) {
+          .grid { grid-template-columns: repeat(2, 1fr); gap: 8px 8px; }
+          .icon { 
+            width: 60px; 
+            height: 60px; 
+            font-size: 1.7rem;
+            border-radius: 14px;
+          }
+          .label { font-size: 10px; min-height: 22px; }
         }
       `}</style>
 

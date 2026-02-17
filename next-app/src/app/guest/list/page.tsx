@@ -66,12 +66,58 @@ export default function GuestListPage() {
         .container { max-width: 650px; margin: 0 auto; }
         .header { background: white; padding: 12px 20px; border-radius: 12px; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 22px; }
         .list { display: flex; flex-direction: column; gap: 14px; }
-        .item { background: white; border-radius: 15px; padding: 18px 22px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.2s ease; border: 2px solid transparent; box-shadow: 0 4px 6px rgba(0,0,0,0.03); text-decoration: none; }
-        .item:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.08); }
-        .icon { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; background: #eef2ff; color: #4f46e5; }
+        .item { 
+          background: white; 
+          border-radius: 15px; 
+          padding: 20px 24px; 
+          display: flex; 
+          align-items: center; 
+          gap: 18px; 
+          cursor: pointer; 
+          transition: all 0.2s ease; 
+          border: 2px solid transparent; 
+          box-shadow: 0 4px 6px rgba(0,0,0,0.03); 
+          text-decoration: none; 
+        }
+        .item:hover { 
+          transform: translateY(-2px); 
+          box-shadow: 0 6px 15px rgba(0,0,0,0.08); 
+        }
+        .icon { 
+          width: 48px; 
+          height: 48px; 
+          border-radius: 10px; 
+          display: flex; 
+          align-items: center; 
+          justify-content: center; 
+          font-size: 1.6rem; 
+          background: #eef2ff; 
+          color: #4f46e5;
+          padding: 0;
+          margin: 0;
+          position: relative;
+          flex-shrink: 0;
+        }
+        .icon i {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
+          line-height: 1;
+          position: relative;
+          z-index: 1;
+        }
         .t { font-weight: 800; font-size: 1.05rem; color: #2c3e50; margin-bottom: 2px; }
         .d { font-size: 0.85rem; color: #8898aa; }
         .btn-exec { margin-top: 22px; width: 100%; padding: 14px 16px; border-radius: 30px; font-weight: 900; }
+
+        @media (max-width: 480px) {
+          .icon { width: 44px; height: 44px; font-size: 1.4rem; }
+          .item { padding: 16px 18px; gap: 14px; }
+          .t { font-size: 1rem; }
+          .d { font-size: 0.8rem; }
+        }
       `}</style>
 
             <div className="container">

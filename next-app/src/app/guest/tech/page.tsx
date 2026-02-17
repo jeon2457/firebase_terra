@@ -134,6 +134,19 @@ export default function GuestTechPage() {
           align-items: center;
           justify-content: center;
           font-size: 1.8rem;
+          padding: 0;
+          margin: 0;
+          position: relative;
+        }
+        .icon i {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
+          line-height: 1;
+          position: relative;
+          z-index: 1;
         }
         .title {
           color: #94a3b8;
@@ -154,6 +167,38 @@ export default function GuestTechPage() {
           padding: 12px 26px;
           border-radius: 8px;
           font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+          .grid { 
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 14px;
+          }
+          .icon { 
+            width: 54px; 
+            height: 54px; 
+            font-size: 1.6rem;
+          }
+          .card { 
+            height: 150px;
+            padding: 18px 12px;
+          }
+        }
+        @media (max-width: 480px) {
+          .grid { 
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+          }
+          .icon { 
+            width: 50px; 
+            height: 50px; 
+            font-size: 1.5rem;
+          }
+          .card { 
+            height: 140px;
+            padding: 16px 10px;
+          }
+          .title { font-size: 0.9rem; }
         }
       `}</style>
 

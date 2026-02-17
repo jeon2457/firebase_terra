@@ -99,7 +99,8 @@ export default function GuestGlassPage() {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 10px;
+          gap: 12px;
+          padding: 8px;
         }
         .icon {
           width: 86px;
@@ -113,6 +114,19 @@ export default function GuestGlassPage() {
           box-shadow: 0 10px 22px rgba(0,0,0,0.6);
           position: relative;
           overflow: hidden;
+          padding: 0;
+          margin: 0;
+          border: 2px solid transparent;
+        }
+        .icon i {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
+          line-height: 1;
+          position: relative;
+          z-index: 1;
         }
         .icon:after {
           content: '';
@@ -145,7 +159,24 @@ export default function GuestGlassPage() {
         @media (max-width: 480px) {
           .panel { padding: 24px 14px; border-radius: 32px; }
           .grid { gap: 18px 12px; }
-          .icon { width: 78px; height: 78px; font-size: 2.2rem; }
+          .card { padding: 6px; gap: 10px; }
+          .icon { 
+            width: 78px; 
+            height: 78px; 
+            font-size: 2.2rem;
+            border-radius: 20px;
+          }
+          .label { font-size: 12px; }
+        }
+        @media (max-width: 380px) {
+          .card { padding: 4px; gap: 8px; }
+          .icon { 
+            width: 70px; 
+            height: 70px; 
+            font-size: 2rem;
+          }
+          .label { font-size: 11px; }
+          .grid { gap: 14px 10px; }
         }
       `}</style>
 
