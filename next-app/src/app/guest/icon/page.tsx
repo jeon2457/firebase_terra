@@ -156,35 +156,39 @@ export default function GuestIconPage() {
                 </div>
 
                 <div className="icon-grid">
+                    {/* 1. 연락망 보기 */}
                     <Link href="/members/view" className="icon-item">
                         <div className="icon-box icon-bg-tel"><i className="bi bi-people-fill" /></div>
                         <div className="icon-label">연락망 보기</div>
                     </Link>
+
+                    {/* 2. 사용내역 열람 */}
                     <Link href="/account/view" className="icon-item">
                         <div className="icon-box icon-bg-view"><i className="bi bi-eye" /></div>
                         <div className="icon-label">사용내역 열람</div>
                     </Link>
-                    <Link href="/account/edit" className="icon-item">
-                        <div className="icon-box icon-bg-edit"><i className="bi bi-pencil-fill" /></div>
-                        <div className="icon-label">사용내역 편집</div>
-                    </Link>
+
+                    {/* 3. 영수증 열람 */}
                     <Link href="/receipt/view" className="icon-item">
                         <div className="icon-box icon-bg-image"><i className="bi bi-image" /></div>
                         <div className="icon-label">영수증 열람</div>
                     </Link>
-                    <Link href="/receipt/upload" className="icon-item">
-                        <div className="icon-box icon-bg-upload"><i className="bi bi-upload" /></div>
-                        <div className="icon-label">영수증 업로드</div>
-                    </Link>
-                    <Link href="/fee/status" className="icon-item">
+
+                    {/* 4. 월회비 납부현황 (링크 없음/준비중) */}
+                    <div className="icon-item" onClick={() => alert("준비중입니다.")} role="button" tabIndex={0}
+                         onKeyDown={(e) => { if (e.key === "Enter") alert("준비중입니다."); }}>
                         <div className="icon-box icon-bg-card"><i className="bi bi-credit-card" /></div>
-                        <div className="icon-label">회비 현황</div>
-                    </Link>
+                        <div className="icon-label">월회비 납부현황</div>
+                    </div>
+
+                    {/* 5. 재무 대시보드 (준비중) */}
                     <div className="icon-item" onClick={() => alert("준비중입니다.")} role="button" tabIndex={0}
                          onKeyDown={(e) => { if (e.key === "Enter") alert("준비중입니다."); }}>
                         <div className="icon-box icon-bg-financial"><i className="bi bi-pie-chart-fill" /></div>
                         <div className="icon-label">재무 대시보드</div>
                     </div>
+
+                    {/* 6. 엑셀 리포트 (준비중) */}
                     <div className="icon-item" onClick={() => alert("준비중입니다.")} role="button" tabIndex={0}
                          onKeyDown={(e) => { if (e.key === "Enter") alert("준비중입니다."); }}>
                         <div className="icon-box icon-bg-excel"><i className="bi bi-file-earmark-excel-fill" /></div>
