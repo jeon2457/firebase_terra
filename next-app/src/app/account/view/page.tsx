@@ -23,6 +23,7 @@ function AccountViewContent() {
     const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
     const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
     const [mounted, setMounted] = useState(false);
+    const [yearDropdownOpen, setYearDropdownOpen] = useState(false);
 
     // Calculator state
     const [calcDisplay, setCalcDisplay] = useState("0");
@@ -31,6 +32,23 @@ function AccountViewContent() {
     useEffect(() => {
         setMounted(true);
     }, []);
+
+    // 드롭다운 외부 클릭 시 닫기
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (yearDropdownOpen) {
+                const dropdown = document.querySelector('.year-dropdown-container');
+                if (dropdown && !dropdown.contains(event.target as Node)) {
+                    setYearDropdownOpen(false);
+                }
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [yearDropdownOpen]);
 
     useEffect(() => {
         if (status === "unauthenticated") {
@@ -151,31 +169,40 @@ function AccountViewContent() {
                             grid-template-columns: repeat(6, 1fr);
                         }
                         .view-table th, .view-table td {
-                            font-size: 11px;
-                            padding: 6px 2px;
-                        }
+                        font-size: 11px;
+                        padding: 6px 2px;
+                    }
+                    .year-dropdown-btn {
+                        font-size: 0.9rem !important;
+                        padding: 0.5rem 1rem !important;
+                    }
                     }
                 `}</style>
 
                 <div className="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
                     <h4 className="m-0 fw-bold text-primary">📊 사용내역서 보기</h4>
-                    <div className="dropdown">
-                        <button className="btn btn-primary btn-lg dropdown-toggle rounded-pill px-4 shadow-sm" 
-                                data-bs-toggle="dropdown" 
-                                style={{ fontWeight: '600', fontSize: '1.1rem' }}>
+                    <div className="position-relative year-dropdown-container">
+                        <button className="btn btn-primary dropdown-toggle rounded-pill px-3 shadow-sm year-dropdown-btn" 
+                                onClick={() => setYearDropdownOpen(!yearDropdownOpen)}
+                                style={{ fontWeight: '600' }}>
                             📅 {currentYear}년
                         </button>
-                        <ul className="dropdown-menu dropdown-menu-end shadow" style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                            {uniqueYears.map(y => (
-                                <li key={y}>
-                                    <button className={`dropdown-item ${y === currentYear ? 'active' : ''}`} 
-                                            onClick={() => setCurrentYear(y)}
-                                            style={{ fontWeight: y === currentYear ? '600' : 'normal' }}>
+                        {yearDropdownOpen && (
+                            <div className="dropdown-menu show position-absolute end-0 mt-1 shadow" 
+                                 style={{ maxHeight: '250px', overflowY: 'auto', minWidth: '120px' }}>
+                                {uniqueYears.map(y => (
+                                    <button key={y} 
+                                            className={`dropdown-item ${y === currentYear ? 'active' : ''}`} 
+                                            onClick={() => {
+                                                setCurrentYear(y);
+                                                setYearDropdownOpen(false);
+                                            }}
+                                            style={{ fontWeight: y === currentYear ? '600' : 'normal', fontSize: '0.9rem' }}>
                                         {y}년 {y === new Date().getFullYear() ? '(현재)' : ''} {y === new Date().getFullYear() + 1 ? '(다음해)' : ''}
                                     </button>
-                                </li>
-                            ))}
-                        </ul>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
 
