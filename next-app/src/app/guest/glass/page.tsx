@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import DashboardContent from "@/app/dashboard/DashboardContent";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import styles from "../guest.module.css";
 
 type ThemeValue = "book" | "icon" | "glass" | "list" | "tech";
 
