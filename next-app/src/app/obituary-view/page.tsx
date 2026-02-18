@@ -221,10 +221,31 @@ ${obituary.message}
 
                 .card-header {
                     background: #1a1a1a;
+                    background-image: url('/image/gughwak.jpg');
+                    background-size: cover;
+                    background-position: center;
                     color: white;
                     padding: 30px 20px;
                     text-align: center;
                     border-bottom: 3px solid #333;
+                    position: relative;
+                }
+
+                .card-header::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.6);
+                    z-index: 1;
+                }
+
+                .card-header h1,
+                .card-header p {
+                    position: relative;
+                    z-index: 2;
                 }
 
                 .card-header h1 {
