@@ -74,15 +74,19 @@ export default function SmsObituaryPage() {
         try {
             const response = await fetch('/api/members');
             const result = await response.json();
-            if (result.success) {
-                const membersData: Member[] = result.data;
+            if (result.success && result.data) {
+                const membersData: Member[] = result.data || [];
                 setMembers(membersData);
                 // 기본적으로 모든 멤버 선택
                 const allMemberIds = new Set(membersData.map((m: Member) => m._id));
                 setSelectedMembers(allMemberIds);
+            } else {
+                console.error('회원 목록 조회 실패:', result.message);
+                setMembers([]);
             }
         } catch (error) {
             console.error('회원 목록 조회 오류:', error);
+            setMembers([]);
         }
     };
 
@@ -96,7 +100,7 @@ export default function SmsObituaryPage() {
         setSelectedMembers(newSelected);
         
         // 전체 선택 체크박스 상태 업데이트
-        setSelectAll(newSelected.size === members.length);
+        setSelectAll(newSelected.size === (members || []).length);
     };
 
     const toggleSelectAll = () => {
@@ -116,7 +120,7 @@ export default function SmsObituaryPage() {
         }
 
         // 선택된 멤버들의 전화번호 추출
-        const selectedMembersList = members.filter(m => selectedMembers.has(m._id));
+        const selectedMembersList = (members || []).filter(m => selectedMembers.has(m._id));
         const numbers = selectedMembersList
             .map(m => m.tel.replace(/[^0-9]/g, ''))
             .filter(num => num.length > 0)
@@ -340,7 +344,7 @@ export default function SmsObituaryPage() {
                     {/* 1. 발송 대상 선택 */}
                     <div className="card">
                         <div className="card-header">
-                            <span>발송 대상 선택 ({members.length}명)</span>
+                            <span>발송 대상 선택 ({(members || []).length}명)</span>
                             <label style={{ cursor: 'pointer', fontSize: '0.9rem' }}>
                                 <input 
                                     type="checkbox" 
@@ -351,7 +355,7 @@ export default function SmsObituaryPage() {
                             </label>
                         </div>
                         <div className="member-list">
-                            {members.map((member) => (
+                            {(members || []).map((member) => (
                                 <div key={member._id} className="form-check">
                                     <input 
                                         className="form-check-input sms-check" 
