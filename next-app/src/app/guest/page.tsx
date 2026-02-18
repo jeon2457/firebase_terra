@@ -32,7 +32,6 @@ export default function GuestPage() {
 
     useEffect(() => {
         const routeByTheme = async () => {
-            if (status !== "authenticated") return;
             try {
                 const res = await fetch("/api/theme", { method: "GET" });
                 const data = await res.json();
