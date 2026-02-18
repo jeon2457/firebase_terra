@@ -36,7 +36,6 @@ export default function GuestListPage() {
 
     useEffect(() => {
         const ensureTheme = async () => {
-            if (status !== "authenticated") return;
             const res = await fetch("/api/theme");
             const data = await res.json();
             const theme = data?.theme as ThemeValue | undefined;
