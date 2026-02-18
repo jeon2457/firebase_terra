@@ -3,6 +3,7 @@
 import { useEffect, useMemo } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import DashboardContent from "@/app/dashboard/DashboardContent";
 import "bootstrap/dist/css/bootstrap.min.css";
