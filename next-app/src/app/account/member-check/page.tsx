@@ -40,7 +40,7 @@ export default function MemberCheckPage({ searchParams }: { searchParams?: { mem
     }, [status, memberIds, year]);
 
     const fetchData = async () => {
-        if (!memberIds) {
+        if (!memberIds || memberIds.trim() === '') {
             setLoading(false);
             return;
         }
