@@ -35,6 +35,7 @@ export default function GuestTechPage() {
     }, [session]);
 
     useEffect(() => {
+        if (status !== "authenticated") return;
         const ensureTheme = async () => {
             const res = await fetch("/api/theme");
             const data = await res.json();

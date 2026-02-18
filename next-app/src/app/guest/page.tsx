@@ -31,6 +31,7 @@ export default function GuestPage() {
     }, [session]);
 
     useEffect(() => {
+        if (status !== "authenticated") return;
         const routeByTheme = async () => {
             try {
                 const res = await fetch("/api/theme", { method: "GET" });
@@ -50,6 +51,7 @@ export default function GuestPage() {
         };
         routeByTheme();
     }, [status, router]);
+
 
     if (isLoadingTheme || status === "loading") {
         return <div className="text-center mt-5">Loading...</div>;

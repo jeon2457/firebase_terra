@@ -10,47 +10,48 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 type ThemeValue = "book" | "icon" | "glass" | "list" | "tech";
 
 export default function GuestIconPage() {
-    const { data: session, status } = useSession();
-    const router = useRouter();
-    const [displayName, setDisplayName] = useState("사용자");
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [displayName, setDisplayName] = useState("사용자");
 
-    const themePath = useMemo(() => {
-        return (t: ThemeValue) => (t === "book" ? "/guest" : `/guest/${t}`);
-    }, []);
+  const themePath = useMemo(() => {
+    return (t: ThemeValue) => (t === "book" ? "/guest" : `/guest/${t}`);
+  }, []);
 
-    useEffect(() => {
-        if (session?.user) {
-            const user = session.user as any;
-            let name = user.name || "사용자";
-            if (user.user_level >= 10) name += " (관리자)";
-            else name += " 님";
-            setDisplayName(name);
-        }
-    }, [session]);
-
-    useEffect(() => {
-        const ensureTheme = async () => {
-            const res = await fetch("/api/theme");
-            const data = await res.json();
-            const theme = data?.theme as ThemeValue | undefined;
-            if (theme && theme !== "icon") {
-                router.replace(themePath(theme));
-            }
-        };
-        ensureTheme().catch(() => {
-            // ignore
-        });
-    }, [status, router, themePath]);
-
-    if (status === "loading") return <div className="text-center mt-5">Loading...</div>;
-    if (status === "unauthenticated") {
-        router.replace("/login");
-        return null;
+  useEffect(() => {
+    if (session?.user) {
+      const user = session.user as any;
+      let name = user.name || "사용자";
+      if (user.user_level >= 10) name += " (관리자)";
+      else name += " 님";
+      setDisplayName(name);
     }
+  }, [session]);
 
-    return (
-        <div className="wrap">
-            <style jsx>{`
+  useEffect(() => {
+    if (status !== "authenticated") return;
+    const ensureTheme = async () => {
+      const res = await fetch("/api/theme");
+      const data = await res.json();
+      const theme = data?.theme as ThemeValue | undefined;
+      if (theme && theme !== "icon") {
+        router.replace(themePath(theme));
+      }
+    };
+    ensureTheme().catch(() => {
+      // ignore
+    });
+  }, [status, router, themePath]);
+
+  if (status === "loading") return <div className="text-center mt-5">Loading...</div>;
+  if (status === "unauthenticated") {
+    router.replace("/login");
+    return null;
+  }
+
+  return (
+    <div className="wrap">
+      <style>{`
         .wrap {
           min-height: 100vh;
           background: #f4f6f9;
@@ -148,59 +149,59 @@ export default function GuestIconPage() {
         }
       `}</style>
 
-            <div className="container">
-                <div className="title">회원관리 메뉴판</div>
-                <div className="info">
-                    👤 내 정보: <strong>{displayName}</strong> (Level {(session?.user as any)?.user_level || 0})
-                </div>
-
-                <div className="icon-grid">
-                    {/* 1. 연락망 보기 */}
-                    <Link href="/members/view" className="icon-item">
-                        <div className="icon-box icon-bg-tel"><i className="bi bi-people-fill" /></div>
-                        <div className="icon-label">연락망 보기</div>
-                    </Link>
-
-                    {/* 2. 사용내역 열람 */}
-                    <Link href="/account/view" className="icon-item">
-                        <div className="icon-box icon-bg-view"><i className="bi bi-eye" /></div>
-                        <div className="icon-label">사용내역 열람</div>
-                    </Link>
-
-                    {/* 3. 영수증 열람 */}
-                    <Link href="/receipt/view" className="icon-item">
-                        <div className="icon-box icon-bg-image"><i className="bi bi-image" /></div>
-                        <div className="icon-label">영수증 열람</div>
-                    </Link>
-
-                    {/* 4. 월회비 납부현황 (링크 없음/준비중) */}
-                    <div className="icon-item" onClick={() => alert("준비중입니다.")} role="button" tabIndex={0}
-                         onKeyDown={(e) => { if (e.key === "Enter") alert("준비중입니다."); }}>
-                        <div className="icon-box icon-bg-card"><i className="bi bi-credit-card" /></div>
-                        <div className="icon-label">월회비 납부현황</div>
-                    </div>
-
-                    {/* 5. 재무 대시보드 (준비중) */}
-                    <div className="icon-item" onClick={() => alert("준비중입니다.")} role="button" tabIndex={0}
-                         onKeyDown={(e) => { if (e.key === "Enter") alert("준비중입니다."); }}>
-                        <div className="icon-box icon-bg-financial"><i className="bi bi-pie-chart-fill" /></div>
-                        <div className="icon-label">재무 대시보드</div>
-                    </div>
-
-                    {/* 6. 엑셀 리포트 (준비중) */}
-                    <div className="icon-item" onClick={() => alert("준비중입니다.")} role="button" tabIndex={0}
-                         onKeyDown={(e) => { if (e.key === "Enter") alert("준비중입니다."); }}>
-                        <div className="icon-box icon-bg-excel"><i className="bi bi-file-earmark-excel-fill" /></div>
-                        <div className="icon-label">엑셀 리포트</div>
-                    </div>
-                </div>
-
-                <div className="text-center mt-4">
-                    <button className="btn btn-outline-danger rounded-pill fw-bold px-4" onClick={() => signOut({ callbackUrl: "/login" })}>
-                        로그아웃
-                    </button>
-                </div>
-            </div>
+      <div className="container">
+        <div className="title">회원관리 메뉴판</div>
+        <div className="info">
+          👤 내 정보: <strong>{displayName}</strong> (Level {(session?.user as any)?.user_level || 0})
         </div>
-    );
+
+        <div className="icon-grid">
+          {/* 1. 연락망 보기 */}
+          <Link href="/members/view" className="icon-item">
+            <div className="icon-box icon-bg-tel"><i className="bi bi-people-fill" /></div>
+            <div className="icon-label">연락망 보기</div>
+          </Link>
+
+          {/* 2. 사용내역 열람 */}
+          <Link href="/account/view" className="icon-item">
+            <div className="icon-box icon-bg-view"><i className="bi bi-eye" /></div>
+            <div className="icon-label">사용내역 열람</div>
+          </Link>
+
+          {/* 3. 영수증 열람 */}
+          <Link href="/receipt/view" className="icon-item">
+            <div className="icon-box icon-bg-image"><i className="bi bi-image" /></div>
+            <div className="icon-label">영수증 열람</div>
+          </Link>
+
+          {/* 4. 월회비 납부현황 (링크 없음/준비중) */}
+          <div className="icon-item" onClick={() => alert("준비중입니다.")} role="button" tabIndex={0}
+            onKeyDown={(e) => { if (e.key === "Enter") alert("준비중입니다."); }}>
+            <div className="icon-box icon-bg-card"><i className="bi bi-credit-card" /></div>
+            <div className="icon-label">월회비 납부현황</div>
+          </div>
+
+          {/* 5. 재무 대시보드 (준비중) */}
+          <div className="icon-item" onClick={() => alert("준비중입니다.")} role="button" tabIndex={0}
+            onKeyDown={(e) => { if (e.key === "Enter") alert("준비중입니다."); }}>
+            <div className="icon-box icon-bg-financial"><i className="bi bi-pie-chart-fill" /></div>
+            <div className="icon-label">재무 대시보드</div>
+          </div>
+
+          {/* 6. 엑셀 리포트 (준비중) */}
+          <div className="icon-item" onClick={() => alert("준비중입니다.")} role="button" tabIndex={0}
+            onKeyDown={(e) => { if (e.key === "Enter") alert("준비중입니다."); }}>
+            <div className="icon-box icon-bg-excel"><i className="bi bi-file-earmark-excel-fill" /></div>
+            <div className="icon-label">엑셀 리포트</div>
+          </div>
+        </div>
+
+        <div className="text-center mt-4">
+          <button className="btn btn-outline-danger rounded-pill fw-bold px-4" onClick={() => signOut({ callbackUrl: "/login" })}>
+            로그아웃
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }

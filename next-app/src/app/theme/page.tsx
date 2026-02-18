@@ -82,7 +82,7 @@ export default function ThemePage() {
 
     return (
         <div className="container" style={{ maxWidth: 650, paddingTop: 30, paddingBottom: 40 }}>
-            <style jsx>{`
+            <style>{`
         .title-area {
           text-align: center;
           margin-bottom: 28px;

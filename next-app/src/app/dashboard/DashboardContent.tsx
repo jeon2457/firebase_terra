@@ -418,7 +418,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
                     }}
                 />
             )}
-            <style jsx>{`
+            <style>{`
         .wrap-container {
           max-width: 1100px;
           position: relative;
@@ -954,232 +954,232 @@ export default function DashboardContent({ theme = "book" }: Props) {
       `}</style>
 
             <div className="container wrap-container py-5">
-            {(theme === "glass" || theme === "tech") ? (
-                <>
-                    <div className="space-title">{theme === "tech" ? "TERRAONE" : "TERRAONE NEXUS"}</div>
-                    <div className="space-topbar">
-                        <div className="space-admin">
-                            <div className="space-admin-badge">
-                                <Users size={16} />
-                            </div>
-                            <span>{userDisplayName}</span>
-                        </div>
-                        <button className="space-logout" onClick={() => signOut({ callbackUrl: "/login" })}>로그아웃</button>
-                    </div>
-                </>
-            ) : (
-                <>
-                    <h2 className="section-title">회원관리 도서관{theme !== "book" ? ` (${theme})` : ""}</h2>
-                    <div className="admin-info">
-                        👤 내 정보: <strong>{userDisplayName}</strong> (Level {(session?.user as any)?.user_level || 0})
-                        {(theme === "list" && (session?.user as any)?.user_level < 10) && (
-                            <button
-                                className="btn btn-sm btn-outline-secondary ms-2"
-                                onClick={() => signOut({ callbackUrl: "/login" })}
-                            >
-                                로그아웃
-                            </button>
-                        )}
-                    </div>
-                </>
-            )}
-
-            <div className="option-box">
-                {theme === "book" && (
+                {(theme === "glass" || theme === "tech") ? (
                     <>
-                        {filteredMenuItems.map((item, idx) => (
-                            <div
-                                key={idx}
-                                className={`select-card ${selectedPage === item.path ? 'active' : ''}`}
-                                onClick={() => setSelectedPage(item.path)}
-                            >
-                                <div className={`book-spine ${item.color}`}>
-                                    <div className="mb-1">{item.icon}</div>
-                                    <div className="book-title">{item.title}</div>
+                        <div className="space-title">{theme === "tech" ? "TERRAONE" : "TERRAONE NEXUS"}</div>
+                        <div className="space-topbar">
+                            <div className="space-admin">
+                                <div className="space-admin-badge">
+                                    <Users size={16} />
                                 </div>
+                                <span>{userDisplayName}</span>
                             </div>
-                        ))}
+                            <button className="space-logout" onClick={() => signOut({ callbackUrl: "/login" })}>로그아웃</button>
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        <h2 className="section-title">회원관리 도서관{theme !== "book" ? ` (${theme})` : ""}</h2>
+                        <div className="admin-info">
+                            👤 내 정보: <strong>{userDisplayName}</strong> (Level {(session?.user as any)?.user_level || 0})
+                            {(theme === "list" && (session?.user as any)?.user_level < 10) && (
+                                <button
+                                    className="btn btn-sm btn-outline-secondary ms-2"
+                                    onClick={() => signOut({ callbackUrl: "/login" })}
+                                >
+                                    로그아웃
+                                </button>
+                            )}
+                        </div>
                     </>
                 )}
 
-                {theme === "icon" && (
-                    <div className="icon-grid">
-                        {filteredMenuItems.map((item, idx) => (
-                            <div
-                                key={idx}
-                                className={`icon-item ${selectedPage === item.path ? 'active' : ''}`}
-                                onClick={() => setSelectedPage(item.path)}
-                            >
-                                <div className={`icon-box icon-${item.color}`}>
-                                    {item.icon}
-                                </div>
-                                <div className="icon-label">{item.title}</div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-
-                {theme === "list" && (
-                    <div className="list-box">
-                        {filteredMenuItems.map((item, idx) => (
-                            <div
-                                key={idx}
-                                className={`list-item ${selectedPage === item.path ? 'active' : ''}`}
-                                onClick={() => setSelectedPage(item.path)}
-                            >
-                                <div className="list-left">
-                                    <div className="list-icon">{item.icon}</div>
-                                    <div>
-                                        <div className="list-title">{item.title}</div>
-                                        <div className="list-sub">클릭해서 선택</div>
+                <div className="option-box">
+                    {theme === "book" && (
+                        <>
+                            {filteredMenuItems.map((item, idx) => (
+                                <div
+                                    key={idx}
+                                    className={`select-card ${selectedPage === item.path ? 'active' : ''}`}
+                                    onClick={() => setSelectedPage(item.path)}
+                                >
+                                    <div className={`book-spine ${item.color}`}>
+                                        <div className="mb-1">{item.icon}</div>
+                                        <div className="book-title">{item.title}</div>
                                     </div>
                                 </div>
-                                <i className="bi bi-chevron-right" aria-hidden="true" role="presentation" style={{ color: "#94a3b8", fontWeight: 900 }} />
-                            </div>
-                        ))}
-                    </div>
-                )}
+                            ))}
+                        </>
+                    )}
 
-                {theme === "glass" && (
-                    <div className="glass-menugrid">
-                        {filteredMenuItems.map((item, idx) => (
-                            <div key={idx} className="glass-menu" onClick={() => openMenuPath(item.path)}>
-                                <div className={`glass-menu-icon glass-icon-${item.color}`}>{item.icon}</div>
-                                <div className="glass-menu-label">{item.title}</div>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                    {theme === "icon" && (
+                        <div className="icon-grid">
+                            {filteredMenuItems.map((item, idx) => (
+                                <div
+                                    key={idx}
+                                    className={`icon-item ${selectedPage === item.path ? 'active' : ''}`}
+                                    onClick={() => setSelectedPage(item.path)}
+                                >
+                                    <div className={`icon-box icon-${item.color}`}>
+                                        {item.icon}
+                                    </div>
+                                    <div className="icon-label">{item.title}</div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
 
-                {theme === "tech" && (
-                    <div className="tech-appgrid">
-                        {filteredMenuItems.map((item, idx) => (
-                            <div key={idx} className="tech-app" onClick={() => openMenuPath(item.path)}>
-                                <div className={`tech-app-icon icon-${item.color}`}>{item.icon}</div>
-                                <div className="tech-app-label">{item.title}</div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
+                    {theme === "list" && (
+                        <div className="list-box">
+                            {filteredMenuItems.map((item, idx) => (
+                                <div
+                                    key={idx}
+                                    className={`list-item ${selectedPage === item.path ? 'active' : ''}`}
+                                    onClick={() => setSelectedPage(item.path)}
+                                >
+                                    <div className="list-left">
+                                        <div className="list-icon">{item.icon}</div>
+                                        <div>
+                                            <div className="list-title">{item.title}</div>
+                                            <div className="list-sub">클릭해서 선택</div>
+                                        </div>
+                                    </div>
+                                    <i className="bi bi-chevron-right" aria-hidden="true" role="presentation" style={{ color: "#94a3b8", fontWeight: 900 }} />
+                                </div>
+                            ))}
+                        </div>
+                    )}
 
-            {(session?.user as any)?.user_level >= 10 && (theme !== "glass" && theme !== "tech") && (
-                <div className="text-center mt-4 d-flex flex-column gap-3 align-items-center">
-                    <button className="btn btn-outline-secondary rounded-pill fw-bold" onClick={() => router.push("/theme")}
-                    >
-                        <Palette className="me-2" size={18} /> 디자인 변경 / 테마 설정
-                    </button>
-                    <div className="d-flex flex-column flex-md-row gap-3">
-                        <button className="btn btn-primary btn-same shadow-lg d-flex align-items-center justify-content-center" onClick={handleGoNext}>
-                            <BookOpen className="me-2" size={20} /> 책 펼쳐보기
+                    {theme === "glass" && (
+                        <div className="glass-menugrid">
+                            {filteredMenuItems.map((item, idx) => (
+                                <div key={idx} className="glass-menu" onClick={() => openMenuPath(item.path)}>
+                                    <div className={`glass-menu-icon glass-icon-${item.color}`}>{item.icon}</div>
+                                    <div className="glass-menu-label">{item.title}</div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {theme === "tech" && (
+                        <div className="tech-appgrid">
+                            {filteredMenuItems.map((item, idx) => (
+                                <div key={idx} className="tech-app" onClick={() => openMenuPath(item.path)}>
+                                    <div className={`tech-app-icon icon-${item.color}`}>{item.icon}</div>
+                                    <div className="tech-app-label">{item.title}</div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {(session?.user as any)?.user_level >= 10 && (theme !== "glass" && theme !== "tech") && (
+                    <div className="text-center mt-4 d-flex flex-column gap-3 align-items-center">
+                        <button className="btn btn-outline-secondary rounded-pill fw-bold" onClick={() => router.push("/theme")}
+                        >
+                            <Palette className="me-2" size={18} /> 디자인 변경 / 테마 설정
                         </button>
-                        <button className="btn btn-outline-danger btn-same shadow-sm d-flex align-items-center justify-content-center" onClick={() => signOut({ callbackUrl: "/login" })}>
-                            <LogOut className="me-2" size={20} /> 서재 나가기
+                        <div className="d-flex flex-column flex-md-row gap-3">
+                            <button className="btn btn-primary btn-same shadow-lg d-flex align-items-center justify-content-center" onClick={handleGoNext}>
+                                <BookOpen className="me-2" size={20} /> 책 펼쳐보기
+                            </button>
+                            <button className="btn btn-outline-danger btn-same shadow-sm d-flex align-items-center justify-content-center" onClick={() => signOut({ callbackUrl: "/login" })}>
+                                <LogOut className="me-2" size={20} /> 서재 나가기
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {(session?.user as any)?.user_level >= 10 && theme === "glass" && (
+                    <div className="text-center mt-4 d-flex flex-column gap-3 align-items-center">
+                        <button className="glass-theme-btn" onClick={() => router.push("/theme")}>
+                            <Palette className="me-2" size={18} /> 디자인 변경 / 테마설정
                         </button>
                     </div>
-                </div>
-            )}
+                )}
 
-            {(session?.user as any)?.user_level >= 10 && theme === "glass" && (
-                <div className="text-center mt-4 d-flex flex-column gap-3 align-items-center">
-                    <button className="glass-theme-btn" onClick={() => router.push("/theme")}>
-                        <Palette className="me-2" size={18} /> 디자인 변경 / 테마설정
-                    </button>
-                </div>
-            )}
+                {(session?.user as any)?.user_level >= 10 && theme === "tech" && (
+                    <div className="text-center mt-4 d-flex flex-column gap-3 align-items-center">
+                        <button className="tech-theme-btn" onClick={() => router.push("/theme")}>
+                            <Palette className="me-2" size={18} /> 디자인 변경 / 테마설정
+                        </button>
+                    </div>
+                )}
 
-            {(session?.user as any)?.user_level >= 10 && theme === "tech" && (
-                <div className="text-center mt-4 d-flex flex-column gap-3 align-items-center">
-                    <button className="tech-theme-btn" onClick={() => router.push("/theme")}>
-                        <Palette className="me-2" size={18} /> 디자인 변경 / 테마설정
-                    </button>
-                </div>
-            )}
-
-            {showFinancial && (
-                <div className="custom-modal-overlay" onClick={() => setShowFinancial(false)}>
-                    <div className="custom-modal" onClick={e => e.stopPropagation()}>
-                        <div className="d-flex justify-content-between align-items-center mb-4">
-                            <h4 className="fw-bold m-0"><PieChart className="me-2" /> 재무 대시보드</h4>
-                            <button className="btn btn-link link-dark p-0" onClick={() => setShowFinancial(false)}><X size={24} /></button>
-                        </div>
-
-                        <div className="mb-4 d-flex align-items-center gap-3">
-                            <span className="fw-bold text-secondary">연도 선택</span>
-                            <select
-                                className="form-select w-auto"
-                                value={selectedYear}
-                                onChange={(e) => setSelectedYear(Number(e.target.value))}
-                            >
-                                {[0, 1, 2, 3].map(i => (
-                                    <option key={i} value={new Date().getFullYear() - i}>{new Date().getFullYear() - i}년</option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="d-flex gap-3 mb-4">
-                            <div className="summary-card bg-success-subtle text-success">
-                                <div className="small">연간 총 수입</div>
-                                <div className="h4 fw-bold">{totalInc.toLocaleString()}원</div>
+                {showFinancial && (
+                    <div className="custom-modal-overlay" onClick={() => setShowFinancial(false)}>
+                        <div className="custom-modal" onClick={e => e.stopPropagation()}>
+                            <div className="d-flex justify-content-between align-items-center mb-4">
+                                <h4 className="fw-bold m-0"><PieChart className="me-2" /> 재무 대시보드</h4>
+                                <button className="btn btn-link link-dark p-0" onClick={() => setShowFinancial(false)}><X size={24} /></button>
                             </div>
-                            <div className="summary-card bg-danger-subtle text-danger">
-                                <div className="small">연간 총 지출</div>
-                                <div className="h4 fw-bold">{totalExp.toLocaleString()}원</div>
-                            </div>
-                            <div className="summary-card bg-primary-subtle text-primary">
-                                <div className="small">순 이익</div>
-                                <div className="h4 fw-bold">{(totalInc - totalExp).toLocaleString()}원</div>
-                            </div>
-                        </div>
 
-                        <div className="row">
-                            <div className="col-lg-8 mb-4">
-                                <div className="p-3 border rounded shadow-sm bg-white" style={{ height: '350px' }}>
-                                    <Bar data={barData} options={{ responsive: true, maintainAspectRatio: false }} />
+                            <div className="mb-4 d-flex align-items-center gap-3">
+                                <span className="fw-bold text-secondary">연도 선택</span>
+                                <select
+                                    className="form-select w-auto"
+                                    value={selectedYear}
+                                    onChange={(e) => setSelectedYear(Number(e.target.value))}
+                                >
+                                    {[0, 1, 2, 3].map(i => (
+                                        <option key={i} value={new Date().getFullYear() - i}>{new Date().getFullYear() - i}년</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="d-flex gap-3 mb-4">
+                                <div className="summary-card bg-success-subtle text-success">
+                                    <div className="small">연간 총 수입</div>
+                                    <div className="h4 fw-bold">{totalInc.toLocaleString()}원</div>
+                                </div>
+                                <div className="summary-card bg-danger-subtle text-danger">
+                                    <div className="small">연간 총 지출</div>
+                                    <div className="h4 fw-bold">{totalExp.toLocaleString()}원</div>
+                                </div>
+                                <div className="summary-card bg-primary-subtle text-primary">
+                                    <div className="small">순 이익</div>
+                                    <div className="h4 fw-bold">{(totalInc - totalExp).toLocaleString()}원</div>
                                 </div>
                             </div>
-                            <div className="col-lg-4 mb-4">
-                                <div className="p-3 border rounded shadow-sm bg-white" style={{ height: '350px' }}>
-                                    <Doughnut data={doughnutData} options={{ responsive: true, maintainAspectRatio: false }} />
+
+                            <div className="row">
+                                <div className="col-lg-8 mb-4">
+                                    <div className="p-3 border rounded shadow-sm bg-white" style={{ height: '350px' }}>
+                                        <Bar data={barData} options={{ responsive: true, maintainAspectRatio: false }} />
+                                    </div>
+                                </div>
+                                <div className="col-lg-4 mb-4">
+                                    <div className="p-3 border rounded shadow-sm bg-white" style={{ height: '350px' }}>
+                                        <Doughnut data={doughnutData} options={{ responsive: true, maintainAspectRatio: false }} />
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
 
-            {showExcel && (
-                <div className="custom-modal-overlay" onClick={() => setShowExcel(false)}>
-                    <div className="custom-modal" style={{ maxWidth: '500px' }} onClick={e => e.stopPropagation()}>
-                        <div className="d-flex justify-content-between align-items-center mb-4">
-                            <h4 className="fw-bold m-0"><FileSpreadsheet className="me-2 text-success" /> 엑셀 리포트 설정</h4>
-                            <button className="btn btn-link link-dark p-0" onClick={() => setShowExcel(false)}><X size={24} /></button>
+                {showExcel && (
+                    <div className="custom-modal-overlay" onClick={() => setShowExcel(false)}>
+                        <div className="custom-modal" style={{ maxWidth: '500px' }} onClick={e => e.stopPropagation()}>
+                            <div className="d-flex justify-content-between align-items-center mb-4">
+                                <h4 className="fw-bold m-0"><FileSpreadsheet className="me-2 text-success" /> 엑셀 리포트 설정</h4>
+                                <button className="btn btn-link link-dark p-0" onClick={() => setShowExcel(false)}><X size={24} /></button>
+                            </div>
+
+                            <div className="mb-3">
+                                <label className="form-label fw-bold">대상 연도</label>
+                                <select className="form-select" value={excelConfig.year} onChange={e => setExcelConfig({ ...excelConfig, year: Number(e.target.value) })}>
+                                    {[0, 1, 2, 3].map(i => (
+                                        <option key={i} value={new Date().getFullYear() - i}>{new Date().getFullYear() - i}년</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="mb-4">
+                                <label className="form-label fw-bold">출력 항목</label>
+                                <select className="form-select" value={excelConfig.type} onChange={e => setExcelConfig({ ...excelConfig, type: (e.target as any).value })}>
+                                    <option value="all">전체 (수입 + 지출)</option>
+                                    <option value="income">수입 내역만</option>
+                                    <option value="expense">지출 내역만</option>
+                                </select>
+                            </div>
+
+                            <button className="btn btn-success w-100 p-3 fw-bold rounded-pill" onClick={downloadExcel}>
+                                <Upload className="me-2" size={18} /> 엑셀 파일 다운로드 (.xlsx)
+                            </button>
                         </div>
-
-                        <div className="mb-3">
-                            <label className="form-label fw-bold">대상 연도</label>
-                            <select className="form-select" value={excelConfig.year} onChange={e => setExcelConfig({ ...excelConfig, year: Number(e.target.value) })}>
-                                {[0, 1, 2, 3].map(i => (
-                                    <option key={i} value={new Date().getFullYear() - i}>{new Date().getFullYear() - i}년</option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="form-label fw-bold">출력 항목</label>
-                            <select className="form-select" value={excelConfig.type} onChange={e => setExcelConfig({ ...excelConfig, type: (e.target as any).value })}>
-                                <option value="all">전체 (수입 + 지출)</option>
-                                <option value="income">수입 내역만</option>
-                                <option value="expense">지출 내역만</option>
-                            </select>
-                        </div>
-
-                        <button className="btn btn-success w-100 p-3 fw-bold rounded-pill" onClick={downloadExcel}>
-                            <Upload className="me-2" size={18} /> 엑셀 파일 다운로드 (.xlsx)
-                        </button>
                     </div>
-                </div>
-            )}
+                )}
             </div>
         </div>
     );

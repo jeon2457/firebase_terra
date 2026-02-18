@@ -12,8 +12,8 @@ export default function DashboardListPage() {
     const router = useRouter();
 
     useEffect(() => {
+        if (status !== "authenticated") return;
         const ensureTheme = async () => {
-            if (status !== "authenticated") return;
             const res = await fetch("/api/theme");
             const data = await res.json();
             const theme = data?.theme as ThemeValue | undefined;
@@ -25,6 +25,7 @@ export default function DashboardListPage() {
             // ignore
         });
     }, [status, router]);
+
 
     return <DashboardContent theme="list" />;
 }
