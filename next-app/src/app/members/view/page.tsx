@@ -485,16 +485,22 @@ export default function MembersViewPage() {
                                         </td>
                                         <td className="address_1">
                                             {['회장', '총무'].some(role => member.remark?.includes(role)) ? (
-                                                <a
-                                                    href={`sms:${members
-                                                        .filter(m => m.tel && m.tel !== member.tel)
-                                                        .map(m => m.tel.replace(/-/g, ''))
-                                                        .join(',')}`}
-                                                    style={{ color: '#ffffff', textDecoration: 'none', cursor: 'pointer', fontWeight: 700 }}
-                                                    title="전체 회원에게 문자 보내기"
-                                                >
-                                                    {member.addr}
-                                                </a>
+                                                userLevel >= 5 ? (
+                                                    <a
+                                                        href={`sms:${members
+                                                            .filter(m => m.tel && m.tel !== member.tel)
+                                                            .map(m => m.tel.replace(/-/g, ''))
+                                                            .join(',')}`}
+                                                        style={{ color: '#ffffff', textDecoration: 'none', cursor: 'pointer', fontWeight: 700 }}
+                                                        title="전체 회원에게 문자 보내기"
+                                                    >
+                                                        {member.addr}
+                                                    </a>
+                                                ) : (
+                                                    <span style={{ color: '#ffffff', textDecoration: 'none', cursor: 'default', fontWeight: 700 }}>
+                                                        {member.addr}
+                                                    </span>
+                                                )
                                             ) : (
                                                 member.addr
                                             )}
