@@ -20,21 +20,31 @@ export async function GET(req: NextRequest) {
         const memberIds = searchParams.get('members');
         const year = parseInt(searchParams.get('year') || new Date().getFullYear().toString());
 
+        console.log('=== 회원 체크 API 디버그 ===');
+        console.log('memberIds:', memberIds);
+        console.log('year:', year);
+
         if (!memberIds) {
             return NextResponse.json({ success: false, message: "선택된 회원이 없습니다." });
         }
 
         // MongoDB ObjectId로 변환
         const idArr = memberIds.split(',');
+        console.log('idArr:', idArr);
+        
         const objectIds = [];
         
         for (const id of idArr) {
             try {
-                objectIds.push(new ObjectId(id.trim()));
+                const objectId = new ObjectId(id.trim());
+                objectIds.push(objectId);
+                console.log('유효한 ObjectId:', objectId);
             } catch (error) {
-                console.error('Invalid ObjectId:', id);
+                console.error('Invalid ObjectId:', id, error);
             }
         }
+        
+        console.log('objectIds length:', objectIds.length);
         
         if (objectIds.length === 0) {
             return NextResponse.json({ success: false, message: "유효한 회원 ID가 없습니다." });
@@ -45,6 +55,9 @@ export async function GET(req: NextRequest) {
             { _id: { $in: objectIds } },
             { sort: { name: 1 } }
         );
+        
+        console.log('조회된 회원 수:', members.length);
+        console.log('조회된 회원:', members.map(m => ({ id: m._id, name: m.name })));
 
         // 월별 회비 조회 함수
         async function getMonthlyFee(year: number, month: number) {
