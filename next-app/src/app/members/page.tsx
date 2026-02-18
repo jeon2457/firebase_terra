@@ -57,6 +57,12 @@ export default function MembersSelectPage() {
         }
     ];
 
+    const userLevel = (session?.user as any)?.user_level || 0;
+
+    const filteredMenuItems = userLevel >= 5
+        ? menuItems
+        : menuItems.filter(item => item.id === "opt_view");
+
     return (
         <div className="container py-5" style={{ maxWidth: "650px" }}>
             <style jsx>{`
@@ -113,7 +119,7 @@ export default function MembersSelectPage() {
                 </div>
 
                 <div className="d-flex flex-column gap-3">
-                    {menuItems.map((item) => (
+                    {filteredMenuItems.map((item) => (
                         <div
                             key={item.id}
                             className={`select-card ${selectedPage === item.path ? 'active' : ''}`}
