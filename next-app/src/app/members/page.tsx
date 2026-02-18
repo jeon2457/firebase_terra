@@ -32,14 +32,6 @@ export default function MembersSelectPage() {
 
     const menuItems = [
         {
-            id: "opt_input",
-            title: "회원 등록",
-            desc: "새로운 회원 정보를 입력하고 저장합니다.",
-            path: "/members/input",
-            icon: <UserPlus size={24} />,
-            color: "border-primary"
-        },
-        {
             id: "opt_edit",
             title: "회원 편집",
             desc: "기존 회원 정보를 검색하고 수정합니다.",
