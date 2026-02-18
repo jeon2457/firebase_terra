@@ -132,12 +132,19 @@ export default function SmsObituaryPage() {
         }
 
         // 모바일 OS에 따른 SMS 링크 생성
+        // ==========================================
+        // SMS 제목 설정: "제목없음" 문제 해결을 위해 subject 파라미터 추가
+        // ==========================================
         const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+        const subject = encodeURIComponent('부고 알림: 김천 황악회'); // SMS 제목 설정
 
-        // iOS는 &body=, 안드로이드는 ?body= 형식이 호환성이 좋음
+        // iOS와 Android의 SMS 링크 형식 차이:
+        // iOS: sms:번호&subject=제목&body=내용 (& 파라미터)
+        // Android: sms:번호?subject=제목&body=내용 (? 파라미터)
+        // ==========================================
         let smsLink = isIOS
-            ? `sms:${numbers}&body=${encodeURIComponent(msg)}`
-            : `sms:${numbers}?body=${encodeURIComponent(msg)}`;
+            ? `sms:${numbers}&subject=${subject}&body=${encodeURIComponent(msg)}`  // iOS용 링크
+            : `sms:${numbers}?subject=${subject}&body=${encodeURIComponent(msg)}`; // Android용 링크
 
         // 문자 앱 실행
         window.location.href = smsLink;
