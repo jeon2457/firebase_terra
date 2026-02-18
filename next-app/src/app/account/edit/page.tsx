@@ -22,10 +22,28 @@ function AccountEditContent() {
     const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
     const [mounted, setMounted] = useState(false);
     const [modalData, setModalData] = useState<any | null>(null);
+    const [yearDropdownOpen, setYearDropdownOpen] = useState(false);
 
     useEffect(() => {
         setMounted(true);
     }, []);
+
+    // 드롭다운 외부 클릭 시 닫기
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (yearDropdownOpen) {
+                const dropdown = document.querySelector('.year-dropdown-container');
+                if (dropdown && !dropdown.contains(event.target as Node)) {
+                    setYearDropdownOpen(false);
+                }
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [yearDropdownOpen]);
 
     // Auth check
     useEffect(() => {
@@ -85,7 +103,23 @@ function AccountEditContent() {
         return monthPart && parseInt(monthPart) === currentMonth;
     });
 
-    const years = [0, 1, 2, 3].map(i => new Date().getFullYear() - i);
+    // 5년 전부터 현재까지의 년도 생성, 그리고 다음 해까지 포함
+    const currentDate = new Date();
+    const currentYearValue = currentDate.getFullYear();
+    const years = [];
+    
+    // 5년 전부터 현재까지
+    for (let i = 5; i >= 0; i--) {
+        years.push(currentYearValue - i);
+    }
+    
+    // 12월 1일 이후에만 다음 해 자동 추가
+    if (currentDate.getMonth() === 11 && currentDate.getDate() >= 1) {
+        years.push(currentYearValue + 1);
+    }
+    
+    // 중복 제거 및 정렬
+    const uniqueYears = [...new Set(years)].sort((a, b) => a - b);
     const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
     // Safe formatting helpers
@@ -150,6 +184,10 @@ function AccountEditContent() {
                         padding: 2px 4px; 
                         font-size: 10px;
                     }
+                    .year-dropdown-btn {
+                        font-size: 0.63rem !important; /* 30% 더 축소 */
+                        padding: 0.35rem 0.7rem !important; /* 30% 더 축소 */
+                    }
                 }
                 .modal-overlay {
                     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
@@ -165,15 +203,28 @@ function AccountEditContent() {
 
             <div className="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
                 <h4 className="m-0 fw-bold text-danger">⚙️ 사용내역서 편집</h4>
-                <div className="dropdown">
-                    <button className="btn btn-dark btn-sm dropdown-toggle rounded-pill px-3" data-bs-toggle="dropdown">
-                        {currentYear}년
+                <div className="position-relative year-dropdown-container">
+                    <button className="btn btn-primary dropdown-toggle rounded-pill px-3 shadow-sm year-dropdown-btn" 
+                            onClick={() => setYearDropdownOpen(!yearDropdownOpen)}
+                            style={{ fontWeight: '600' }}>
+                        📅 {currentYear}년
                     </button>
-                    <ul className="dropdown-menu">
-                        {years.map(y => (
-                            <li key={y}><button className="dropdown-item" onClick={() => setCurrentYear(y)}>{y}년</button></li>
-                        ))}
-                    </ul>
+                    {yearDropdownOpen && (
+                        <div className="dropdown-menu show position-absolute end-0 mt-1 shadow" 
+                             style={{ maxHeight: '250px', overflowY: 'auto', minWidth: '120px' }}>
+                            {uniqueYears.map(y => (
+                                <button key={y} 
+                                        className={`dropdown-item ${y === currentYear ? 'active' : ''}`} 
+                                        onClick={() => {
+                                            setCurrentYear(y);
+                                            setYearDropdownOpen(false);
+                                        }}
+                                        style={{ fontWeight: y === currentYear ? '600' : 'normal', fontSize: '0.9rem' }}>
+                                    {y}년 {y === new Date().getFullYear() ? '(현재)' : ''} {y === new Date().getFullYear() + 1 ? '(다음해)' : ''}
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
 
