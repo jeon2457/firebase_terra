@@ -72,7 +72,7 @@ export default function MembersViewPage() {
             const res = await axios.get("/api/members");
             if (res.data.success) {
                 // Filter out specific system/public accounts
-                const filteredMembers = res.data.members.filter((m: any) => m.name !== '공용계정' && m.id !== 'jikji35');
+                const filteredMembers = res.data.data.filter((m: any) => m.name !== '공용계정' && m.id !== 'jikji35');
                 setMembers(filteredMembers);
             }
         } catch (error) {
@@ -137,9 +137,19 @@ export default function MembersViewPage() {
             z-index: 9999;
             inset: 0;
         }
-        #loading-screen img {
-            width: 250px;
-            max-width: 80%;
+        #loading-screen video {
+            width: 200px;
+            height: 200px;
+            max-width: 90vw;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+
+        @media (max-width: 768px) {
+            #loading-screen video {
+                width: 150px;
+                height: 150px;
+            }
         }
 
         #main-content {
