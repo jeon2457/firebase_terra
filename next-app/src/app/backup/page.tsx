@@ -204,7 +204,7 @@ export default function BackupPage() {
             `}</style>
 
             <div className="container">
-                <h2>🛠️ 데이터베이스 관리 도구</h2>
+                <h2>🛠️ MongoDB 데이터베이스 관리 도구</h2>
 
                 <div className="warning-box">
                     <strong>💡 정보:</strong> '백업' 기능을 사용하면 MongoDB의 모든 데이터를 JSON 파일로 다운로드할 수 있습니다.
