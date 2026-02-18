@@ -60,6 +60,14 @@ export default function FeeStatusPage() {
         try {
             const res = await axios.get(`/api/fee/status?year=${year}`);
             if (res.data.success) {
+                console.log('=== 회원 데이터 확인 ===');
+                console.log('회원 수:', res.data.members.length);
+                console.log('회원 ID 샘플:', res.data.members.map((m: any) => ({ 
+                    id: m._id, 
+                    name: m.name, 
+                    idLength: m._id?.toString().length 
+                })));
+                
                 setMembers(res.data.members);
                 setPassMap(res.data.passMap);
                 setMonthlyFees(res.data.monthlyFees);

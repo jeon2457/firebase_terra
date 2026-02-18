@@ -52,9 +52,15 @@ export async function GET(req: NextRequest) {
             monthlyFees[m] = fee?.fee_amount || 20000;
         }
 
+        // 회원 데이터를 안전하게 변환하여 _id를 문자열로 변환
+        const safeMembers = members.map((member: any) => ({
+            ...member.toObject(),
+            _id: member._id.toString()
+        }));
+
         return NextResponse.json({
             success: true,
-            members,
+            members: safeMembers,
             passMap,
             currentMonthFee,
             lastApplyYear,

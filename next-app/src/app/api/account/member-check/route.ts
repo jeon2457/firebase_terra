@@ -33,21 +33,37 @@ export async function GET(req: NextRequest) {
         console.log('idArr:', idArr);
         
         const objectIds = [];
+        const invalidIds = [];
         
         for (const id of idArr) {
+            const trimmedId = id.trim();
+            if (trimmedId.length === 0) continue;
+            
+            // MongoDB ObjectId 형식 검증 (24자 16진수)
+            if (!/^[0-9a-fA-F]{24}$/.test(trimmedId)) {
+                console.error('Invalid ObjectId format:', trimmedId);
+                invalidIds.push(trimmedId);
+                continue;
+            }
+            
             try {
-                const objectId = new ObjectId(id.trim());
+                const objectId = new ObjectId(trimmedId);
                 objectIds.push(objectId);
                 console.log('유효한 ObjectId:', objectId);
             } catch (error) {
-                console.error('Invalid ObjectId:', id, error);
+                console.error('Invalid ObjectId:', trimmedId, error);
+                invalidIds.push(trimmedId);
             }
         }
         
         console.log('objectIds length:', objectIds.length);
+        console.log('invalidIds:', invalidIds);
         
         if (objectIds.length === 0) {
-            return NextResponse.json({ success: false, message: "유효한 회원 ID가 없습니다." });
+            return NextResponse.json({ 
+                success: false, 
+                message: `유효한 회원 ID가 없습니다. 잘못된 ID: ${invalidIds.join(', ')}` 
+            });
         }
 
         // 회원 정보 조회
