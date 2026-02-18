@@ -30,7 +30,6 @@ export default function GuestIconPage() {
 
     useEffect(() => {
         const ensureTheme = async () => {
-            if (status !== "authenticated") return;
             const res = await fetch("/api/theme");
             const data = await res.json();
             const theme = data?.theme as ThemeValue | undefined;
@@ -45,7 +44,7 @@ export default function GuestIconPage() {
 
     if (status === "loading") return <div className="text-center mt-5">Loading...</div>;
     if (status === "unauthenticated") {
-        if (typeof window !== "undefined") window.location.href = "/login";
+        router.replace("/login");
         return null;
     }
 

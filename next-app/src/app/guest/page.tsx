@@ -57,9 +57,7 @@ export default function GuestPage() {
 
     // 로그인 안된 경우 처리 (middleware가 없다면 여기서 처리)
     if (status === "unauthenticated") {
-        if (typeof window !== "undefined") {
-            window.location.href = "/login";
-        }
+        router.replace("/login");
         return null;
     }
 

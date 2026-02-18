@@ -39,7 +39,7 @@ export default function GuestGlassPage() {
 
     if (status === "loading") return <div className="text-center mt-5">Loading...</div>;
     if (status === "unauthenticated") {
-        if (typeof window !== "undefined") window.location.href = "/login";
+        router.replace("/login");
         return null;
     }
 
