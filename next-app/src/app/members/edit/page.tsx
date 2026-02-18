@@ -27,7 +27,7 @@ export default function MemberEditListPage() {
         try {
             const res = await axios.get("/api/members?includeSystem=1");
             if (res.data.success) {
-                setMembers(res.data.members);
+                setMembers(res.data.data);
             }
         } catch (error) {
             console.error("Failed to load members", error);
@@ -76,8 +76,8 @@ export default function MemberEditListPage() {
 
             <h3 className="section-title mb-4">📋 회원편집 / 삭제</h3>
 
-            <div className="text-end mb-2">
-                <span className="fw-bold">전체회원수: {members.length} 명</span>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <span className="fw-bold">전체회원수: {(members || []).length} 명</span>
             </div>
 
             <div className="table-responsive bg-white rounded shadow-sm">
@@ -91,8 +91,8 @@ export default function MemberEditListPage() {
                         </tr>
                     </thead>
                     <tbody>
-                        {members.length > 0 ? (
-                            members.map((m) => (
+                        {(members || []).length > 0 ? (
+                            (members || []).map((m) => (
                                 <tr key={m._id} onClick={() => setSelectedId(m._id)} style={{ cursor: "pointer" }}>
                                     <td>
                                         <input
