@@ -1080,6 +1080,17 @@ export default function DashboardContent({ theme = "book" }: Props) {
                     </div>
                 )}
 
+                {(session?.user as any)?.user_level < 10 && theme === "icon" && (
+                    <div className="text-center mt-4">
+                        <button
+                            className="btn btn-outline-danger rounded-pill fw-bold px-4"
+                            onClick={() => signOut({ callbackUrl: "/login" })}
+                        >
+                            <LogOut className="me-2" size={18} /> 로그아웃
+                        </button>
+                    </div>
+                )}
+
                 {(session?.user as any)?.user_level >= 10 && theme === "glass" && (
                     <div className="text-center mt-4 d-flex flex-column gap-3 align-items-center">
                         <button className="glass-theme-btn" onClick={() => router.push("/theme")}>
