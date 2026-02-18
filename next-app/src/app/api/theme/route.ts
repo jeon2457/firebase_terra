@@ -13,24 +13,27 @@ function isAllowedTheme(value: any): value is ThemeValue {
 
 export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions);
-    if (!session) {
-        return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
-    }
-
+    
     try {
         await dbConnect();
 
-        const userId = (session.user as any).id as string;
         const cookieTheme = req.cookies.get("user_site_theme")?.value;
-
         let theme: ThemeValue = "book";
-        const userDoc = await User.findOne({ id: userId }).select("site_theme");
 
-        const dbTheme = userDoc?.site_theme;
-        if (isAllowedTheme(dbTheme)) {
-            theme = dbTheme;
-        } else if (isAllowedTheme(cookieTheme)) {
-            theme = cookieTheme;
+        if (session) {
+            const userId = (session.user as any).id as string;
+            const userDoc = await User.findOne({ id: userId }).select("site_theme");
+            const dbTheme = userDoc?.site_theme;
+            if (isAllowedTheme(dbTheme)) {
+                theme = dbTheme;
+            } else if (isAllowedTheme(cookieTheme)) {
+                theme = cookieTheme;
+            }
+        } else {
+            // 세션이 없는 경우 (게스트 모드)
+            if (isAllowedTheme(cookieTheme)) {
+                theme = cookieTheme;
+            }
         }
 
         const res = NextResponse.json({ success: true, theme });
