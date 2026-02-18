@@ -380,18 +380,18 @@ export default function MembersViewPage() {
             .cube img:nth-child(3) { transform: rotateX(180deg) translateZ(11px); }
             .cube img:nth-child(4) { transform: rotateX(270deg) translateZ(11px); }
 
-            .custom-table thead th { font-size: 0.7em; color: #f0c420; }
+            .custom-table thead th { color: #f0c420; } /* font-size removed */
             .custom-table td { font-size: 12px; padding: 0.32rem 0; }
 
             .custom-span { font-size: 14px; margin: 0 10px; line-height: 30px; }
             
             /* Column Widths Mobile */
-            .col-no { width: 6%; }
-            .col-name { width: 22%; font-size: calc(0.7em + 4px); letter-spacing: 1px; } /* 이름 */
-            .col-tel { width: 47%; font-size: calc(0.7em + 4px); letter-spacing: 1px; } /* 전화번호 */
-            .col-addr { width: 17%; font-size: calc(0.7em + 2px); } /* 거주지 */
+            .col-no { width: 6%; font-size: 11px !important; } /* NO */
+            .col-name { width: 22%; font-size: 15px !important; letter-spacing: 1px !important; } /* 이름 */
+            .col-tel { width: 47%; font-size: 15px !important; letter-spacing: 1px !important; } /* 전화번호 */
+            .col-addr { width: 17%; font-size: 13px !important; } /* 거주지 */
             .col-remark { display: none; } /* Hide remark on mobile */
-            .col-sms { width: 12%; font-size: calc(0.7em + 2px); } /* SMS */
+            .col-sms { width: 12%; font-size: 13px !important; } /* SMS */
             .hide-mobile { display: none; }
         }
 
