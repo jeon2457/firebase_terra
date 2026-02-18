@@ -393,20 +393,40 @@ export default function MembersViewPage() {
             .custom-table thead th { color: #f0c420; } /* font-size removed */
             .custom-table td { font-size: 12px; padding: 0.32rem 0; }
 
-            .custom-span { font-size: 14px; margin: 0 10px; line-height: 30px; }
-            
-            /* Column Widths Mobile */
-            .col-no { width: 6%; font-size: 11px !important; } /* NO */
-            .col-name { width: 22%; font-size: 15px !important; letter-spacing: 1px !important; } /* 이름 */
-            .col-tel { width: 47%; font-size: 15px !important; letter-spacing: 1px !important; } /* 전화번호 */
-            .col-addr { width: 17%; font-size: 13px !important; } /* 거주지 */
-            .col-remark { display: none; } /* Hide remark on mobile */
-            .col-sms { width: 12%; font-size: 13px !important; } /* SMS */
-            .hide-mobile { display: none; }
-        }
+    .wrap2 { top: 3.5rem; padding: 5px 42px 0 60px; height: 40px; }
+    .cube-container { top: 50%; left: 1px; transform: translateY(-50%); }
+    .wrap1 { width: 22px; height: 22px; }
+    .cube { width: 22px; height: 22px; }
+    .cube img { width: 22px; height: 22px; top: 0; left: 0; }
+    .cube img:nth-child(1) { transform: translateZ(11px); }
+    .cube img:nth-child(2) { transform: rotateX(90deg) translateZ(11px); }
+    .cube img:nth-child(3) { transform: rotateX(180deg) translateZ(11px); }
+    .cube img:nth-child(4) { transform: rotateX(270deg) translateZ(11px); }
 
-        /* PC Column Widths */
-        @media (min-width: 769px) {
+    .custom-table thead th { color: #f0c420; } /* font-size removed */
+    .custom-table td { font-size: 12px; padding: 0.32rem 0; }
+
+    .custom-span { font-size: 14px; margin: 0 10px; line-height: 30px; }
+            
+    /* Column Widths Mobile */
+    .col-no { width: 6%; font-size: 11px !important; } /* NO */
+    .col-name { width: 22%; font-size: 13px !important; letter-spacing: 1px !important; } /* 이름 - 폰트 크기 2px 감소 (15px -> 13px) */
+    .col-tel { width: 47%; font-size: 13px !important; letter-spacing: 1px !important; } /* 전화번호 - 폰트 크기 2px 감소 (15px -> 13px) */
+    .col-addr { width: 17%; font-size: 13px !important; } /* 거주지 */
+    .col-remark { display: none; } /* Hide remark on mobile */
+    .col-sms { width: 12%; font-size: 13px !important; } /* SMS */
+    .hide-mobile { display: none; }
+}
+
+/* PC Column Widths */
+@media (min-width: 769px) {
+     .col-no { width: 1.56rem; }
+     .col-name { width: 6rem; }
+     .col-tel { width: 10.5rem; white-space: nowrap; }
+     .col-addr { width: 2.8rem; }
+     .col-remark { width: 3.75rem; }
+     .col-sms { width: 3.75rem; }
+}
              .col-no { width: 1.56rem; }
              .col-name { width: 6rem; }
              .col-tel { width: 10.5rem; white-space: nowrap; }
@@ -426,7 +446,7 @@ export default function MembersViewPage() {
                 id="loading-screen"
                 style={{ opacity: isPageReady ? 0 : 1, pointerEvents: isPageReady ? 'none' : 'auto' }}
             >
-                <video src="/images/clova.mp4" autoPlay loop muted playsInline style={{ width: '100px', height: '100px' }} />
+                <video src="/images/clova.mp4" autoPlay loop muted playsInline style={{ width: '200px', height: '200px' }} />
             </div>
 
             <div id="main-content">
