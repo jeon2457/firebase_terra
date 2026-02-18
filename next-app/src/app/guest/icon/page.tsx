@@ -111,7 +111,7 @@ export default function GuestIconPage() {
           font-weight: 800;
           text-align: center;
           line-height: 1.25;
-          text-decoration: none;
+          text-decoration: none !important;
         }
         .icon-bg-tel { background: linear-gradient(180deg, #34AADC, #0076FF); }
         .icon-bg-view { background: linear-gradient(180deg, #4CD964, #28A745); }
