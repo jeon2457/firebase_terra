@@ -26,7 +26,19 @@ export async function GET(req: NextRequest) {
 
         // MongoDB ObjectId로 변환
         const idArr = memberIds.split(',');
-        const objectIds = idArr.map(id => new ObjectId(id));
+        const objectIds = [];
+        
+        for (const id of idArr) {
+            try {
+                objectIds.push(new ObjectId(id.trim()));
+            } catch (error) {
+                console.error('Invalid ObjectId:', id);
+            }
+        }
+        
+        if (objectIds.length === 0) {
+            return NextResponse.json({ success: false, message: "유효한 회원 ID가 없습니다." });
+        }
 
         // 회원 정보 조회
         const members = await Member.find(
