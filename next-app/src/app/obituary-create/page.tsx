@@ -120,9 +120,28 @@ export default function ObituaryCreatePage() {
             message
         };
 
-        // MongoDB 저장 (추후 구현)
-        console.log('부고장 데이터:', obData);
-        alert('부고장이 생성되었습니다.\n(현재는 데이터베이스 저장 기능이 구현 중입니다)');
+        try {
+            // MongoDB 저장
+            const response = await fetch('/api/obituary', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(obData)
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                // 생성된 부고장 페이지로 이동
+                router.push(`/obituary-view?id=${result.id}`);
+            } else {
+                alert('부고장 생성에 실패했습니다: ' + (result.error || '알 수 없는 오류'));
+            }
+        } catch (error) {
+            console.error('부고장 생성 오류:', error);
+            alert('부고장 생성에 실패했습니다.');
+        }
     };
 
     if (status === "loading") {
@@ -485,6 +504,15 @@ export default function ObituaryCreatePage() {
 
                             <button type="submit" className="btn-custom">
                                 부고장 생성하기
+                            </button>
+
+                            <button
+                                type="button"
+                                className="btn-custom"
+                                style={{ background: '#6c757d', marginTop: '10px' }}
+                                onClick={() => router.push('/obituary-view')}
+                            >
+                                📋 부고장 보러가기
                             </button>
 
                             <button

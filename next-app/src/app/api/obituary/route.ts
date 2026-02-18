@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 
 const uri = process.env.MONGODB_URI!;
 const client = new MongoClient(uri);
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
         const collection = database.collection('obituaries');
         
         if (id) {
-            const obituary = await collection.findOne({ _id: new (require('mongodb').ObjectId)(id) });
+            const obituary = await collection.findOne({ _id: new ObjectId(id) });
             if (!obituary) {
                 return NextResponse.json({ error: '부고장을 찾을 수 없습니다.' }, { status: 404 });
             }
