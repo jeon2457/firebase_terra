@@ -29,10 +29,15 @@ function ObituaryViewContent() {
     const [obituary, setObituary] = useState<ObituaryData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [members, setMembers] = useState<any[]>([]);
+    const [selectedMembers, setSelectedMembers] = useState<Set<string>>(new Set());
+    const [selectAll, setSelectAll] = useState(true);
+    const [showMemberList, setShowMemberList] = useState(false);
 
     useEffect(() => {
         if (id) {
             fetchObituary();
+            fetchMembers();
         } else {
             setError('부고장 ID가 없습니다.');
             setLoading(false);
@@ -54,6 +59,82 @@ function ObituaryViewContent() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const fetchMembers = async () => {
+        try {
+            const response = await fetch('/api/members');
+            const result = await response.json();
+            if (result.success && result.data) {
+                const membersData = result.data || [];
+                setMembers(membersData);
+                // 기본적으로 모든 멤버 선택
+                const allMemberIds = new Set(membersData.map((m: any) => m._id.toString()));
+                setSelectedMembers(allMemberIds);
+            }
+        } catch (error) {
+            console.error('회원 목록 조회 오류:', error);
+        }
+    };
+
+    const toggleMember = (memberId: string) => {
+        const newSelected = new Set(selectedMembers);
+        if (newSelected.has(memberId)) {
+            newSelected.delete(memberId);
+        } else {
+            newSelected.add(memberId);
+        }
+        setSelectedMembers(newSelected);
+        setSelectAll(newSelected.size === (members || []).length);
+    };
+
+    const toggleSelectAll = () => {
+        setSelectAll(!selectAll);
+    };
+
+    useEffect(() => {
+        if (selectAll) {
+            const allMemberIds = new Set(members.map((m: any) => m._id.toString()));
+            setSelectedMembers(allMemberIds);
+        } else {
+            setSelectedMembers(new Set());
+        }
+    }, [selectAll, members]);
+
+    const sendBulkSMS = () => {
+        if (selectedMembers.size === 0) {
+            alert('대상자를 선택하세요.');
+            return;
+        }
+
+        // 선택된 멤버들의 전화번호 추출
+        const selectedMembersList = (members || []).filter(m => selectedMembers.has(m._id.toString()));
+        const numbers = selectedMembersList
+            .map(m => m.tel.replace(/[^0-9]/g, ''))
+            .filter(num => num.length > 0)
+            .join(',');
+
+        if (!numbers) {
+            alert('유효한 전화번호가 없습니다.');
+            return;
+        }
+
+        // 부고장 링크 생성
+        const shareLink = `${window.location.origin}${window.location.pathname}${window.location.search}`;
+
+        // SMS 메시지 내용 구성
+        const msg = `[부고알림-김천 황악회]\n故 ${obituary?.deceasedName || 'OOO'}님께서 별세하셨기에 알려드립니다.\n\n아래 링크에서 자세한 내용을 확인하세요.\n${shareLink}`;
+
+        // 모바일 OS에 따른 SMS 링크 생성
+        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+        const subject = encodeURIComponent('부고 알림: 김천 황악회');
+
+        let smsLink = isIOS
+            ? `sms:${numbers}&subject=${subject}&body=${encodeURIComponent(msg)}`
+            : `sms:${numbers}?subject=${subject}&body=${encodeURIComponent(msg)}`;
+
+        // 문자 앱 실행
+        window.location.href = smsLink;
     };
 
     const copyToClipboard = async () => {
@@ -232,9 +313,110 @@ ${obituary.message}
                     font-weight: 700;
                     color: #1a1a1a;
                 }
+
+                .member-card {
+                    background: #f8f9fa;
+                    border-radius: 12px;
+                    border: 1px solid #ddd;
+                    margin-bottom: 20px;
+                    overflow: hidden;
+                }
+
+                .member-header {
+                    background: #343a40;
+                    color: white;
+                    padding: 12px 15px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    cursor: pointer;
+                }
+
+                .member-list {
+                    max-height: 250px;
+                    overflow-y: auto;
+                    padding: 10px;
+                    display: none;
+                }
+
+                .member-list.show {
+                    display: block;
+                }
+
+                .form-check {
+                    background: white;
+                    padding: 8px 12px;
+                    border: 1px solid #eee;
+                    border-radius: 6px;
+                    margin-bottom: 5px;
+                    display: flex;
+                    align-items: center;
+                }
+
+                .form-check-input {
+                    width: 18px;
+                    height: 18px;
+                    margin-right: 10px;
+                }
+
+                .form-check-label {
+                    font-size: 0.9rem;
+                    flex: 1;
+                }
+
+                .sms-btn-group {
+                    padding: 10px;
+                    background: #eee;
+                    text-align: center;
+                }
             `}</style>
 
             <div className="container">
+                {/* 발송 대상 선택 섹션 */}
+                <div className="member-card">
+                    <div className="member-header" onClick={() => setShowMemberList(!showMemberList)}>
+                        <span>📱 발송 대상 선택 ({(members || []).length}명)</span>
+                        <span>{showMemberList ? '▲' : '▼'}</span>
+                    </div>
+                    <div className={`member-list ${showMemberList ? 'show' : ''}`}>
+                        <div className="form-check" style={{ background: '#e9ecef', position: 'sticky', top: 0, zIndex: 10 }}>
+                            <input 
+                                className="form-check-input" 
+                                type="checkbox" 
+                                checked={selectAll}
+                                onChange={toggleSelectAll}
+                            />
+                            <label className="form-check-label">
+                                <strong>전체 선택/해제</strong>
+                            </label>
+                        </div>
+                        {(members || []).map((member) => (
+                            <div key={member._id} className="form-check">
+                                <input 
+                                    className="form-check-input sms-check" 
+                                    type="checkbox" 
+                                    value={member.tel}
+                                    id={`m${member._id}`}
+                                    checked={selectedMembers.has(member._id.toString())}
+                                    onChange={() => toggleMember(member._id.toString())}
+                                />
+                                <label className="form-check-label" htmlFor={`m${member._id}`}>
+                                    {member.name} <span style={{ fontSize: '0.8rem', color: '#666' }}>({member.tel})</span>
+                                </label>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="sms-btn-group">
+                        <button 
+                            type="button" 
+                            className="btn btn-dark w-100"
+                            onClick={sendBulkSMS}
+                        >
+                            📱 선택된 회원에게 부고장 링크 발송
+                        </button>
+                    </div>
+                </div>
+
                 <div className="card">
                     <div className="card-header">
                         <h1>訃 告</h1>
