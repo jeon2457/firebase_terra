@@ -33,11 +33,15 @@ function ObituaryViewContent() {
     const [selectedMembers, setSelectedMembers] = useState<Set<string>>(new Set());
     const [selectAll, setSelectAll] = useState(true);
     const [showMemberList, setShowMemberList] = useState(false);
+    const [isViewMode, setIsViewMode] = useState(false);
 
     useEffect(() => {
         if (id) {
             fetchObituary();
             fetchMembers();
+            // URL에서 mode=view 파라미터 확인
+            const urlParams = new URLSearchParams(window.location.search);
+            setIsViewMode(urlParams.get('mode') === 'view');
         } else {
             setError('부고장 ID가 없습니다.');
             setLoading(false);
@@ -119,8 +123,8 @@ function ObituaryViewContent() {
             return;
         }
 
-        // 부고장 링크 생성
-        const shareLink = `${window.location.origin}${window.location.pathname}${window.location.search}`;
+        // 공개용 부고장 링크 생성 (mode=view 파라미터 추가)
+        const shareLink = `${window.location.origin}${window.location.pathname}${window.location.search}${window.location.search.includes('?') ? '&' : '?'}mode=view`;
 
         // SMS 메시지 내용 구성
         const msg = `[부고알림-김천 황악회]\n故 ${obituary?.deceasedName || 'OOO'}님께서 별세하셨기에 알려드립니다.\n\n아래 링크에서 자세한 내용을 확인하세요.\n${shareLink}`;
@@ -395,50 +399,52 @@ ${obituary.message}
             `}</style>
 
             <div className="container">
-                {/* 발송 대상 선택 섹션 */}
-                <div className="member-card">
-                    <div className="member-header" onClick={() => setShowMemberList(!showMemberList)}>
-                        <span>📱 발송 대상 선택 ({(members || []).length}명)</span>
-                        <span>{showMemberList ? '▲' : '▼'}</span>
-                    </div>
-                    <div className={`member-list ${showMemberList ? 'show' : ''}`}>
-                        <div className="form-check" style={{ background: '#e9ecef', position: 'sticky', top: 0, zIndex: 10 }}>
-                            <input 
-                                className="form-check-input" 
-                                type="checkbox" 
-                                checked={selectAll}
-                                onChange={toggleSelectAll}
-                            />
-                            <label className="form-check-label">
-                                <strong>전체 선택/해제</strong>
-                            </label>
+                {/* 발송 대상 선택 섹션 - view 모드일 때 숨김 */}
+                {!isViewMode && (
+                    <div className="member-card">
+                        <div className="member-header" onClick={() => setShowMemberList(!showMemberList)}>
+                            <span>📱 발송 대상 선택 ({(members || []).length}명)</span>
+                            <span>{showMemberList ? '▲' : '▼'}</span>
                         </div>
-                        {(members || []).map((member) => (
-                            <div key={member._id} className="form-check">
+                        <div className={`member-list ${showMemberList ? 'show' : ''}`}>
+                            <div className="form-check" style={{ background: '#e9ecef', position: 'sticky', top: 0, zIndex: 10 }}>
                                 <input 
-                                    className="form-check-input sms-check" 
+                                    className="form-check-input" 
                                     type="checkbox" 
-                                    value={member.tel}
-                                    id={`m${member._id}`}
-                                    checked={selectedMembers.has(member._id.toString())}
-                                    onChange={() => toggleMember(member._id.toString())}
+                                    checked={selectAll}
+                                    onChange={toggleSelectAll}
                                 />
-                                <label className="form-check-label" htmlFor={`m${member._id}`}>
-                                    {member.name} <span style={{ fontSize: '0.8rem', color: '#666' }}>({member.tel})</span>
+                                <label className="form-check-label">
+                                    <strong>전체 선택/해제</strong>
                                 </label>
                             </div>
-                        ))}
+                            {(members || []).map((member) => (
+                                <div key={member._id} className="form-check">
+                                    <input 
+                                        className="form-check-input sms-check" 
+                                        type="checkbox" 
+                                        value={member.tel}
+                                        id={`m${member._id}`}
+                                        checked={selectedMembers.has(member._id.toString())}
+                                        onChange={() => toggleMember(member._id.toString())}
+                                    />
+                                    <label className="form-check-label" htmlFor={`m${member._id}`}>
+                                        {member.name} <span style={{ fontSize: '0.8rem', color: '#666' }}>({member.tel})</span>
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="sms-btn-group">
+                            <button 
+                                type="button" 
+                                className="btn btn-dark w-100"
+                                onClick={sendBulkSMS}
+                            >
+                                📱 선택된 회원에게 부고장 링크 발송
+                            </button>
+                        </div>
                     </div>
-                    <div className="sms-btn-group">
-                        <button 
-                            type="button" 
-                            className="btn btn-dark w-100"
-                            onClick={sendBulkSMS}
-                        >
-                            📱 선택된 회원에게 부고장 링크 발송
-                        </button>
-                    </div>
-                </div>
+                )}
 
                 <div className="card">
                     <div className="card-header">
@@ -503,26 +509,31 @@ ${obituary.message}
                             </div>
                         </div>
 
-                        <button 
-                            type="button" 
-                            className="btn-custom"
-                            onClick={copyToClipboard}
-                        >
-                            📋 부고장 복사하기
-                        </button>
+                        {/* 하단 메뉴 - view 모드일 때 숨김 */}
+                        {!isViewMode && (
+                            <>
+                                <button 
+                                    type="button" 
+                                    className="btn-custom"
+                                    onClick={copyToClipboard}
+                                >
+                                    📋 부고장 복사하기
+                                </button>
 
-                        <a 
-                            href="https://open.kakao.com/o/gWWWIK5h" 
-                            target="_blank" 
-                            className="btn-custom"
-                            style={{ backgroundColor: '#FEE500', color: '#3C1E1E' }}
-                        >
-                            🔗 카톡 공유방
-                        </a>
+                                <a 
+                                    href="https://open.kakao.com/o/gWWWIK5h" 
+                                    target="_blank" 
+                                    className="btn-custom"
+                                    style={{ backgroundColor: '#FEE500', color: '#3C1E1E' }}
+                                >
+                                    🔗 카톡 공유방
+                                </a>
 
-                        <a href="/obituary-sms" className="btn-back">
-                            ⏪ 돌아가기
-                        </a>
+                                <a href="/obituary-sms" className="btn-back">
+                                    ⏪ 돌아가기
+                                </a>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
