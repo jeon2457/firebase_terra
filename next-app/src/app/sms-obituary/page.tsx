@@ -136,7 +136,7 @@ export default function SmsObituaryPage() {
         // SMS 제목 설정: "제목없음" 문제 해결을 위해 subject 파라미터 추가
         // ==========================================
         const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-        const subject = encodeURIComponent('부고 알림: 김천 황악회'); // SMS 제목 설정
+        const subject = encodeURIComponent('부고 알림: 김천 황악회'); // SMS 제목 설정부분
 
         // iOS와 Android의 SMS 링크 형식 차이:
         // iOS: sms:번호&subject=제목&body=내용 (& 파라미터)
