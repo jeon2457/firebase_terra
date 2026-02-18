@@ -387,11 +387,11 @@ export default function MembersViewPage() {
             
             /* Column Widths Mobile */
             .col-no { width: 6%; }
-            .col-name { width: 22%; }
-            .col-tel { width: 47%; }
-            .col-addr { width: 17%; }
+            .col-name { width: 22%; font-size: calc(0.7em + 4px); letter-spacing: 1px; } /* 이름 */
+            .col-tel { width: 47%; font-size: calc(0.7em + 4px); letter-spacing: 1px; } /* 전화번호 */
+            .col-addr { width: 17%; font-size: calc(0.7em + 2px); } /* 거주지 */
             .col-remark { display: none; } /* Hide remark on mobile */
-            .col-sms { width: 12%; }
+            .col-sms { width: 12%; font-size: calc(0.7em + 2px); } /* SMS */
             .hide-mobile { display: none; }
         }
 
