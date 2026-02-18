@@ -17,17 +17,18 @@ type PassMap = {
     };
 };
 
-export default function MemberCheckPage({ searchParams }: { searchParams?: { members?: string; year?: string } }) {
+export default function MemberCheckPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
+    const searchParams = useSearchParams();
     
     const [members, setMembers] = useState<Member[]>([]);
     const [passMap, setPassMap] = useState<PassMap>({});
     const [monthlyFees, setMonthlyFees] = useState<{ [month: number]: number }>({});
     const [loading, setLoading] = useState(true);
     
-    const memberIds = searchParams?.members || '';
-    const year = searchParams?.year ? parseInt(searchParams.year) : new Date().getFullYear();
+    const memberIds = searchParams?.get('members') || '';
+    const year = searchParams?.get('year') ? parseInt(searchParams.get('year')!) : new Date().getFullYear();
     const todayYear = new Date().getFullYear();
     const todayMonth = new Date().getMonth() + 1;
 
@@ -217,9 +218,6 @@ export default function MemberCheckPage({ searchParams }: { searchParams?: { mem
                 <h3 className="mb-0">회원 납부 상세 확인</h3>
                 <div>
                     <span className="badge bg-primary">{year}년도</span>
-                    <button className="btn btn-secondary btn-sm ms-2" onClick={() => router.back()}>
-                        뒤로 가기
-                    </button>
                 </div>
             </div>
 
@@ -278,6 +276,12 @@ export default function MemberCheckPage({ searchParams }: { searchParams?: { mem
                     </div>
                 </>
             )}
+            
+            <div className="d-flex justify-content-center mt-5 mb-4">
+                <button className="btn btn-secondary btn-lg" onClick={() => router.back()}>
+                    ⏪ 뒤로 가기
+                </button>
+            </div>
         </div>
     );
 }
