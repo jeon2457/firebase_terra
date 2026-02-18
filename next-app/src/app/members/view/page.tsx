@@ -408,7 +408,7 @@ export default function MembersViewPage() {
 
     .custom-span { font-size: 14px; margin: 0 10px; line-height: 30px; }
             
-    /* Column Widths Mobile */
+    /* 테이블 제목 너비폭 비율 및 폰트크기  */
     .col-no { width: 6%; font-size: 11px !important; } /* NO */
     .col-name { width: 22%; font-size: 13px !important; letter-spacing: 1px !important; } /* 이름 - 폰트 크기 2px 감소 (15px -> 13px) */
     .col-tel { width: 47%; font-size: 13px !important; letter-spacing: 1px !important; } /* 전화번호 - 폰트 크기 2px 감소 (15px -> 13px) */
@@ -439,6 +439,31 @@ export default function MembersViewPage() {
         .member-tel-cell {
             white-space: nowrap;
             font-variant-numeric: tabular-nums; /* Ensures numbers are same width */
+            font-family: 'Courier New', monospace; /* 고정폭 폰트로 숫자 너비 통일 */
+        }
+
+        /* SMS 아이콘 위치 수정 */
+        .sms_1 {
+            text-align: center;
+            vertical-align: middle;
+            padding: 2px;
+        }
+        .sms-icon {
+            display: block;
+            margin: 0 auto;
+            max-width: 16px;
+            max-height: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .sms_1 {
+                width: 10% !important; /* SMS 열 너비 조정 */
+                padding: 1px;
+            }
+            .sms-icon {
+                max-width: 14px;
+                max-height: 14px;
+            }
         }
       `}</style>
 
