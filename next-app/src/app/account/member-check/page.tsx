@@ -17,18 +17,17 @@ type PassMap = {
     };
 };
 
-export default function MemberCheckPage() {
+export default function MemberCheckPage({ searchParams }: { searchParams?: { members?: string; year?: string } }) {
     const { data: session, status } = useSession();
     const router = useRouter();
-    const searchParams = useSearchParams();
     
     const [members, setMembers] = useState<Member[]>([]);
     const [passMap, setPassMap] = useState<PassMap>({});
     const [monthlyFees, setMonthlyFees] = useState<{ [month: number]: number }>({});
     const [loading, setLoading] = useState(true);
     
-    const memberIds = searchParams.get('members') || '';
-    const year = parseInt(searchParams.get('year') || new Date().getFullYear().toString());
+    const memberIds = searchParams?.members || '';
+    const year = searchParams?.year ? parseInt(searchParams.year) : new Date().getFullYear();
     const todayYear = new Date().getFullYear();
     const todayMonth = new Date().getMonth() + 1;
 
