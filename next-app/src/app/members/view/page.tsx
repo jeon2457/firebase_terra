@@ -298,8 +298,7 @@ export default function MembersViewPage() {
         }
         .custom-table thead th {
             position: sticky;
-            height: 45px;
-            top: calc(3.5rem + 40px);
+            top: calc(3.5rem + 39px); /* 1px 위로 이동 */
             z-index: 998;
             background: url('/images/background_mable-1.jpg') center center / cover no-repeat !important;
             color: #cea71bff !important;
@@ -309,7 +308,7 @@ export default function MembersViewPage() {
             border: 1px solid #eedca6 !important;
             text-align: center;
             vertical-align: middle;
-            padding: 0;
+            padding: 0.44rem 0; /* 데이터 행과 동일한 높이로 조정 */
             font-size: 0.9em;
         }
         .custom-table tbody tr {
