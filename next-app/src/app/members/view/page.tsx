@@ -416,7 +416,7 @@ export default function MembersViewPage() {
                 id="loading-screen"
                 style={{ opacity: isPageReady ? 0 : 1, pointerEvents: isPageReady ? 'none' : 'auto' }}
             >
-                <img src="/images/clova.png" alt="loading" />
+                <video src="/images/clova.mp4" autoPlay loop muted playsInline style={{ width: '100px', height: '100px' }} />
             </div>
 
             <div id="main-content">
