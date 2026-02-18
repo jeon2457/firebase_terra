@@ -102,7 +102,21 @@ function AccountViewContent() {
         }
     };
 
-    const years = [0, 1, 2, 3].map(i => new Date().getFullYear() - i);
+    // 5년 전부터 현재까지의 년도 생성, 그리고 다음 해까지 포함
+    const currentDate = new Date();
+    const currentYearValue = currentDate.getFullYear();
+    const years = [];
+    
+    // 5년 전부터 현재까지
+    for (let i = 5; i >= 0; i--) {
+        years.push(currentYearValue - i);
+    }
+    
+    // 다음 해 자동 추가 (항상 미래 년도를 포함)
+    years.push(currentYearValue + 1);
+    
+    // 중복 제거 및 정렬
+    const uniqueYears = [...new Set(years)].sort((a, b) => a - b);
     const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
     if (!mounted) return <div className="text-center mt-5">Loading...</div>;
@@ -146,12 +160,20 @@ function AccountViewContent() {
                 <div className="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
                     <h4 className="m-0 fw-bold text-primary">📊 사용내역서 보기</h4>
                     <div className="dropdown">
-                        <button className="btn btn-dark btn-sm dropdown-toggle rounded-pill px-3" data-bs-toggle="dropdown">
-                            {currentYear}년
+                        <button className="btn btn-primary btn-lg dropdown-toggle rounded-pill px-4 shadow-sm" 
+                                data-bs-toggle="dropdown" 
+                                style={{ fontWeight: '600', fontSize: '1.1rem' }}>
+                            📅 {currentYear}년
                         </button>
-                        <ul className="dropdown-menu">
-                            {years.map(y => (
-                                <li key={y}><button className="dropdown-item" onClick={() => setCurrentYear(y)}>{y}년</button></li>
+                        <ul className="dropdown-menu dropdown-menu-end shadow" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                            {uniqueYears.map(y => (
+                                <li key={y}>
+                                    <button className={`dropdown-item ${y === currentYear ? 'active' : ''}`} 
+                                            onClick={() => setCurrentYear(y)}
+                                            style={{ fontWeight: y === currentYear ? '600' : 'normal' }}>
+                                        {y}년 {y === new Date().getFullYear() ? '(현재)' : ''} {y === new Date().getFullYear() + 1 ? '(다음해)' : ''}
+                                    </button>
+                                </li>
                             ))}
                         </ul>
                     </div>
