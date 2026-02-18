@@ -221,14 +221,16 @@ ${obituary.message}
 
                 .card-header {
                     background: #1a1a1a;
-                    background-image: url('/image/gughwak.jpg');
+                    background-image: url('/images/gughwak.jpg');
                     background-size: cover;
                     background-position: center;
+                    background-repeat: no-repeat;
                     color: white;
-                    padding: 30px 20px;
+                    padding: 45px 20px; /* 높이 15px 추가 (30px -> 45px) */
                     text-align: center;
                     border-bottom: 3px solid #333;
                     position: relative;
+                    min-height: 120px; /* 최소 높이 설정 */
                 }
 
                 .card-header::before {
