@@ -130,8 +130,10 @@ function AccountViewContent() {
         years.push(currentYearValue - i);
     }
     
-    // 다음 해 자동 추가 (항상 미래 년도를 포함)
-    years.push(currentYearValue + 1);
+    // 12월 1일 이후에만 다음 해 자동 추가
+    if (currentDate.getMonth() === 11 && currentDate.getDate() >= 1) {
+        years.push(currentYearValue + 1);
+    }
     
     // 중복 제거 및 정렬
     const uniqueYears = [...new Set(years)].sort((a, b) => a - b);
@@ -173,9 +175,9 @@ function AccountViewContent() {
                         padding: 6px 2px;
                     }
                     .year-dropdown-btn {
-                        font-size: 0.9rem !important;
-                        padding: 0.5rem 1rem !important;
-                    }
+                         font-size: 0.63rem !important; /* 30% 더 축소 */
+                         padding: 0.35rem 0.7rem !important; /* 30% 더 축소 */
+                     }
                     }
                 `}</style>
 
