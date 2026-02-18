@@ -7,10 +7,14 @@ import { useRouter } from "next/navigation";
 import styles from "./guest.module.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
+type ThemeValue = "book" | "icon" | "glass" | "list" | "tech";
+
 export default function GuestPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
     const [displayName, setDisplayName] = useState("사용자");
+    const [currentTheme, setCurrentTheme] = useState<ThemeValue | null>(null);
+    const [isLoadingTheme, setIsLoadingTheme] = useState(true);
 
     useEffect(() => {
         if (session?.user) {
@@ -32,18 +36,23 @@ export default function GuestPage() {
             try {
                 const res = await fetch("/api/theme", { method: "GET" });
                 const data = await res.json();
-                const theme = data?.theme;
+                const theme = data?.theme as ThemeValue | undefined;
+
                 if (theme && theme !== "book") {
                     router.replace(`/guest/${theme}`);
+                } else {
+                    setCurrentTheme("book");
+                    setIsLoadingTheme(false);
                 }
             } catch {
-                // ignore
+                setCurrentTheme("book");
+                setIsLoadingTheme(false);
             }
         };
         routeByTheme();
     }, [status, router]);
 
-    if (status === "loading") {
+    if (isLoadingTheme || status === "loading") {
         return <div className="text-center mt-5">Loading...</div>;
     }
 
@@ -55,6 +64,8 @@ export default function GuestPage() {
         return null;
     }
 
+    // currentTheme이 "book"이 아니면 이 컴포넌트가 렌더링되지 않으므로,
+    // 이 시점에서는 currentTheme이 "book"임을 확신할 수 있습니다.
     return (
         <div style={{ backgroundColor: "#f0f2f5", minHeight: "100vh", overflow: "hidden" }}>
             <div className={styles.container}>
