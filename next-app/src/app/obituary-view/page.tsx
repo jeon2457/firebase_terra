@@ -69,7 +69,7 @@ function ObituaryViewContent() {
                 const membersData = result.data || [];
                 setMembers(membersData);
                 // 기본적으로 모든 멤버 선택
-                const allMemberIds = new Set(membersData.map((m: any) => m._id.toString()));
+                const allMemberIds: Set<string> = new Set(membersData.map((m: any) => m._id.toString()));
                 setSelectedMembers(allMemberIds);
             }
         } catch (error) {
@@ -94,7 +94,7 @@ function ObituaryViewContent() {
 
     useEffect(() => {
         if (selectAll) {
-            const allMemberIds = new Set(members.map((m: any) => m._id.toString()));
+            const allMemberIds: Set<string> = new Set(members.map((m: any) => m._id.toString()));
             setSelectedMembers(allMemberIds);
         } else {
             setSelectedMembers(new Set());
