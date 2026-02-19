@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import clientPromise from "@/lib/mongodb";
+import dbConnect from "@/lib/mongodb"; // 기존 DB 연결 함수 사용
 import { ObjectId } from "mongodb";
+import mongoose from "mongoose";
 
 export async function GET(req: NextRequest) {
     // 1. 보안 체크: 로그인한 사용자만 접근 가능
@@ -42,9 +43,16 @@ export async function GET(req: NextRequest) {
             return NextResponse.json({ success: false, message: "유효한 회원 ID가 없습니다." });
         }
 
-        // DB 연결 (Native Driver 사용)
-        const client = await clientPromise;
-        const db = client.db("terraone"); // DB 이름 (필요시 수정)
+        // DB 연결 (Mongoose 사용)
+        await dbConnect();
+        
+        // Mongoose 연결 객체에서 Native MongoDB DB 객체 가져오기
+        // 주의: mongoose.connection.db가 초기화될 때까지 기다려야 할 수도 있으나, await dbConnect() 이후엔 보통 사용 가능합니다.
+        const db = mongoose.connection.db;
+
+        if (!db) {
+            throw new Error("Database connection failed");
+        }
 
         // 2. 회원 정보 조회
         const members = await db.collection("members")
@@ -74,15 +82,16 @@ export async function GET(req: NextRequest) {
             monthlyFees[m] = fee;
         }
 
-        // 4. 납부 내역 조회
-        const passData = await db.collection("account_pass")
+        // 4. 납부 내역 조회 (문자열 ID와 ObjectId 둘 다 조회)
+        // 4-1. 문자열로 저장된 ID 조회
+        const passDataString = await db.collection("account_pass")
             .find({
-                member_id: { $in: objectIds.map(id => id.toString()) }, // 문자열로 저장된 경우 대비
+                member_id: { $in: objectIds.map(id => id.toString()) }, 
                 pay_year: year
             })
             .toArray();
             
-        // 만약 account_pass 컬렉션의 member_id가 ObjectId 타입으로 저장되어 있다면 아래 쿼리도 추가 실행 (안전장치)
+        // 4-2. ObjectId로 저장된 ID 조회
         const passDataObj = await db.collection("account_pass")
             .find({
                 member_id: { $in: objectIds }, 
@@ -91,7 +100,7 @@ export async function GET(req: NextRequest) {
             .toArray();
 
         // 두 결과 합치기
-        const allPassData = [...passData, ...passDataObj];
+        const allPassData = [...passDataString, ...passDataObj];
 
         // 납부 내역 맵핑 (Map 구조로 변환)
         const passMap: any = {};
