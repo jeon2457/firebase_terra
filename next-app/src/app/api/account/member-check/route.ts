@@ -107,8 +107,19 @@ export async function GET(req: NextRequest) {
         
         console.log('✅ Monthly fees calculated:', monthlyFees);
 
-        // 4. 납부 내역 조회
+        // 4. 납부 내역 조회 - 다양한 방법으로 시도
         console.log('🔍 Fetching pass data...');
+        console.log('Looking for member IDs (string):', objectIds.map(id => id.toString()));
+        console.log('Looking for member IDs (ObjectId):', objectIds);
+        console.log('For year:', year);
+        
+        // 먼저 해당 연도의 모든 데이터 구조 확인
+        console.log('📊 Checking account_pass collection structure:');
+        const allCollectionData = await db.collection("account_pass")
+            .find({ pay_year: year })
+            .limit(5)
+            .toArray();
+        console.log('Collection sample data:', allCollectionData);
         
         // 4-1. 문자열로 저장된 ID 조회
         const passDataString = await db.collection("account_pass")
@@ -119,6 +130,7 @@ export async function GET(req: NextRequest) {
             .toArray();
         
         console.log('✅ Pass data (string IDs):', passDataString.length);
+        console.log('String ID sample data:', passDataString.slice(0, 2));
             
         // 4-2. ObjectId로 저장된 ID 조회
         const passDataObj = await db.collection("account_pass")
@@ -129,17 +141,56 @@ export async function GET(req: NextRequest) {
             .toArray();
         
         console.log('✅ Pass data (ObjectIds):', passDataObj.length);
+        console.log('ObjectId sample data:', passDataObj.slice(0, 2));
 
-        // 두 결과 합치기
-        const allPassData = [...passDataString, ...passDataObj];
-        console.log('✅ Total pass data:', allPassData.length);
+        // 4-3. 다른 필드명 시도 (member_id 대신 memberId)
+        const passDataAlt = await db.collection("account_pass")
+            .find({
+                memberId: { $in: [...objectIds.map(id => id.toString()), ...objectIds] }, 
+                pay_year: year
+            })
+            .toArray();
+        
+        console.log('✅ Pass data (memberId field):', passDataAlt.length);
+        console.log('memberId field sample data:', passDataAlt.slice(0, 2));
+
+        // 4-4. 해당 회원의 모든 납부 내역 조회 (연도 무시)
+        const passDataAnyYear = await db.collection("account_pass")
+            .find({
+                $or: [
+                    { member_id: { $in: objectIds } },
+                    { member_id: { $in: objectIds.map(id => id.toString()) } },
+                    { memberId: { $in: [...objectIds.map(id => id.toString()), ...objectIds] } }
+                ]
+            })
+            .toArray();
+        
+        console.log('✅ Pass data (any year):', passDataAnyYear.length);
+        console.log('Any year sample data:', passDataAnyYear.slice(0, 3));
+
+        // 가장 관련성 높은 데이터 선택
+        let allPassData = [...passDataString, ...passDataObj, ...passDataAlt];
+        
+        // 만약 해당 연도 데이터가 없다면 모든 연도 데이터에서 필터링
+        if (allPassData.length === 0 && passDataAnyYear.length > 0) {
+            console.log('🔄 Using cross-year data as fallback');
+            allPassData = passDataAnyYear.filter(p => p.pay_year === year);
+        }
+        
+        console.log('✅ Final pass data count:', allPassData.length);
+        console.log('Final pass data:', allPassData);
 
         // 납부 내역 맵핑
         const passMap: any = {};
         allPassData.forEach((p: any) => {
-            const mId = p.member_id.toString();
-            if (!passMap[mId]) passMap[mId] = {};
-            passMap[mId][p.pay_month] = p.paid;
+            const mId = p.member_id?.toString() || p.memberId?.toString();
+            if (mId) {
+                if (!passMap[mId]) passMap[mId] = {};
+                passMap[mId][p.pay_month] = p.paid;
+                console.log(`Mapping: ${mId} -> month ${p.pay_month} -> paid ${p.paid}`);
+            } else {
+                console.log('⚠️ Invalid pass data entry:', p);
+            }
         });
         
         console.log('✅ Pass map created:', passMap);
