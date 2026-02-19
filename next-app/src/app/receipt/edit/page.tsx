@@ -24,6 +24,7 @@ function ReceiptEditContent() {
     const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
     const [selectedImg, setSelectedImg] = useState<string | null>(null);
     const [mounted, setMounted] = useState(false);
+    const [yearDropdownOpen, setYearDropdownOpen] = useState(false);
 
     // Track editing notices
     const [notices, setNotices] = useState<{ [key: string]: string }>({});
@@ -87,6 +88,23 @@ function ReceiptEditContent() {
             alert("삭제 실패");
         }
     };
+
+    // 드롭다운 외부 클릭 시 닫기
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (yearDropdownOpen) {
+                const dropdown = document.querySelector('.year-dropdown-container');
+                if (dropdown && !dropdown.contains(event.target as Node)) {
+                    setYearDropdownOpen(false);
+                }
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [yearDropdownOpen]);
 
     const years = [];
     
@@ -156,15 +174,21 @@ function ReceiptEditContent() {
 
                 <div className="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
                     <h3 className="m-0 fw-bold text-danger">✂️ 영수증 편집기</h3>
-                    <div className="dropdown">
-                        <button className="btn btn-dark btn-sm dropdown-toggle rounded-pill px-3" data-bs-toggle="dropdown">
+                    <div className="position-relative year-dropdown-container">
+                        <button className="btn btn-dark btn-sm dropdown-toggle rounded-pill px-3" 
+                                onClick={() => setYearDropdownOpen(!yearDropdownOpen)}>
                             {currentYear}년
                         </button>
-                        <ul className="dropdown-menu">
-                            {uniqueYears.map(y => (
-                                <li key={y}><button className="dropdown-item" onClick={() => setCurrentYear(y)}>{y}년</button></li>
-                            ))}
-                        </ul>
+                        {yearDropdownOpen && (
+                            <ul className="dropdown-menu show">
+                                {uniqueYears.map(y => (
+                                    <li key={y}><button className="dropdown-item" onClick={() => {
+                                        setCurrentYear(y);
+                                        setYearDropdownOpen(false);
+                                    }}>{y}년</button></li>
+                                ))}
+                            </ul>
+                        )}
                     </div>
                 </div>
 
