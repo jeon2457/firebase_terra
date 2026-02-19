@@ -71,6 +71,7 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
             const res = await axios.get(apiUrl);
             
             console.log('📡 API Response:', res.data);
+            console.log('Full response object:', JSON.stringify(res.data, null, 2));
             console.log('Response status:', res.status);
             
             if (res.data.success) {
@@ -90,6 +91,8 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
                     console.log('Final data count:', res.data.debug.finalDataCount);
                     console.log('Sample collection data:', res.data.debug.sampleCollectionData);
                     console.log('Sample pass data:', res.data.debug.samplePassData);
+                } else {
+                    console.log('⚠️ No debug info in response - API may not be updated yet');
                 }
                 
                 setMembers(res.data.members);

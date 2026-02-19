@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import dbConnect from "@/lib/mongodb"; // 기존 DB 연결 함수 사용
+import dbConnect from "@/lib/mongodb";
+import Member from "@/models/Member";
+import AccountPass from "@/models/AccountPass";
+import MonthlyFeeHistory from "@/models/MonthlyFeeHistory";
 import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
 
@@ -64,30 +67,15 @@ export async function GET(req: NextRequest) {
         console.log('🔌 Connecting to database...');
         await dbConnect();
         console.log('✅ Database connected');
-        
-        // Mongoose 연결 객체에서 Native MongoDB DB 객체 가져오기
-        const db = mongoose.connection.db;
 
-        if (!db) {
-            throw new Error("Database connection failed");
-        }
-
-        // 2. 회원 정보 조회
+        // 2. 회원 정보 조회 (Mongoose 모델 사용)
         console.log('🔍 Fetching members...');
-        const members = await db.collection("members")
-            .find({ _id: { $in: objectIds } })
-            .sort({ name: 1 })
-            .toArray();
-        
+        const members = await Member.find({ _id: { $in: objectIds } }).sort({ name: 1 });
         console.log('✅ Found members:', members.length, members);
 
-        // 3. 월회비 이력 조회
+        // 3. 월회비 이력 조회 (Mongoose 모델 사용)
         console.log('🔍 Fetching fee history...');
-        const feeHistory = await db.collection("monthly_fee_history")
-            .find({})
-            .sort({ apply_year: 1, apply_month: 1 })
-            .toArray();
-        
+        const feeHistory = await MonthlyFeeHistory.find({}).sort({ apply_year: 1, apply_month: 1 });
         console.log('✅ Fee history count:', feeHistory.length);
 
         // 월별 회비 계산
@@ -107,90 +95,28 @@ export async function GET(req: NextRequest) {
         
         console.log('✅ Monthly fees calculated:', monthlyFees);
 
-        // 4. 납부 내역 조회 - 다양한 방법으로 시도
+        // 4. 납부 내역 조회 (Mongoose 모델 사용)
         console.log('🔍 Fetching pass data...');
-        console.log('Looking for member IDs (string):', objectIds.map(id => id.toString()));
-        console.log('Looking for member IDs (ObjectId):', objectIds);
+        console.log('Looking for member IDs:', objectIds);
         console.log('For year:', year);
         
-        // 먼저 해당 연도의 모든 데이터 구조 확인
-        console.log('📊 Checking account_pass collection structure:');
-        const allCollectionData = await db.collection("account_pass")
-            .find({ pay_year: year })
-            .limit(5)
-            .toArray();
-        console.log('Collection sample data:', allCollectionData);
+        const passRecords = await AccountPass.find({ 
+            member_id: { $in: objectIds }, 
+            pay_year: year 
+        });
         
-        // 4-1. 문자열로 저장된 ID 조회
-        const passDataString = await db.collection("account_pass")
-            .find({
-                member_id: { $in: objectIds.map(id => id.toString()) }, 
-                pay_year: year
-            })
-            .toArray();
-        
-        console.log('✅ Pass data (string IDs):', passDataString.length);
-        console.log('String ID sample data:', passDataString.slice(0, 2));
-            
-        // 4-2. ObjectId로 저장된 ID 조회
-        const passDataObj = await db.collection("account_pass")
-            .find({
-                member_id: { $in: objectIds }, 
-                pay_year: year
-            })
-            .toArray();
-        
-        console.log('✅ Pass data (ObjectIds):', passDataObj.length);
-        console.log('ObjectId sample data:', passDataObj.slice(0, 2));
+        console.log('✅ Pass records found:', passRecords.length);
+        console.log('Sample pass data:', passRecords.slice(0, 3));
 
-        // 4-3. 다른 필드명 시도 (member_id 대신 memberId)
-        const passDataAlt = await db.collection("account_pass")
-            .find({
-                memberId: { $in: [...objectIds.map(id => id.toString()), ...objectIds] }, 
-                pay_year: year
-            })
-            .toArray();
-        
-        console.log('✅ Pass data (memberId field):', passDataAlt.length);
-        console.log('memberId field sample data:', passDataAlt.slice(0, 2));
-
-        // 4-4. 해당 회원의 모든 납부 내역 조회 (연도 무시)
-        const passDataAnyYear = await db.collection("account_pass")
-            .find({
-                $or: [
-                    { member_id: { $in: objectIds } },
-                    { member_id: { $in: objectIds.map(id => id.toString()) } },
-                    { memberId: { $in: [...objectIds.map(id => id.toString()), ...objectIds] } }
-                ]
-            })
-            .toArray();
-        
-        console.log('✅ Pass data (any year):', passDataAnyYear.length);
-        console.log('Any year sample data:', passDataAnyYear.slice(0, 3));
-
-        // 가장 관련성 높은 데이터 선택
-        let allPassData = [...passDataString, ...passDataObj, ...passDataAlt];
-        
-        // 만약 해당 연도 데이터가 없다면 모든 연도 데이터에서 필터링
-        if (allPassData.length === 0 && passDataAnyYear.length > 0) {
-            console.log('🔄 Using cross-year data as fallback');
-            allPassData = passDataAnyYear.filter(p => p.pay_year === year);
-        }
-        
-        console.log('✅ Final pass data count:', allPassData.length);
-        console.log('Final pass data:', allPassData);
-
-        // 납부 내역 맵핑
+        // passMap 생성 (fee/status API와 동일한 방식)
         const passMap: any = {};
-        allPassData.forEach((p: any) => {
-            const mId = p.member_id?.toString() || p.memberId?.toString();
-            if (mId) {
-                if (!passMap[mId]) passMap[mId] = {};
-                passMap[mId][p.pay_month] = p.paid;
-                console.log(`Mapping: ${mId} -> month ${p.pay_month} -> paid ${p.paid}`);
-            } else {
-                console.log('⚠️ Invalid pass data entry:', p);
+        passRecords.forEach((record: any) => {
+            const memberId = record.member_id.toString();
+            if (!passMap[memberId]) {
+                passMap[memberId] = {};
             }
+            passMap[memberId][record.pay_month] = record.paid;
+            console.log(`Mapping: ${memberId} -> month ${record.pay_month} -> paid ${record.paid}`);
         });
         
         console.log('✅ Pass map created:', passMap);
@@ -200,17 +126,7 @@ export async function GET(req: NextRequest) {
             success: true,
             members: members.map(m => ({ _id: m._id.toString(), name: m.name })),
             passMap,
-            monthlyFees,
-            debug: {
-                objectIdCount: objectIds.length,
-                stringIdsCount: passDataString.length,
-                objectIdsCount: passDataObj.length,
-                altFieldCount: passDataAlt.length,
-                anyYearCount: passDataAnyYear.length,
-                finalDataCount: allPassData.length,
-                sampleCollectionData: allCollectionData.slice(0, 2),
-                samplePassData: allPassData.slice(0, 3)
-            }
+            monthlyFees
         };
         
         console.log('✅ Final result:', result);
