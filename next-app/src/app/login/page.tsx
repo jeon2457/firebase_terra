@@ -1,15 +1,21 @@
+// (app/login/page.tsx)
 "use client";
 
 import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import "bootstrap/dist/css/bootstrap.min.css";
+// [추가] 아이콘이 보이도록 CSS 파일 import 필수
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 export default function LoginPage() {
     const [id, setId] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    
+    // [추가] 비밀번호 표시/숨김 상태 관리
     const [showPassword, setShowPassword] = useState(false);
+    
     const router = useRouter();
     const { data: session } = useSession();
 
@@ -27,16 +33,11 @@ export default function LoginPage() {
         // 로고 애니메이션
         const logo = document.getElementById("logoImg");
         if (logo) {
-            // 1. 흔들기 시작 (1.5초)
             logo.classList.add("animate-shake");
-
-            // 2. 1.5초 후 흔들기 멈추고 회전 시작
             setTimeout(() => {
                 logo.classList.remove("animate-shake");
                 logo.classList.add("animate-spin");
             }, 1500);
-
-            // 3. 회전 끝난 후 (1.5초 뒤) 클래스 제거 (총 3초 후 정지)
             setTimeout(() => {
                 logo.classList.remove("animate-spin");
             }, 3000);
@@ -72,7 +73,7 @@ export default function LoginPage() {
                     overflow: auto;
                 }
 
-                /* 브라우저 자체 비밀번호 표시 아이콘 숨기기 */
+                /* 브라우저 자체 비밀번호 표시 아이콘 숨기기 (중복 방지) */
                 input::-ms-reveal,
                 input::-ms-clear {
                     display: none;
@@ -122,7 +123,7 @@ export default function LoginPage() {
                     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
                 }
 
-                /* 로고 애니메이션 */
+                /* 애니메이션 */
                 @keyframes shake {
                     0% { transform: rotate(0deg); }
                     25% { transform: rotate(-15deg); }
@@ -161,17 +162,8 @@ export default function LoginPage() {
                     margin-bottom: 8px;
                 }
 
-                .input-group .form-control {
-                    border: none;
-                    border-bottom: 2px solid #ddd;
-                    border-radius: 0;
-                    padding: 12px 0;
-                    font-size: 1rem;
-                    background: transparent;
-                    transition: all 0.3s ease;
-                }
-
-                .form-control:not(.input-group > .form-control) {
+                /* 입력창 공통 스타일 */
+                .form-control {
                     border: none;
                     border-bottom: 2px solid #ddd;
                     border-radius: 0;
@@ -185,28 +177,43 @@ export default function LoginPage() {
                     box-shadow: none;
                     border-bottom-color: #667eea;
                     background: transparent;
-                    transform: translateY(-2px);
                     outline: none;
                 }
 
-                .form-control::placeholder {
-                    color: #aaa;
+                /* [수정] Input Group 내부 스타일링 */
+                .input-group {
+                    align-items: center; /* 수직 중앙 정렬 */
                 }
 
-                /* 눈 아이콘 버튼 */
+                .input-group .form-control {
+                    margin-bottom: 0;
+                    border-bottom: 2px solid #ddd;
+                }
+                
+                /* 포커스 시 라인 색상 변경 (버튼과 입력창 둘 다 고려) */
+                .input-group:focus-within .form-control,
+                .input-group:focus-within .toggle-password-btn {
+                    border-bottom-color: #667eea;
+                }
+
+                /* 눈 아이콘 버튼 스타일 */
                 .toggle-password-btn {
                     border: none;
                     background: transparent;
-                    border-bottom: 2px solid #ddd;
+                    border-bottom: 2px solid #ddd; /* 입력창과 동일한 라인 */
                     border-radius: 0;
-                    color: #6c757d;
+                    color: #aaa;
                     cursor: pointer;
-                    padding: 12px 0;
-                    transition: color 0.3s ease;
+                    padding: 12px 10px; /* 클릭 영역 확보 */
+                    transition: all 0.3s ease;
                 }
 
                 .toggle-password-btn:hover {
                     color: #667eea;
+                }
+
+                .form-control::placeholder {
+                    color: #aaa;
                 }
 
                 .btn-login {
@@ -241,54 +248,20 @@ export default function LoginPage() {
                 }
 
                 @media (max-width: 576px) {
-                    .login-wrapper {
-                        padding: 15px;
-                    }
-
-                    .login-container {
-                        max-width: 100%;
-                    }
-
-                    .card-header {
-                        padding: 30px 20px;
-                    }
-
-                    .card-body {
-                        padding: 30px 25px;
-                    }
-
-                    .card-title {
-                        font-size: 1.6rem;
-                    }
-
-                    .login-icon img {
-                        width: 80px;
-                        height: 80px;
-                    }
-
-                    .btn-login {
-                        font-size: 1rem;
-                        padding: 12px;
-                    }
+                    .login-wrapper { padding: 15px; }
+                    .login-container { max-width: 100%; }
+                    .card-header { padding: 30px 20px; }
+                    .card-body { padding: 30px 25px; }
+                    .card-title { font-size: 1.6rem; }
+                    .login-icon img { width: 80px; height: 80px; }
+                    .btn-login { font-size: 1rem; padding: 12px; }
                 }
 
                 @media (max-width: 400px) {
-                    .card-body {
-                        padding: 25px 20px;
-                    }
-
-                    .card-header {
-                        padding: 25px 15px;
-                    }
-
-                    .login-icon img {
-                        width: 70px;
-                        height: 70px;
-                    }
-
-                    .card-title {
-                        font-size: 1.4rem;
-                    }
+                    .card-body { padding: 25px 20px; }
+                    .card-header { padding: 25px 15px; }
+                    .login-icon img { width: 70px; height: 70px; }
+                    .card-title { font-size: 1.4rem; }
                 }
             `}</style>
 
@@ -328,6 +301,7 @@ export default function LoginPage() {
                                     <label htmlFor="inputPassword" className="form-label">
                                         비밀번호
                                     </label>
+                                    {/* [수정] Input Group을 사용하여 버튼을 입력창 우측에 배치 */}
                                     <div className="input-group">
                                         <input
                                             type={showPassword ? "text" : "password"}
@@ -343,8 +317,10 @@ export default function LoginPage() {
                                             className="toggle-password-btn"
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
+                                            tabIndex={-1} // 탭 이동 시 버튼 건너뛰기 (선택사항)
                                         >
-                                            <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                                            {/* 아이콘: showPassword 상태에 따라 변경 */}
+                                            <i className={`bi ${showPassword ? 'bi-eye' : 'bi-eye-slash'}`}></i>
                                         </button>
                                     </div>
                                 </div>
