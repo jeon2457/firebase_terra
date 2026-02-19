@@ -200,7 +200,17 @@ export async function GET(req: NextRequest) {
             success: true,
             members: members.map(m => ({ _id: m._id.toString(), name: m.name })),
             passMap,
-            monthlyFees
+            monthlyFees,
+            debug: {
+                objectIdCount: objectIds.length,
+                stringIdsCount: passDataString.length,
+                objectIdsCount: passDataObj.length,
+                altFieldCount: passDataAlt.length,
+                anyYearCount: passDataAnyYear.length,
+                finalDataCount: allPassData.length,
+                sampleCollectionData: allCollectionData.slice(0, 2),
+                samplePassData: allPassData.slice(0, 3)
+            }
         };
         
         console.log('✅ Final result:', result);

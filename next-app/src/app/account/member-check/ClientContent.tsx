@@ -79,6 +79,19 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
                 console.log('PassMap:', res.data.passMap);
                 console.log('MonthlyFees:', res.data.monthlyFees);
                 
+                // 디버깅 정보 확인
+                if (res.data.debug) {
+                    console.log('🔍 Debug Info:');
+                    console.log('ObjectId count:', res.data.debug.objectIdCount);
+                    console.log('String IDs count:', res.data.debug.stringIdsCount);
+                    console.log('ObjectIds count:', res.data.debug.objectIdsCount);
+                    console.log('Alt field count:', res.data.debug.altFieldCount);
+                    console.log('Any year count:', res.data.debug.anyYearCount);
+                    console.log('Final data count:', res.data.debug.finalDataCount);
+                    console.log('Sample collection data:', res.data.debug.sampleCollectionData);
+                    console.log('Sample pass data:', res.data.debug.samplePassData);
+                }
+                
                 setMembers(res.data.members);
                 setPassMap(res.data.passMap);
                 setMonthlyFees(res.data.monthlyFees);
