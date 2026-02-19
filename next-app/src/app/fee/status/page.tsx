@@ -42,10 +42,28 @@ export default function FeeStatusPage() {
 
     const [checkedMembers, setCheckedMembers] = useState<string[]>([]);
     const [checkAll, setCheckAll] = useState(false);
+    const [yearDropdownOpen, setYearDropdownOpen] = useState(false);
 
     const isAdmin = (session?.user as any)?.user_level >= 10;
     const todayMonth = new Date().getMonth() + 1;
     const todayYear = new Date().getFullYear();
+
+    // 드롭다운 외부 클릭 시 닫기
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (yearDropdownOpen) {
+                const dropdown = document.querySelector('.year-dropdown-container');
+                if (dropdown && !dropdown.contains(event.target as Node)) {
+                    setYearDropdownOpen(false);
+                }
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [yearDropdownOpen]);
 
     useEffect(() => {
         if (status === "unauthenticated") {
@@ -713,21 +731,28 @@ export default function FeeStatusPage() {
             </div>
 
             <div className="header-box">
-                <div>
-                    <div className="dropdown">
-                        <button className="btn btn-dark btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-                            {year}년 선택
-                        </button>
-                        <ul className="dropdown-menu">
+                <div className="position-relative year-dropdown-container">
+                    <button className="btn btn-primary dropdown-toggle rounded-pill px-3 shadow-sm" 
+                            onClick={() => setYearDropdownOpen(!yearDropdownOpen)}
+                            style={{ fontWeight: '600' }}>
+                        📅 {year}년
+                    </button>
+                    {yearDropdownOpen && (
+                        <div className="dropdown-menu show position-absolute end-0 mt-1 shadow" 
+                             style={{ maxHeight: '250px', overflowY: 'auto', minWidth: '120px' }}>
                             {years.map(y => (
-                                <li key={y}>
-                                    <button className={`dropdown-item ${y === year ? 'active' : ''}`} onClick={() => setYear(y)}>
-                                        {y}년
-                                    </button>
-                                </li>
+                                <button key={y} 
+                                        className={`dropdown-item ${y === year ? 'active' : ''}`} 
+                                        onClick={() => {
+                                            setYear(y);
+                                            setYearDropdownOpen(false);
+                                        }}
+                                        style={{ fontWeight: y === year ? '600' : 'normal', fontSize: '0.9rem' }}>
+                                    {y}년 {y === new Date().getFullYear() ? '(현재)' : ''} {y === new Date().getFullYear() + 1 ? '(다음해)' : ''}
+                                </button>
                             ))}
-                        </ul>
-                    </div>
+                        </div>
+                    )}
                 </div>
                 <div className="text-center">
                     <div className="title-btn">{year}년도 회비납부 현황</div>
