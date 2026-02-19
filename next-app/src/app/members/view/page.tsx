@@ -432,8 +432,8 @@ export default function MembersViewPage() {
                     .col-no { width: 8%; font-size: 12px !important; }
                     .col-name { width: 18%; font-size: 14px !important; } /* 이름 폰트 키움 */
                     .col-tel { width: 47%; font-size: 14px !important; } /* 전화번호 폰트 키움 */
-                    .col-addr { width: 15%; font-size: 13px !important; }
-                    .col-sms { width: 12%; font-size: 13px !important; } /* SMS 공간 확장 */
+                    .col-addr { width: 15%; font-size: 12px !important; } /* 거주지 폰트 공간 확장 */
+                    .col-sms { width: 12%; font-size: 14px !important; } /* SMS 아이콘 공간 확장 */
                     
                     .col-remark { display: none; }
                     .hide-mobile { display: none; }
