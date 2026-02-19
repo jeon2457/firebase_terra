@@ -211,7 +211,24 @@ export default function FeeStatusPage() {
         return <div className="text-center mt-5">Loading...</div>;
     }
 
-    const years = [0, 1, 2, 3].map(i => new Date().getFullYear() - i);
+    const years = [];
+    
+    // 5년 전부터 현재까지의 년도 생성, 그리고 다음 해까지 포함
+    const currentDate = new Date();
+    const currentYearValue = currentDate.getFullYear();
+    
+    // 5년 전부터 현재까지
+    for (let i = 5; i >= 0; i--) {
+        years.push(currentYearValue - i);
+    }
+    
+    // 12월 1일 이후에만 다음 해 자동 추가
+    if (currentDate.getMonth() === 11 && currentDate.getDate() >= 1) {
+        years.push(currentYearValue + 1);
+    }
+    
+    // 중복 제거 및 정렬
+    const uniqueYears = [...new Set(years)].sort((a, b) => a - b);
 
     return (
         <div className="container-fluid py-4" style={{ background: "#f9f9fa", minHeight: "100vh" }}>
@@ -740,7 +757,7 @@ export default function FeeStatusPage() {
                     {yearDropdownOpen && (
                         <div className="dropdown-menu show position-absolute end-0 mt-1 shadow" 
                              style={{ maxHeight: '250px', overflowY: 'auto', minWidth: '120px' }}>
-                            {years.map(y => (
+                            {uniqueYears.map(y => (
                                 <button key={y} 
                                         className={`dropdown-item ${y === year ? 'active' : ''}`} 
                                         onClick={() => {
