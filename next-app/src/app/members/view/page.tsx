@@ -93,16 +93,35 @@ export default function MembersViewPage() {
         return numbers; // 형식에 맞지 않으면 숫자만 반환
     };
 
+    // 이름 표준화 함수 - 동일한 너비를 위해 공백 패딩 추가
+    const formatName = (name: string) => {
+        if (!name) return '';
+        
+        // 이름 길이를 6자로 통일 (한글 기준)
+        const targetLength = 6;
+        const currentLength = name.length;
+        
+        if (currentLength < targetLength) {
+            // 부족한 길이만큼 공백 추가 (양쪽에 균등하게)
+            const leftSpaces = Math.floor((targetLength - currentLength) / 2);
+            const rightSpaces = targetLength - currentLength - leftSpaces;
+            return '　'.repeat(leftSpaces) + name + '　'.repeat(rightSpaces);
+        }
+        
+        return name; // 6자 이상이면 그대로 반환
+    };
+
     const fetchMembers = async () => {
         try {
             const res = await axios.get("/api/members");
             if (res.data.success) {
-                // Filter out specific system/public accounts and format phone numbers
+                // Filter out specific system/public accounts and format phone numbers and names
                 const filteredMembers = res.data.data
                     .filter((m: any) => m.name !== '공용계정' && m.id !== 'jikji35')
                     .map((m: any) => ({
                         ...m,
-                        tel: formatPhoneNumber(m.tel)
+                        tel: formatPhoneNumber(m.tel),
+                        name: formatName(m.name)
                     }));
                 setMembers(filteredMembers);
             }
@@ -375,8 +394,25 @@ export default function MembersViewPage() {
         }
         .name-link {
              font-size: 1.1rem; font-weight: 600; color: #ffffff !important; text-decoration: none !important;
+             font-family: 'Courier New', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important; /* 이름도 고정폭 폰트로 통일 */
+             letter-spacing: 0.5px; /* 글자 간격 통일 */
+             display: inline-block; /* 블록 요소로 만들어 폭 일정하게 */
+             width: 100%; /* 전체 너비 사용 */
+             text-align: center; /* 중앙 정렬 */
         }
         .name-link:hover { color: #ffffff !important; text-decoration: none !important; }
+        
+        /* 이름 셀 스타일 추가 */
+        .name_1 {
+            font-family: 'Courier New', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important; /* 고정폭 폰트로 통일 */
+            letter-spacing: 0.5px; /* 글자 간격 통일 */
+            text-align: center; /* 중앙 정렬 */
+            display: block; /* 블록 요소로 만들어 폭 일정하게 */
+            margin: 0 auto; /* 중앙 정렬 */
+            white-space: nowrap; /* 줄바꿈 방지 */
+            overflow: hidden; /* 넘치는 텍스트 숨김 */
+            text-overflow: ellipsis; /* 넘치는 텍스트는 ...으로 표시 */
+        }
         
         .sms-icon { cursor: pointer; transition: transform 0.2s; }
         .sms-icon:hover { transform: scale(1.15); }
@@ -441,7 +477,7 @@ export default function MembersViewPage() {
             
     /* 테이블 제목 너비폭 비율 및 폰트크기  */
     .col-no { width: 6%; font-size: 11px !important; } /* NO */
-    .col-name { width: 22%; font-size: 13px !important; letter-spacing: 1px !important; } /* 이름 - 폰트 크기 2px 감소 (15px -> 13px) */
+    .col-name { width: 22%; font-size: 13px !important; letter-spacing: 1px !important; min-width: 80px; } /* 이름 - 고정 너비 추가 */
     .col-tel { width: 47%; font-size: 13px !important; letter-spacing: 1px !important; min-width: 140px; } /* 전화번호 - 고정 너비 추가 */
     .col-addr { width: 17%; font-size: 13px !important; } /* 거주지 */
     .col-remark { display: none; } /* Hide remark on mobile */
@@ -452,14 +488,14 @@ export default function MembersViewPage() {
 /* PC Column Widths */
 @media (min-width: 769px) {
      .col-no { width: 1.56rem; }
-     .col-name { width: 6rem; }
+     .col-name { width: 6rem; min-width: 80px; } /* 이름 - 고정 너비 유지 */
      .col-tel { width: 10.5rem; white-space: nowrap; min-width: 140px; } /* 고정 너비 유지 */
      .col-addr { width: 2.8rem; }
      .col-remark { width: 3.75rem; }
      .col-sms { width: 3.75rem; }
 }
              .col-no { width: 1.56rem; }
-             .col-name { width: 6rem; }
+             .col-name { width: 6rem; min-width: 80px; } /* 이름 - 고정 너비 유지 */
              .col-tel { width: 10.5rem; white-space: nowrap; min-width: 140px; } /* 고정 너비 유지 */
              .col-addr { width: 2.8rem; }
              .col-remark { width: 3.75rem; }
