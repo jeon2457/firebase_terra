@@ -73,8 +73,13 @@ export async function GET(req: NextRequest) {
 
         // 2. 회원 정보 조회 (User 모델 사용 - tel 필드가 있음)
         console.log('🔍 Fetching members from User model...');
+        
+        // 먼저 User 컬렉션에서 직접 tel 필드 확인
+        const userCheck = await User.find({ _id: { $in: objectIds } }).select('name tel').limit(3);
+        console.log('📋 User collection sample (name, tel):', userCheck);
+        
         const members = await User.find({ _id: { $in: objectIds } }).sort({ name: 1 });
-        console.log('✅ Found members:', members.length, members);
+        console.log('✅ Found members:', members.length);
         
         // 전화번호 필드 확인을 위한 디버깅
         members.forEach((member, index) => {
@@ -83,9 +88,14 @@ export async function GET(req: NextRequest) {
                 name: member.name,
                 tel: member.tel,
                 hasTelField: 'tel' in member,
-                telType: typeof member.tel
+                telType: typeof member.tel,
+                allKeys: Object.keys(member.toObject())
             });
         });
+        
+        // Member 컬렉션에서도 확인
+        const memberCheck = await Member.find({ _id: { $in: objectIds } });
+        console.log('📋 Member collection sample:', memberCheck);
 
         // 3. 월회비 이력 조회 (Mongoose 모델 사용)
         console.log('🔍 Fetching fee history...');
