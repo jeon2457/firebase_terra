@@ -171,9 +171,24 @@ export default function FeeStatusPage() {
     };
 
     const goMemberCheck = () => {
-        if (checkedMembers.length === 0) { alert('회원을 선택하세요.'); return; }
+        console.log('=== goMemberCheck Debug ===');
+        console.log('checkedMembers:', checkedMembers);
+        console.log('checkedMembers.length:', checkedMembers.length);
+        console.log('year:', year);
+        
+        if (checkedMembers.length === 0) { 
+            console.log('❌ No members selected');
+            alert('회원을 선택하세요.'); 
+            return; 
+        }
+        
         const ids = checkedMembers.join(',');
-        router.push(`/account/member-check?members=${ids}&year=${year}`);
+        const url = `/account/member-check?members=${ids}&year=${year}`;
+        
+        console.log('✅ Generated IDs:', ids);
+        console.log('🌐 Navigation URL:', url);
+        
+        router.push(url);
     };
 
     if (status === "loading" || loading) {

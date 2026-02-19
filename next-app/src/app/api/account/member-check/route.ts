@@ -17,37 +17,55 @@ export async function GET(req: NextRequest) {
         const membersParam = searchParams.get('members');
         const yearParam = searchParams.get('year');
 
+        // 디버깅 로그 추가
+        console.log('=== Member Check API Debug ===');
+        console.log('Request URL:', req.url);
+        console.log('membersParam:', membersParam);
+        console.log('yearParam:', yearParam);
+
         // 파라미터 확인
         if (!membersParam) {
+            console.log('❌ No members parameter');
             return NextResponse.json({ success: false, message: "선택된 회원이 없습니다." });
         }
 
         const year = yearParam ? parseInt(yearParam) : new Date().getFullYear();
+        console.log('Parsed year:', year);
         
         // ID 유효성 검사 및 변환
         const idArr = membersParam.split(',');
         const objectIds: ObjectId[] = [];
         
+        console.log('ID array before processing:', idArr);
+        
         for (const id of idArr) {
             const trimmedId = id.trim();
+            console.log('Processing ID:', trimmedId, 'Length:', trimmedId.length);
             if (trimmedId.length === 24) { // MongoDB ObjectId 길이 체크
                 try {
                     objectIds.push(new ObjectId(trimmedId));
+                    console.log('✅ Valid ObjectId:', trimmedId);
                 } catch (e) {
-                    console.error("Invalid ID conversion:", trimmedId);
+                    console.error("❌ Invalid ID conversion:", trimmedId, e);
                 }
+            } else {
+                console.log('❌ Invalid ID length:', trimmedId);
             }
         }
 
+        console.log('Valid ObjectIds:', objectIds);
+
         if (objectIds.length === 0) {
+            console.log('❌ No valid ObjectIds found');
             return NextResponse.json({ success: false, message: "유효한 회원 ID가 없습니다." });
         }
 
         // DB 연결 (Mongoose 사용)
+        console.log('🔌 Connecting to database...');
         await dbConnect();
+        console.log('✅ Database connected');
         
         // Mongoose 연결 객체에서 Native MongoDB DB 객체 가져오기
-        // 주의: mongoose.connection.db가 초기화될 때까지 기다려야 할 수도 있으나, await dbConnect() 이후엔 보통 사용 가능합니다.
         const db = mongoose.connection.db;
 
         if (!db) {
@@ -55,24 +73,29 @@ export async function GET(req: NextRequest) {
         }
 
         // 2. 회원 정보 조회
+        console.log('🔍 Fetching members...');
         const members = await db.collection("members")
             .find({ _id: { $in: objectIds } })
             .sort({ name: 1 })
             .toArray();
+        
+        console.log('✅ Found members:', members.length, members);
 
-        // 3. 월회비 이력 조회 (한 번에 조회하여 성능 최적화)
+        // 3. 월회비 이력 조회
+        console.log('🔍 Fetching fee history...');
         const feeHistory = await db.collection("monthly_fee_history")
             .find({})
             .sort({ apply_year: 1, apply_month: 1 })
             .toArray();
+        
+        console.log('✅ Fee history count:', feeHistory.length);
 
-        // 월별 회비 계산 (메모리 연산)
+        // 월별 회비 계산
         const monthlyFees: { [key: number]: number } = {};
         for (let m = 1; m <= 12; m++) {
-            let fee = 20000; // 기본값
+            let fee = 20000;
             let found = null;
             
-            // 해당 연/월에 적용되는 가장 마지막 설정값 찾기
             for (const h of feeHistory) {
                 if (h.apply_year < year || (h.apply_year === year && h.apply_month <= m)) {
                     found = h;
@@ -81,8 +104,12 @@ export async function GET(req: NextRequest) {
             if (found) fee = found.fee_amount;
             monthlyFees[m] = fee;
         }
+        
+        console.log('✅ Monthly fees calculated:', monthlyFees);
 
-        // 4. 납부 내역 조회 (문자열 ID와 ObjectId 둘 다 조회)
+        // 4. 납부 내역 조회
+        console.log('🔍 Fetching pass data...');
+        
         // 4-1. 문자열로 저장된 ID 조회
         const passDataString = await db.collection("account_pass")
             .find({
@@ -90,6 +117,8 @@ export async function GET(req: NextRequest) {
                 pay_year: year
             })
             .toArray();
+        
+        console.log('✅ Pass data (string IDs):', passDataString.length);
             
         // 4-2. ObjectId로 저장된 ID 조회
         const passDataObj = await db.collection("account_pass")
@@ -98,30 +127,38 @@ export async function GET(req: NextRequest) {
                 pay_year: year
             })
             .toArray();
+        
+        console.log('✅ Pass data (ObjectIds):', passDataObj.length);
 
         // 두 결과 합치기
         const allPassData = [...passDataString, ...passDataObj];
+        console.log('✅ Total pass data:', allPassData.length);
 
-        // 납부 내역 맵핑 (Map 구조로 변환)
+        // 납부 내역 맵핑
         const passMap: any = {};
         allPassData.forEach((p: any) => {
             const mId = p.member_id.toString();
             if (!passMap[mId]) passMap[mId] = {};
             passMap[mId][p.pay_month] = p.paid;
         });
+        
+        console.log('✅ Pass map created:', passMap);
 
         // 5. 결과 반환
-        return NextResponse.json({
+        const result = {
             success: true,
             members: members.map(m => ({ _id: m._id.toString(), name: m.name })),
             passMap,
             monthlyFees
-        });
+        };
+        
+        console.log('✅ Final result:', result);
+        return NextResponse.json(result);
 
     } catch (error) {
-        console.error("Member Check API Error:", error);
+        console.error("❌ Member Check API Error:", error);
         return NextResponse.json(
-            { success: false, message: "서버 오류가 발생했습니다." },
+            { success: false, message: "서버 오류가 발생했습니다.", error: String(error) },
             { status: 500 }
         );
     }

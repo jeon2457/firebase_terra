@@ -51,24 +51,45 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
     }, [status, memberIds, year]);
 
     const fetchData = async () => {
+        console.log('=== Client Fetch Debug ===');
+        console.log('memberIds:', memberIds);
+        console.log('year:', year);
+        console.log('memberIds type:', typeof memberIds);
+        console.log('memberIds.trim():', memberIds?.trim());
+
         if (!memberIds || memberIds.trim() === '') {
+            console.log('❌ No member IDs provided');
             setLoading(false);
             return;
         }
 
         setLoading(true);
         try {
-            const res = await axios.get(`/api/account/member-check?members=${encodeURIComponent(memberIds)}&year=${year}`);
+            const apiUrl = `/api/account/member-check?members=${encodeURIComponent(memberIds)}&year=${year}`;
+            console.log('🌐 API URL:', apiUrl);
+            
+            const res = await axios.get(apiUrl);
+            
+            console.log('📡 API Response:', res.data);
+            console.log('Response status:', res.status);
             
             if (res.data.success) {
+                console.log('✅ Data loaded successfully');
+                console.log('Members:', res.data.members);
+                console.log('PassMap:', res.data.passMap);
+                console.log('MonthlyFees:', res.data.monthlyFees);
+                
                 setMembers(res.data.members);
                 setPassMap(res.data.passMap);
                 setMonthlyFees(res.data.monthlyFees);
             } else {
+                console.log('❌ API returned error:', res.data.message);
                 alert(res.data.message || '데이터 로드 실패');
             }
-        } catch (error) {
-            console.error("Failed to fetch data:", error);
+        } catch (error: any) {
+            console.error("❌ Failed to fetch data:", error);
+            console.error('Error details:', error.response?.data);
+            console.error('Error status:', error.response?.status);
             alert('데이터를 불러오는데 실패했습니다.');
         } finally {
             setLoading(false);
