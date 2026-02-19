@@ -3,14 +3,13 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import Link from "next/link";
+// import Link from "next/link"; // 사용하지 않으므로 주석 처리 혹은 삭제
 import "bootstrap-icons/font/bootstrap-icons.css";
 import axios from "axios";
 
 export default function MembersViewPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
-
 
     const [members, setMembers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -22,7 +21,6 @@ export default function MembersViewPage() {
 
     // Animation State
     const [cubeDeg, setCubeDeg] = useState(0);
-
     const [isPageReady, setIsPageReady] = useState(false);
 
     useEffect(() => {
@@ -37,12 +35,10 @@ export default function MembersViewPage() {
     useEffect(() => {
         const timer = setInterval(() => {
             const now = new Date();
-
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const day = String(now.getDate()).padStart(2, '0');
             const week = ['일', '월', '화', '수', '목', '금', '토'][now.getDay()];
-
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
 
@@ -56,7 +52,7 @@ export default function MembersViewPage() {
     useEffect(() => {
         const cubeTimer = setInterval(() => {
             setCubeDeg(prev => prev - 90);
-        }, 2000); // Slower rotate for better stability
+        }, 2000);
         return () => clearInterval(cubeTimer);
     }, []);
 
@@ -70,52 +66,31 @@ export default function MembersViewPage() {
     // 전화번호 형식 통일 함수
     const formatPhoneNumber = (phone: string) => {
         if (!phone) return '';
-        
-        // 숫자만 추출
         const numbers = phone.replace(/[^0-9]/g, '');
-        
-        // 형식에 맞게 하이픈 추가
         if (numbers.length === 11) {
-            // 010-1234-5678
             return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7)}`;
         } else if (numbers.length === 10) {
-            // 02-123-4567 or 010-123-4567
             if (numbers.startsWith('02')) {
                 return `${numbers.slice(0, 2)}-${numbers.slice(2, 5)}-${numbers.slice(5)}`;
             } else {
                 return `${numbers.slice(0, 3)}-${numbers.slice(3, 6)}-${numbers.slice(6)}`;
             }
         } else if (numbers.length === 9) {
-            // 02-12-3456
             return `${numbers.slice(0, 2)}-${numbers.slice(2, 5)}-${numbers.slice(5)}`;
         }
-        
-        return numbers; // 형식에 맞지 않으면 숫자만 반환
+        return numbers;
     };
 
-    // 이름 표준화 함수 - 동일한 너비를 위해 공백 패딩 추가
+    // [수정됨] 이름 표준화 함수 - 공백 패딩 제거 (CSS 정렬 사용)
     const formatName = (name: string) => {
         if (!name) return '';
-        
-        // 이름 길이를 6자로 통일 (한글 기준)
-        const targetLength = 6;
-        const currentLength = name.length;
-        
-        if (currentLength < targetLength) {
-            // 부족한 길이만큼 공백 추가 (양쪽에 균등하게)
-            const leftSpaces = Math.floor((targetLength - currentLength) / 2);
-            const rightSpaces = targetLength - currentLength - leftSpaces;
-            return '　'.repeat(leftSpaces) + name + '　'.repeat(rightSpaces);
-        }
-        
-        return name; // 6자 이상이면 그대로 반환
+        return name.trim(); 
     };
 
     const fetchMembers = async () => {
         try {
             const res = await axios.get("/api/members");
             if (res.data.success) {
-                // Filter out specific system/public accounts and format phone numbers and names
                 const filteredMembers = res.data.data
                     .filter((m: any) => m.name !== '공용계정' && m.id !== 'jikji35')
                     .map((m: any) => ({
@@ -157,415 +132,354 @@ export default function MembersViewPage() {
     return (
         <div className="wrapper">
             <style jsx global>{`
-        body {
-          background: linear-gradient(to right, #232526, #414345);
-          margin: 0;
-          padding: 3px 0;
-          font-family: 'Noto Sans KR', sans-serif;
-          color: #ffffff;
-        }
-      `}</style>
+                body {
+                    background: linear-gradient(to right, #232526, #414345);
+                    margin: 0;
+                    padding: 3px 0;
+                    font-family: 'Noto Sans KR', sans-serif;
+                    color: #ffffff;
+                }
+            `}</style>
             <style jsx>{`
-        .wrapper {
-            width: 100%;
-            min-height: 100vh;
-            background: transparent;
-        }
+                .wrapper {
+                    width: 100%;
+                    min-height: 100vh;
+                    background: transparent;
+                }
 
-        a { text-decoration: none !important; }
+                a { text-decoration: none !important; }
 
-        /* Loading Screen */
-        #loading-screen {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            background: #363434;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.5s ease;
-            z-index: 9999;
-            inset: 0;
-        }
-        #loading-screen video {
-            width: 200px;
-            height: 200px;
-            max-width: 90vw;
-            max-height: 90vh;
-            object-fit: contain;
-        }
+                /* Loading Screen */
+                #loading-screen {
+                    position: fixed;
+                    width: 100%;
+                    height: 100%;
+                    background: #363434;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    transition: opacity 0.5s ease;
+                    z-index: 9999;
+                    inset: 0;
+                }
+                #loading-screen video {
+                    width: 200px;
+                    height: 200px;
+                    max-width: 90vw;
+                    max-height: 90vh;
+                    object-fit: contain;
+                }
 
-        @media (max-width: 768px) {
-            #loading-screen video {
-                width: 150px;
-                height: 150px;
-            }
-        }
+                @media (max-width: 768px) {
+                    #loading-screen video {
+                        width: 150px;
+                        height: 150px;
+                    }
+                }
 
-        #main-content {
-            display: ${isPageReady ? "block" : "none"};
-        }
+                #main-content {
+                    display: ${isPageReady ? "block" : "none"};
+                }
 
-        /* Container */
-        .container {
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 0;
-        }
+                /* Container */
+                .container {
+                    max-width: 700px;
+                    margin: 0 auto;
+                    padding: 0;
+                }
 
-        /* Header */
-        .header {
-            width: 100%;
-            max-width: 700px;
-            height: 3.5rem;
-            margin: 0 auto;
-            text-align: center;
-            color: #f4f4f4;
-            background-color: rgba(0, 0, 0);
-            padding: 0 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-        }
+                /* Header */
+                .header {
+                    width: 100%;
+                    max-width: 700px;
+                    height: 3.5rem;
+                    margin: 0 auto;
+                    text-align: center;
+                    color: #f4f4f4;
+                    background-color: rgba(0, 0, 0);
+                    padding: 0 15px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    z-index: 1000;
+                    box-sizing: border-box; /* 추가: 패딩 포함 너비 계산 */
+                }
 
-        .header-left { display: flex; align-items: center; gap: 10px; }
-        .date-text { color: #cea71bff; font-size: 1.5rem; }
-        .time-text { color: #4A9EFF; font-size: 1.5rem; line-height: 1.1; }
-        .header-right { display: flex; align-items: center; }
-        .user-info-box {
-            font-size: 12px;
-            color: #E3EFFA !important;
-            background: #333;
-            padding: 4px 8px;
-            border-radius: 5px;
-            border: 1px solid #555;
-            white-space: nowrap;
-        }
+                .header-left { display: flex; align-items: center; gap: 10px; }
+                .date-text { color: #cea71bff; font-size: 1.5rem; }
+                .time-text { color: #4A9EFF; font-size: 1.5rem; line-height: 1.1; }
+                .header-right { display: flex; align-items: center; }
+                .user-info-box {
+                    font-size: 12px;
+                    color: #E3EFFA !important;
+                    background: #333;
+                    padding: 4px 8px;
+                    border-radius: 5px;
+                    border: 1px solid #555;
+                    white-space: nowrap;
+                }
 
-        /* Marquee Section (wrap2) */
-        .wrap2 {
-            position: fixed;
-            top: 3.5rem;
-            left: 0;
-            right: 0;
-            z-index: 999;
-            width: 100%;
-            max-width: 700px;
-            margin: 0 auto;
-            overflow: hidden;
-            background-image: url('/images/bg.gif');
-            background-color: lightgray;
-            background-position: center;
-            background-repeat: repeat-x;
-            background-size: contain;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            padding: 0 103px 0 93px;
-            box-sizing: border-box;
-        }
-        
-        /* 3D Cube */
-        .cube-container {
-            position: absolute;
-            top: 7px;
-            left: 10px;
-            z-index: 1001;
-        }
+                /* Marquee Section (wrap2) */
+                .wrap2 {
+                    position: fixed;
+                    top: 3.5rem;
+                    left: 0;
+                    right: 0;
+                    z-index: 999;
+                    width: 100%;
+                    max-width: 700px;
+                    margin: 0 auto;
+                    overflow: hidden;
+                    background-image: url('/images/bg.gif');
+                    background-color: lightgray;
+                    background-position: center;
+                    background-repeat: repeat-x;
+                    background-size: contain;
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                    padding: 0 103px 0 93px;
+                    box-sizing: border-box;
+                }
+                
+                /* 3D Cube */
+                .cube-container {
+                    position: absolute;
+                    top: 7px;
+                    left: 10px;
+                    z-index: 1001;
+                }
 
-        .wrap1 {
-            width: 25px;
-            height: 25px;
-            perspective: 500px;
-            transform-style: preserve-3d;
-            position: relative;
-            padding: 0;
-        }
+                .wrap1 {
+                    width: 25px;
+                    height: 25px;
+                    perspective: 500px;
+                    transform-style: preserve-3d;
+                    position: relative;
+                    padding: 0;
+                }
 
-        .cube {
-            width: 25px;
-            height: 25px;
-            position: absolute;
-            top: 0;
-            left: 0;
-            transform-style: preserve-3d;
-            transform: rotateX(${cubeDeg}deg);
-            transition: transform 0.6s ease;
-        }
-        .cube img {
-            position: absolute;
-            top: 3px;
-            left: -3px;
-            width: 25px;
-            height: 25px;
-            backface-visibility: hidden;
-            display: block;
-        }
-        .cube img:nth-child(1) { transform: translateZ(12.5px); }
-        .cube img:nth-child(2) { transform: rotateX(90deg) translateZ(12.5px); }
-        .cube img:nth-child(3) { transform: rotateX(180deg) translateZ(12.5px); }
-        .cube img:nth-child(4) { transform: rotateX(270deg) translateZ(12.5px); }
+                .cube {
+                    width: 25px;
+                    height: 25px;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    transform-style: preserve-3d;
+                    transform: rotateX(${cubeDeg}deg);
+                    transition: transform 0.6s ease;
+                }
+                .cube img {
+                    position: absolute;
+                    top: 3px;
+                    left: -3px;
+                    width: 25px;
+                    height: 25px;
+                    backface-visibility: hidden;
+                    display: block;
+                }
+                .cube img:nth-child(1) { transform: translateZ(12.5px); }
+                .cube img:nth-child(2) { transform: rotateX(90deg) translateZ(12.5px); }
+                .cube img:nth-child(3) { transform: rotateX(180deg) translateZ(12.5px); }
+                .cube img:nth-child(4) { transform: rotateX(270deg) translateZ(12.5px); }
 
-        /* Marquee Text */
-        .marquee-container {
-            width: 100%;
-            overflow: hidden;
-            white-space: nowrap;
-            box-sizing: border-box;
-            display: flex;
-            align-items: center;
-        }
+                /* Marquee Text */
+                .marquee-container {
+                    width: 100%;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    box-sizing: border-box;
+                    display: flex;
+                    align-items: center;
+                }
 
-        .marquee {
-            display: flex;
-            align-items: center;
-            animation: marquee 15s linear infinite;
-            font-size: 18px;
-            color: #ffffff;
-            padding-left: 100%;
-        }
-        @keyframes marquee {
-            0% { transform: translateX(0); }
-            10% { transform: translateX(-50px); }
-            90% { transform: translateX(calc(-100% + 50px)); }
-            100% { transform: translateX(-100%); }
-        }
-        .custom-span {
-            display: inline-block;
-            font-size: 18px;
-            line-height: 30px;
-            margin: 1px 20px 5px 17px;
-            padding: 0;
-            vertical-align: middle;
-        }
+                .marquee {
+                    display: flex;
+                    align-items: center;
+                    animation: marquee 15s linear infinite;
+                    font-size: 18px;
+                    color: #ffffff;
+                    padding-left: 100%;
+                }
+                @keyframes marquee {
+                    0% { transform: translateX(0); }
+                    10% { transform: translateX(-50px); }
+                    90% { transform: translateX(calc(-100% + 50px)); }
+                    100% { transform: translateX(-100%); }
+                }
+                .custom-span {
+                    display: inline-block;
+                    font-size: 18px;
+                    line-height: 30px;
+                    margin: 1px 20px 5px 17px;
+                    padding: 0;
+                    vertical-align: middle;
+                }
 
-        /* Table */
-        .table-container {
-            padding-top: calc(3.25rem + 30px);
-            padding-bottom: 2px;
-        }
-        .custom-table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-            border: 1px solid #eedca6;
-            max-width: 700px;
-        }
-        .custom-table thead th {
-            position: sticky;
-            top: calc(3.5rem + 39px); /* 1px 위로 이동 */
-            z-index: 998;
-            background: url('/images/background_mable-1.jpg') center center / cover no-repeat !important;
-            color: #cea71bff !important;
-            text-shadow: 0 0 10px rgba(240, 196, 32, 0.4), 1px 1px 2px #000;
-            font-weight: bold;
-            border-bottom: 1px solid #444;
-            border: 1px solid #eedca6 !important;
-            text-align: center;
-            vertical-align: middle;
-            padding: 0.44rem 0; /* 데이터 행과 동일한 높이로 조정 */
-            font-size: 0.9em;
-        }
-        .custom-table tbody tr {
-            background-color: transparent;
-            color: #ffffff;
-            border: 1px solid #eedca6 !important;
-        }
-        .custom-table tbody tr:hover { background: rgba(255,255,255,0.06); }
+                /* Table */
+                .table-container {
+                    padding-top: calc(3.25rem + 30px);
+                    padding-bottom: 2px;
+                }
+                .custom-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    table-layout: fixed; /* 중요: 고정 레이아웃 */
+                    border: 1px solid #eedca6;
+                    max-width: 700px;
+                    margin: 0 auto; /* 중앙 정렬 */
+                }
+                .custom-table thead th {
+                    position: sticky;
+                    top: calc(3.5rem + 39px);
+                    z-index: 998;
+                    background: url('/images/background_mable-1.jpg') center center / cover no-repeat !important;
+                    color: #cea71bff !important;
+                    text-shadow: 0 0 10px rgba(240, 196, 32, 0.4), 1px 1px 2px #000;
+                    font-weight: bold;
+                    border-bottom: 1px solid #444;
+                    border: 1px solid #eedca6 !important;
+                    text-align: center;
+                    vertical-align: middle;
+                    padding: 0.44rem 0;
+                    font-size: 0.9em;
+                }
+                .custom-table tbody tr {
+                    background-color: transparent;
+                    color: #ffffff;
+                    border: 1px solid #eedca6 !important;
+                }
+                .custom-table tbody tr:hover { background: rgba(255,255,255,0.06); }
 
-        /* [수동조절 위치] 첫 번째 데이터 행이 상단(sticky 헤더/전광판)에 가려질 때 아래 값을 조절하세요 */
-        /* 예: 2px~12px 사이로 조절 */
-        .custom-table tbody tr:first-child td {
-            padding-top: calc(0.44rem + 12px);
-        }
+                .custom-table tbody tr:first-child td {
+                    padding-top: calc(0.44rem + 12px);
+                }
 
-        .custom-table td {
-            border: 1px solid #eedca6 !important;
-            text-align: center;
-            vertical-align: middle;
-            padding: 0.44rem 0;
-            word-break: break-word;
-            line-height: 1.1;
-        }
-        .name-link {
-             font-size: 1.1rem; font-weight: 600; color: #ffffff !important; text-decoration: none !important;
-             font-family: 'Courier New', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important; /* 이름도 고정폭 폰트로 통일 */
-             letter-spacing: 0.5px; /* 글자 간격 통일 */
-             display: inline-block; /* 블록 요소로 만들어 폭 일정하게 */
-             width: 100%; /* 전체 너비 사용 */
-             text-align: center; /* 중앙 정렬 */
-        }
-        .name-link:hover { color: #ffffff !important; text-decoration: none !important; }
-        
-        /* 이름 셀 스타일 추가 */
-        .name_1 {
-            text-align: center;
-            padding: 0.32rem 0;
-            font-size: 13px !important;
-            font-family: 'Courier New', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
-        }
-        
-        /* 전화번호 셀 스타일 추가 */
-        .tel_1 {
-            text-align: center;
-            padding: 0.32rem 0;
-            font-size: 13px !important;
-            font-family: 'Courier New', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
-        }
-        
-        .name-link {
-            font-size: 13px !important;
-            font-family: 'Courier New', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
-            color: #ffffff !important;
-            text-decoration: none !important;
-            display: block;
-            text-align: center;
-        }
-        
-        .sms-icon { cursor: pointer; transition: transform 0.2s; }
-        .sms-icon:hover { transform: scale(1.15); }
+                .custom-table td {
+                    border: 1px solid #eedca6 !important;
+                    text-align: center;
+                    vertical-align: middle;
+                    padding: 0.44rem 0;
+                    word-break: break-all; /* 내용이 넘치면 줄바꿈 */
+                    line-height: 1.1;
+                }
 
-        .max-small {
-            width: 1.15rem;
-            height: 1.15rem;
-        }
+                /* 이름/전화번호 링크 공통 스타일 */
+                .name-link {
+                    color: #ffffff !important; 
+                    text-decoration: none !important;
+                    display: block;
+                    width: 100%;
+                    text-align: center;
+                }
+                .name-link:hover { color: #ffffff !important; text-decoration: none !important; }
+                
+                /* 셀 스타일 */
+                .name_1 {
+                    text-align: center;
+                    padding: 0.32rem 0;
+                }
+                .tel_1 {
+                    text-align: center;
+                    padding: 0.32rem 0;
+                }
+                
+                .sms-icon { cursor: pointer; transition: transform 0.2s; }
+                .sms-icon:hover { transform: scale(1.15); }
 
-        /* Address Toggle Logic */
-        .address-header { cursor: pointer; color: #cea71b !important; }
-        .addr-visible { color: #cea71b !important; } 
-        
-        
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .header {
-                max-width: 100%;
-                width: 100vw;
-                left: 0;
-                right: 0;
-                margin: 0;
-                height: 60px;
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-                padding: 5px 10px;
-            }
+                .max-small {
+                    width: 1.15rem;
+                    height: 1.15rem;
+                }
 
-            .header-left { gap: 6px; }
-            .date-text { font-size: 1.1rem; color: #f0c420; }
-            .time-text { font-size: 1.1rem; }
-            .user-info-box { font-size: 10px; padding: 2px 6px; }
+                /* Address Toggle Logic */
+                .address-header { cursor: pointer; color: #cea71b !important; }
+                .addr-visible { color: #cea71b !important; } 
+                
+                
+                /* ========================================= */
+                /* Mobile Responsive (핵심 수정 구간) */
+                /* ========================================= */
+                @media (max-width: 768px) {
+                    .header {
+                        height: 60px;
+                        padding: 5px 10px;
+                    }
 
-            .wrap2 { top: 3.5rem; padding: 5px 42px 0 60px; height: 40px; }
-            .cube-container { top: 50%; left: 1px; transform: translateY(-50%); }
-            .wrap1 { width: 22px; height: 22px; }
-            .cube { width: 22px; height: 22px; }
-            .cube img { width: 22px; height: 22px; top: 0; left: 0; }
-            .cube img:nth-child(1) { transform: translateZ(11px); }
-            .cube img:nth-child(2) { transform: rotateX(90deg) translateZ(11px); }
-            .cube img:nth-child(3) { transform: rotateX(180deg) translateZ(11px); }
-            .cube img:nth-child(4) { transform: rotateX(270deg) translateZ(11px); }
+                    .header-left { gap: 6px; }
+                    .date-text { font-size: 1.1rem; color: #f0c420; }
+                    .time-text { font-size: 1.1rem; }
+                    .user-info-box { font-size: 10px; padding: 2px 6px; }
 
-            .custom-table thead th { color: #f0c420; } /* font-size removed */
-            .custom-table td { font-size: 12px; padding: 0.32rem 0; }
+                    .wrap2 { top: 3.5rem; padding: 5px 42px 0 60px; height: 40px; }
+                    .cube-container { top: 50%; left: 1px; transform: translateY(-50%); }
+                    .wrap1 { width: 22px; height: 22px; }
+                    .cube { width: 22px; height: 22px; }
+                    .cube img { width: 22px; height: 22px; top: 0; left: 0; }
+                    
+                    /* 테이블 헤더/본문 폰트 사이즈 조정 */
+                    .custom-table thead th { color: #f0c420; font-size: 13px; } 
+                    .custom-table td { padding: 0.32rem 0; }
 
-    .wrap2 { top: 3.5rem; padding: 5px 42px 0 60px; height: 40px; }
-    .cube-container { top: 50%; left: 1px; transform: translateY(-50%); }
-    .wrap1 { width: 22px; height: 22px; }
-    .cube { width: 22px; height: 22px; }
-    .cube img { width: 22px; height: 22px; top: 0; left: 0; }
-    .cube img:nth-child(1) { transform: translateZ(11px); }
-    .cube img:nth-child(2) { transform: rotateX(90deg) translateZ(11px); }
-    .cube img:nth-child(3) { transform: rotateX(180deg) translateZ(11px); }
-    .cube img:nth-child(4) { transform: rotateX(270deg) translateZ(11px); }
+                    .custom-span { font-size: 14px; margin: 0 10px; line-height: 30px; }
+                    
+                    /* [수정] 모바일 컬럼 너비 재배분 (SMS 공간 확보) */
+                    /* 총합 100%가 되도록 조정 */
+                    .col-no { width: 8%; font-size: 12px !important; }
+                    .col-name { width: 18%; font-size: 14px !important; } /* 이름 폰트 키움 */
+                    .col-tel { width: 47%; font-size: 14px !important; } /* 전화번호 폰트 키움 */
+                    .col-addr { width: 15%; font-size: 13px !important; }
+                    .col-sms { width: 12%; font-size: 13px !important; } /* SMS 공간 확장 */
+                    
+                    .col-remark { display: none; }
+                    .hide-mobile { display: none; }
 
-    .custom-table thead th { color: #f0c420; } /* font-size removed */
-    .custom-table td { font-size: 12px; padding: 0.32rem 0; }
+                    /* [수정] 모바일에서 폰트 깨짐 방지를 위해 고정폭 폰트 해제 (Noto Sans 사용) */
+                    .name-link {
+                        font-family: 'Noto Sans KR', sans-serif !important;
+                        font-weight: 500;
+                    }
+                    
+                    /* 전화번호는 숫자가 잘 보이도록 유지하되 폰트 사이즈 통일 */
+                    .member-tel-cell .name-link {
+                        font-family: 'Noto Sans KR', sans-serif !important; /* 이름과 동일 폰트 적용 */
+                        letter-spacing: 0;
+                        white-space: nowrap; /* 줄바꿈 방지 */
+                    }
+                }
 
-    .custom-span { font-size: 14px; margin: 0 10px; line-height: 30px; }
-            
-    /* 테이블 제목 너비폭 비율 및 폰트크기  */
-    .col-no { width: 6%; font-size: 11px !important; } /* NO */
-    .col-name { width: 22%; font-size: 13px !important; text-align: center; } /* 이름 - 폰트 크기 통일, 중앙 정렬 */
-    .col-tel { width: 47%; font-size: 13px !important; text-align: center; } /* 전화번호 - 폰트 크기 통일, 중앙 정렬 */
-    .col-addr { width: 17%; font-size: 13px !important; } /* 거주지 */
-    .col-remark { display: none; } /* Hide remark on mobile */
-    .col-sms { width: 8%; font-size: 13px !important; text-align: center; } /* SMS - 너비 축소, 중앙 정렬 */
-    .hide-mobile { display: none; }
-}
+                /* PC Column Widths */
+                @media (min-width: 769px) {
+                    .col-no { width: 1.56rem; }
+                    .col-name { width: 6rem; min-width: 80px; }
+                    .col-tel { width: 10.5rem; white-space: nowrap; min-width: 140px; }
+                    .col-addr { width: 2.8rem; }
+                    .col-remark { width: 3.75rem; }
+                    .col-sms { width: 3.75rem; }
+                    
+                    /* PC에서는 약간의 monospace 느낌을 원한다면 유지하되 폰트 통일 */
+                    .name-link {
+                         font-size: 15px;
+                         font-family: 'Noto Sans KR', sans-serif !important;
+                    }
+                }
 
-/* PC Column Widths */
-@media (min-width: 769px) {
-     .col-no { width: 1.56rem; }
-     .col-name { width: 6rem; min-width: 80px; } /* 이름 - 고정 너비 유지 */
-     .col-tel { width: 10.5rem; white-space: nowrap; min-width: 140px; } /* 고정 너비 유지 */
-     .col-addr { width: 2.8rem; }
-     .col-remark { width: 3.75rem; }
-     .col-sms { width: 3.75rem; }
-}
-             .col-no { width: 1.56rem; }
-             .col-name { width: 6rem; min-width: 80px; } /* 이름 - 고정 너비 유지 */
-             .col-tel { width: 10.5rem; white-space: nowrap; min-width: 140px; } /* 고정 너비 유지 */
-             .col-addr { width: 2.8rem; }
-             .col-remark { width: 3.75rem; }
-             .col-sms { width: 3.75rem; }
-        }
-
-        /* Phone cell specific style to prevent wrapping and ensure consistency */
-        .member-tel-cell {
-            white-space: nowrap;
-            font-variant-numeric: tabular-nums; /* Ensures numbers are same width */
-            font-family: 'Courier New', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important; /* 고정폭 폰트로 숫자 너비 통일 */
-            letter-spacing: 0.5px; /* 숫자 사이 간격 통일 */
-            text-align: center; /* 중앙 정렬 */
-            display: block; /* 블록 요소로 만들어 폭 일정하게 */
-            margin: 0 auto; /* 중앙 정렬 */
-        }
-        
-        .tel_1 a {
-            font-family: 'Courier New', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
-            letter-spacing: 0.5px;
-            text-align: center;
-            display: inline-block;
-            width: 100%;
-            font-weight: 500 !important; /* 폰트 두께 통일 */
-        }
-        
-        /* 전화번호 링크에 대한 추가 스타일 - 폭 일정하게 유지 */
-        .tel_1 .name-link {
-            font-family: 'Courier New', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
-            font-size: inherit !important; /* 부모 요소의 폰트 크기 상속 */
-            line-height: 1.2 !important; /* 라인 높이 통일 */
-        }
-
-        /* SMS 아이콘 위치 수정 */
-        .sms_1 {
-            text-align: center;
-            vertical-align: middle;
-            padding: 2px;
-        }
-        .sms-icon {
-            display: block;
-            margin: 0 auto;
-            max-width: 16px;
-            max-height: 16px;
-        }
-        
-        @media (max-width: 768px) {
-            .sms_1 {
-                width: 10% !important; /* SMS 열 너비 조정 */
-                padding: 1px;
-            }
-            .sms-icon {
-                max-width: 14px;
-                max-height: 14px;
-            }
-        }
-      `}</style>
+                .sms_1 {
+                    text-align: center;
+                    vertical-align: middle;
+                    padding: 2px;
+                }
+                .sms-icon {
+                    display: block;
+                    margin: 0 auto;
+                    max-width: 16px;
+                    max-height: 16px;
+                }
+            `}</style>
 
             <div
                 id="loading-screen"
@@ -677,20 +591,20 @@ export default function MembersViewPage() {
                     </div>
                 </div>
 
-            {/* Floating Action Button (Scroll to Top) */}
-            <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 2000 }}>
-                <button
-                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                    style={{
-                        width: '40px', height: '40px', borderRadius: '50%', border: 'none',
-                        background: 'rgba(10, 132, 255, 0.7)', color: '#fff', fontSize: '20px',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-                        backdropFilter: 'blur(4px)', boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
-                    }}
-                >
-                    <i className="bi bi-arrow-up"></i>
-                </button>
-            </div>
+                {/* Floating Action Button */}
+                <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 2000 }}>
+                    <button
+                        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                        style={{
+                            width: '40px', height: '40px', borderRadius: '50%', border: 'none',
+                            background: 'rgba(10, 132, 255, 0.7)', color: '#fff', fontSize: '20px',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                            backdropFilter: 'blur(4px)', boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
+                        }}
+                    >
+                        <i className="bi bi-arrow-up"></i>
+                    </button>
+                </div>
             </div>
         </div>
     );
