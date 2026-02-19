@@ -105,14 +105,21 @@ export default function GuestFeeStatusPage() {
     const currentDate = new Date();
     const currentYearValue = currentDate.getFullYear();
     
-    for (let i = 5; i >= 0; i--) { years.push(currentYearValue - i); }
-    if (currentDate.getMonth() === 11 && currentDate.getDate() >= 1) { years.push(currentYearValue + 1); }
+    for (let i = 5; i >= 0; i--) {
+        years.push(currentYearValue - i);
+    }
+    
+    if (currentDate.getMonth() === 11 && currentDate.getDate() >= 1) {
+        years.push(currentYearValue + 1);
+    }
+    
     const uniqueYears = [...new Set(years)].sort((a, b) => a - b);
 
     return (
         <div className="container-fluid py-4" style={{ background: "#f9f9fa", minHeight: "100vh" }}>
             <style jsx>{`
                 body { background: #f9f9f9; margin: 20px 5px 10px 5px; }
+                
                 .admin-info { text-align: right; font-size: 15px; color: #6c757d; margin-bottom: 20px; }
                 .header-box { display: grid; grid-template-columns: auto 1fr auto; align-items: center; margin-bottom: 10px; gap: 10px; }
                 .title-btn { background: #1976d2; color: #fff; padding: 14px 28px; border-radius: 30px; font-weight: 800; font-size: 18px; white-space: nowrap; }
@@ -127,17 +134,8 @@ export default function GuestFeeStatusPage() {
                 .ox.x { color: red; }
                 
                 .total-members-info { font-size: 14px; color: #555; font-weight: 700; margin-bottom: 8px; margin-left: 5px; }
-                .guide-legend { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
-                .legend-item { display: flex; align-items: center; gap: 8px; padding: 10px 15px; border-radius: 8px; font-weight: 700; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-                .legend-o { background: #e8f5e9; border: 1px solid #c8e6c9; color: #2e7d32; }
-                .legend-x { background: #ffebee; border: 1px solid #ffcdd2; color: #c62828; }
-                .guide-desc-box { background: #f8f9fa; border-radius: 8px; padding: 15px; font-size: 13px; color: #444; margin-top: 15px; text-align: left; }
-                .guide-desc-box ul { margin: 0; padding-left: 20px; }
-                .guide-desc-box li { margin-bottom: 5px; }
 
-                /* ========================================================== */
-                /*  Mobile Card View Styles (게스트 모드용) */
-                /* ========================================================== */
+                /* Mobile Card View Styles */
                 .mobile-header-bar {
                     display: grid;
                     grid-template-columns: 75px 1fr;
@@ -166,41 +164,58 @@ export default function GuestFeeStatusPage() {
                     overflow: hidden;
                     min-height: 120px;
                 }
-                
-                /* 좌측: 이름 (게스트 모드는 체크박스 없음) */
-                .mc-left-name {
-                    display: flex; align-items: center; justify-content: center;
-                    border-right: 1px solid #eee;
-                    font-weight: 700;
-                    font-size: 15px;
-                    color: #333;
-                }
-
-                /* 우측: 월별 데이터 & 합계 */
+                .mc-left-name { display: flex; align-items: center; justify-content: center; border-right: 1px solid #eee; font-weight: 700; font-size: 15px; color: #333; }
                 .mc-right { display: flex; flex-direction: column; }
-                
-                /* 상반기 (1~6월) */
                 .mc-row-months { display: grid; grid-template-columns: repeat(6, 1fr); height: 40px; }
                 .mc-half-1 { background: #f4faff; border-bottom: 1px solid #f0f0f0; }
                 .mc-half-2 { background: #fffaf4; border-bottom: 1px solid #f0f0f0; }
-
-                .mc-month-cell {
-                    display: flex; align-items: center; justify-content: center;
-                    border-right: 1px solid rgba(0,0,0,0.03);
-                    font-size: 14px;
-                    font-weight: bold;
-                }
+                .mc-month-cell { display: flex; align-items: center; justify-content: center; border-right: 1px solid rgba(0,0,0,0.03); font-size: 14px; font-weight: bold; }
                 .mc-month-cell:last-child { border-right: none; }
-                
-                /* 합계 영역 */
                 .mc-row-total { display: flex; height: 40px; background: #fafafa; }
                 .mc-total-box { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
                 .mc-deposit { color: #2e7d32; background: #e8f5e9; margin: 4px; border-radius: 6px; }
                 .mc-unpaid { color: #c62828; background: #ffebee; margin: 4px; border-radius: 6px; }
-
                 .m-ox { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; cursor: default; }
                 .m-ox.o { color: green; }
                 .m-ox.x { color: red; }
+
+                /* [수정됨] 모달 내부 스타일 (이미지 디자인 반영) */
+                .example-box {
+                    border: 1px solid #dee2e6;
+                    border-radius: 8px;
+                    overflow: hidden;
+                }
+                .exam-header-blue {
+                    background: #e3f2fd;
+                    color: #0d47a1;
+                    font-weight: bold;
+                    text-align: center;
+                    padding: 8px;
+                    font-size: 14px;
+                    border-bottom: 1px solid #dee2e6;
+                }
+                .exam-header-orange {
+                    background: #fff3e0;
+                    color: #e65100;
+                    font-weight: bold;
+                    text-align: center;
+                    padding: 8px;
+                    font-size: 14px;
+                    border-top: 1px solid #dee2e6;
+                    border-bottom: 1px solid #dee2e6;
+                }
+                .exam-summary {
+                    background: #f8f9fa;
+                    padding: 15px;
+                    text-align: center;
+                    font-weight: bold;
+                    font-size: 15px;
+                    border-top: 1px solid #dee2e6;
+                }
+                .exam-table td {
+                    vertical-align: middle;
+                    padding: 6px 2px;
+                }
 
                 @media (max-width: 768px) {
                     body { margin: 10px 3px; }
@@ -215,13 +230,10 @@ export default function GuestFeeStatusPage() {
                     
                     /* PC Table Hide */
                     .pc-table-view { display: none; }
-                    /* Mobile View Show */
                     .mobile-card-view { display: block; }
                     
                     .modal-content-custom { width: 95%; max-width: 350px; padding: 20px; max-height: 90vh; overflow-y: auto; }
                     .modal-content-custom h5 { font-size: 16px; }
-                    .legend-item { padding: 8px 12px; font-size: 13px; }
-                    .guide-desc-box { font-size: 12px; padding: 12px; }
                 }
 
                 @media (min-width: 769px) {
@@ -274,15 +286,14 @@ export default function GuestFeeStatusPage() {
                 전체 회원 수: {members.length}명
             </div>
 
+            {/* 메인 테이블 렌더링 영역 */}
             {members.length === 0 ? (
                 <div className="alert alert-warning text-center">
                     회원 데이터가 없습니다. MongoDB에 회원을 추가해주세요.
                 </div>
             ) : (
                 <>
-                    {/* ======================= */}
-                    {/* 1. PC View (Table)      */}
-                    {/* ======================= */}
+                    {/* PC View (Table) */}
                     <div className="table-responsive pc-table-view">
                         <table className="table table-bordered text-center align-middle list-table mode-guest">
                             <thead className="table-light">
@@ -324,11 +335,8 @@ export default function GuestFeeStatusPage() {
                         </table>
                     </div>
 
-                    {/* ======================= */}
-                    {/* 2. Mobile View (Card)   */}
-                    {/* ======================= */}
+                    {/* Mobile View (Card) */}
                     <div className="mobile-card-view">
-                        {/* Mobile Header Bar */}
                         <div className="mobile-header-bar">
                             <div className="mobile-header-name">이름</div>
                             <div className="mobile-header-right">
@@ -337,19 +345,12 @@ export default function GuestFeeStatusPage() {
                             </div>
                         </div>
 
-                        {/* Member Cards */}
                         {members.map(member => {
                             const { totalPaid, unpaidTotal } = calculateTotals(member._id);
                             return (
                                 <div className="mobile-card" key={member._id}>
-                                    {/* Left: Name (게스트 모드이므로 체크박스 제거) */}
-                                    <div className="mc-left-name">
-                                        {member.name}
-                                    </div>
-
-                                    {/* Right: Data Grid */}
+                                    <div className="mc-left-name">{member.name}</div>
                                     <div className="mc-right">
-                                        {/* Row 1: 1~6월 */}
                                         <div className="mc-row-months mc-half-1">
                                             {[1,2,3,4,5,6].map(m => {
                                                 const paid = passMap[member._id]?.[m] || 0;
@@ -362,8 +363,6 @@ export default function GuestFeeStatusPage() {
                                                 )
                                             })}
                                         </div>
-
-                                        {/* Row 2: 7~12월 */}
                                         <div className="mc-row-months mc-half-2">
                                             {[7,8,9,10,11,12].map(m => {
                                                 const paid = passMap[member._id]?.[m] || 0;
@@ -376,8 +375,6 @@ export default function GuestFeeStatusPage() {
                                                 )
                                             })}
                                         </div>
-
-                                        {/* Row 3: Totals */}
                                         <div className="mc-row-total">
                                             <div className="mc-total-box">
                                                 <div className="mc-deposit w-100 h-100 d-flex align-items-center justify-content-center">
@@ -402,42 +399,101 @@ export default function GuestFeeStatusPage() {
                 <button className="btn btn-secondary btn-lg" onClick={() => router.push('/guest')}>⏪ 돌아가기</button>
             </div>
 
-            {/* 안내 모달 */}
+            {/* ======================================================== */}
+            {/* [수정됨] 안내 모달: 이미지 디자인 반영 */}
+            {/* ======================================================== */}
             {showGuideModal && (
                 <div className="modal-overlay" onClick={() => setShowGuideModal(false)}>
-                    <div className="modal-content-custom" style={{ maxWidth: '400px' }} onClick={(e) => e.stopPropagation()}>
-                        <h5 style={{ fontWeight: 800, textAlign: 'center', marginBottom: '20px', color: '#1976d2' }}>
-                            📋 현황표 보는법
-                        </h5>
-                        <div className="guide-legend">
-                            <div className="legend-item legend-o">
-                                <span style={{ fontSize: '18px' }}>O</span> 납부 완료
-                            </div>
-                            <div className="legend-item legend-x">
-                                <span style={{ fontSize: '18px' }}>X</span> 미납
+                    <div className="modal-content-custom" onClick={(e) => e.stopPropagation()}>
+                        {/* Header */}
+                        <div className="text-center mb-3">
+                            <h5 style={{ fontWeight: 800, color: '#1976d2', margin: 0 }}>
+                                📋 회비납부 현황 보는법 안내
+                            </h5>
+                        </div>
+                        
+                        {/* Description */}
+                        <div className="text-center mb-3" style={{ fontSize: '13px', color: '#555' }}>
+                            <p className="mb-1">예:) 아래 예시와 같이 월별 납부 현황이 표시됩니다.</p>
+                            <p className="mb-2">월회비가 20,000원인 경우로 계산된겁니다.</p>
+                            <div style={{ fontWeight: 'bold' }}>
+                                <span style={{ color: 'green' }}>O (납부)</span> / <span style={{ color: 'red' }}>X (미납)</span>
                             </div>
                         </div>
-                        <div className="guide-desc-box">
-                            <ul>
-                                <li><strong>입금합계</strong> : {year}년도 납부 총액</li>
-                                <li><strong>미납금</strong> : {todayMonth}월까지 미납 총액</li>
-                            </ul>
+
+                        {/* Example Table Box */}
+                        <div className="example-box">
+                            {/* 상반기 */}
+                            <div>
+                                <div className="exam-header-blue">상반기 (1~6월)</div>
+                                <table className="table table-bordered mb-0 text-center exam-table" style={{ fontSize: '13px', width: '100%' }}>
+                                    <tbody>
+                                        <tr style={{ backgroundColor: '#f8f9fa' }}>
+                                            <td rowSpan={2} style={{ verticalAlign: 'middle', fontWeight: 'bold', width: '20%' }}>홍길동</td>
+                                            <td>1월</td><td>2월</td><td>3월</td><td>4월</td><td>5월</td><td>6월</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="text-success fw-bold">O</td>
+                                            <td className="text-success fw-bold">O</td>
+                                            <td className="text-success fw-bold">O</td>
+                                            <td className="text-success fw-bold">O</td>
+                                            <td className="text-success fw-bold">O</td>
+                                            <td className="text-success fw-bold">O</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {/* 하반기 */}
+                            <div>
+                                <div className="exam-header-orange">하반기 (7~12월)</div>
+                                <table className="table table-bordered mb-0 text-center exam-table" style={{ fontSize: '13px', width: '100%' }}>
+                                    <tbody>
+                                        <tr style={{ backgroundColor: '#f8f9fa' }}>
+                                            <td rowSpan={2} style={{ verticalAlign: 'middle', fontWeight: 'bold', width: '20%' }}>홍길동</td>
+                                            <td>7월</td><td>8월</td><td>9월</td><td>10월</td><td>11월</td><td>12월</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="text-success fw-bold">O</td>
+                                            <td className="text-success fw-bold">O</td>
+                                            <td className="text-success fw-bold">O</td>
+                                            <td className="text-success fw-bold">O</td>
+                                            <td className="text-danger fw-bold">X</td>
+                                            <td className="text-danger fw-bold">X</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {/* Summary */}
+                            <div className="exam-summary">
+                                <div className="mb-1">
+                                    <span style={{ color: '#2e7d32' }}>✅ 입금 합계: 200,000원</span>
+                                </div>
+                                <div>
+                                    <span style={{ color: '#c62828' }}>❌ 미납 합계: 40,000원</span>
+                                </div>
+                            </div>
                         </div>
-                        <div className="text-center mt-4">
-                            <button className="btn btn-dark w-100" onClick={() => setShowGuideModal(false)}>닫기</button>
+
+                        {/* Close Button */}
+                        <div className="mt-4">
+                            <button className="btn btn-dark w-100 fw-bold" onClick={() => setShowGuideModal(false)}>
+                                확인 및 닫기
+                            </button>
                         </div>
                     </div>
                 </div>
             )}
             
-            {/* 오버레이 스타일 */}
+            {/* Modal Overlay Style */}
             <style jsx>{`
                 .modal-overlay {
                     position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999;
                     display: flex; align-items: center; justify-content: center; padding: 20px;
                 }
                 .modal-content-custom {
-                    background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 400px;
+                    background: white; padding: 25px; border-radius: 12px; width: 95%; max-width: 420px;
                 }
             `}</style>
         </div>
