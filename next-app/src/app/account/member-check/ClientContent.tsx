@@ -209,12 +209,10 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
         }
     };
 
-    // SMS 발송 페이지 이동 (예시)
+    // SMS 발송 페이지 이동
     const sendSMS = () => {
         const ids = members.map(m => m._id).join(',');
-        // 실제 SMS 발송 페이지 경로로 수정하세요
-        alert(`SMS 발송 페이지로 이동: ${ids}`); 
-        // router.push(`/sms/send?members=${ids}`);
+        router.push(`/account/sms-send?members=${ids}&year=${year}`);
     };
 
     if (status === "loading" || loading) {
