@@ -54,11 +54,22 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
         setLoading(true);
         try {
             // 1. 회원 정보 가져오기
+            console.log('=== SMS Send Debug ===');
+            console.log('Fetching members with IDs:', memberIds);
+            console.log('Year:', year);
+            
             const membersRes = await axios.get(`/api/account/member-check?members=${encodeURIComponent(memberIds)}&year=${year}`);
+            
+            console.log('API Response:', membersRes.data);
+            console.log('Members data:', membersRes.data.members);
             
             if (membersRes.data.success) {
                 const membersData = membersRes.data.members;
+                console.log('Members with phone numbers:', membersData.map((m: any) => ({ name: m.name, tel: m.tel })));
                 setMembers(membersData);
+                
+                console.log('Members data after setting state:', membersData);
+                console.log('Sample member phone numbers:', membersData.slice(0, 3).map(m => ({ name: m.name, tel: m.tel })));
                 
                 // 2. 미납 정보 계산
                 const unpaidData: { [key: string]: UnpaidInfo } = {};

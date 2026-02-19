@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import dbConnect from "@/lib/mongodb";
-import Member from "@/models/Member";
+import User from "@/models/User";
 import AccountPass from "@/models/AccountPass";
 import MonthlyFeeHistory from "@/models/MonthlyFeeHistory";
 import { ObjectId } from "mongodb";
@@ -68,10 +68,21 @@ export async function GET(req: NextRequest) {
         await dbConnect();
         console.log('✅ Database connected');
 
-        // 2. 회원 정보 조회 (Mongoose 모델 사용)
-        console.log('🔍 Fetching members...');
-        const members = await Member.find({ _id: { $in: objectIds } }).sort({ name: 1 });
+        // 2. 회원 정보 조회 (User 모델 사용 - tel 필드가 있음)
+        console.log('🔍 Fetching members from User model...');
+        const members = await User.find({ _id: { $in: objectIds } }).sort({ name: 1 });
         console.log('✅ Found members:', members.length, members);
+        
+        // 전화번호 필드 확인을 위한 디버깅
+        members.forEach((member, index) => {
+            console.log(`Member ${index + 1}:`, {
+                _id: member._id.toString(),
+                name: member.name,
+                tel: member.tel,
+                hasTelField: 'tel' in member,
+                telType: typeof member.tel
+            });
+        });
 
         // 3. 월회비 이력 조회 (Mongoose 모델 사용)
         console.log('🔍 Fetching fee history...');
@@ -133,7 +144,11 @@ export async function GET(req: NextRequest) {
             monthlyFees
         };
         
-        console.log('✅ Final result:', result);
+        console.log('✅ Final result members with phone numbers:');
+        result.members.forEach((member, index) => {
+            console.log(`Member ${index + 1}: ID=${member._id}, Name=${member.name}, Tel=${member.tel}`);
+        });
+        
         return NextResponse.json(result);
 
     } catch (error) {

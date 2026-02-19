@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ollama + VS Code Cline 연동 가이드</title>
+    <style>
+        :root { --primary: #2563eb; --bg: #f8fafc; --text: #1e293b; }
+        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.8; margin: 0; padding: 20px; }
+        .wrapper { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        h1 { text-align: center; color: var(--primary); font-size: 2.2rem; border-bottom: 4px solid var(--primary); padding-bottom: 15px; }
+        h2 { background: #eff6ff; padding: 10px 20px; border-radius: 10px; color: var(--primary); margin-top: 40px; }
+        .step-box { border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin: 20px 0; background: #fff; position: relative; }
+        .step-num { position: absolute; top: -15px; left: 20px; background: var(--primary); color: white; padding: 2px 15px; border-radius: 20px; font-weight: bold; }
+        code { background: #1e1e1e; color: #76c7ff; padding: 3px 8px; border-radius: 5px; font-family: 'Consolas', monospace; }
+        .tip { background: #f0fdf4; border-left: 5px solid #22c55e; padding: 15px; margin: 15px 0; font-size: 0.95rem; }
+        .error-case { background: #fef2f2; border-left: 5px solid #ef4444; padding: 15px; margin: 15px 0; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 10px; }
+        .highlight { color: #e11d48; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <h1>🚀 Ollama & Cline 설치 완벽 가이드</h1>
+    <p style="text-align: center; color: #64748b;">이 문서는 실제 설치 과정을 바탕으로 작성된 학습용 가이드입니다.</p>
+
+    <h2>STEP 1. Ollama 설치 및 서버 실행</h2>
+    <div class="step-box">
+        <div class="step-num">단계 1</div>
+        <ul>
+            <li><strong>엔진 다운로드:</strong> <a href="https://ollama.com" target="_blank">Ollama 공식 홈페이지</a>에서 Windows용 설치 파일을 받습니다.</li>
+            <li><strong>프로그램 설치:</strong> 다운로드된 파일을 실행하고 <code>Install</code> 버튼을 누릅니다.</li>
+            <li><strong>상태 확인:</strong> 윈도우 우측 하단 <strong>작업 표시줄</strong>에 라마 아이콘이 떠 있어야 합니다. 이 아이콘이 없으면 AI가 작동하지 않습니다.</li>
+        </ul>
+    </div>
+
+    <h2>STEP 2. 터미널(Git Bash)을 이용한 모델 구축</h2>
+    <div class="step-box">
+        <div class="step-num">단계 2</div>
+        <ul>
+            <li><strong>Git Bash 실행:</strong> 명령어를 입력하기 위해 터미널을 엽니다.</li>
+            <li><strong>모델 설치 명령어 입력:</strong> 
+                <br><code>ollama run qwen2.5-coder:7b</code>
+            </li>
+            <li class="error-case"><strong>⚠️ 주의했던 에러:</strong> 웹에서 명령어를 복사해 붙여넣으면 보이지 않는 공백문자가 섞여 <code>command not found</code>가 발생할 수 있습니다. <strong>반드시 직접 타이핑</strong>하는 습관을 들입시다.</li>
+            <li><strong>완료 확인:</strong> 다운로드가 100% 완료되고 <code>>>></code>가 뜨면 성공입니다. <code>/exit</code>로 빠져나옵니다.</li>
+        </ul>
+    </div>
+
+    <h2>STEP 3. VS Code 확장 프로그램(Cline) 세팅</h2>
+    <div class="step-box">
+        <div class="step-num">단계 3</div>
+        <ul>
+            <li><strong>Extension 설치:</strong> VS Code 왼쪽 블록 아이콘에서 <code>Cline</code>을 검색하여 설치합니다. (유사품 주의: 200만 명 이상이 쓰는 정식 버전을 선택!)</li>
+            <li><strong>아이콘 고정:</strong> 아이콘이 안 보인다면 왼쪽 메뉴 바 빈 곳에서 <strong>마우스 오른쪽 클릭</strong> 후 <code>Cline</code>을 체크하여 활성화합니다.</li>
+            <li><strong>초기 화면 진입:</strong> <code>Bring my own API key</code>를 선택하고 <code>Continue</code>를 눌러 설정 창으로 이동합니다.</li>
+        </ul>
+    </div>
+
+    <h2>STEP 4. Cline과 Ollama 연동 설정</h2>
+    <div class="step-box">
+        <div class="step-num">단계 4</div>
+        <p>Cline 화면 우측 상단의 <span class="highlight">톱니바퀴(⚙️)</span>를 눌러 아래와 같이 설정합니다.</p>
+        <ul>
+            <li><strong>API Provider:</strong> <code>Ollama</code> 선택</li>
+            <li><strong>Model:</strong> <code>qwen2.5-coder:7b</code> (목록에서 선택하거나 직접 입력)</li>
+            <li class="tip"><strong>💡 참고:</strong> "Does not support Mcp" 같은 붉은 글씨는 로컬 AI의 제약사항일 뿐, 사용에 전혀 문제가 없는 정상 상태입니다.</li>
+            <li><strong>저장:</strong> 맨 아래 <code>Done</code> 또는 <code>Continue</code>를 눌러 채팅창으로 나갑니다.</li>
+        </ul>
+    </div>
+
+    <h2>STEP 5. 실제 활용 및 유지보수</h2>
+    <div class="step-box">
+        <div class="step-num">단계 5</div>
+        <ul>
+            <li><strong>프로젝트 분석:</strong> 채팅창에 <code>@codebase</code>를 입력하고 질문하면 내 폴더 전체를 읽습니다.</li>
+            <li><strong>버전 업데이트:</strong> Ollama 모델은 자동으로 업데이트되지 않으므로, 가끔 터미널에서 <code>ollama pull qwen2.5-coder:7b</code>를 입력해 최신화합니다.</li>
+            <li><strong>창 닫기:</strong> VS Code를 닫아도 Ollama(라마 아이콘)가 켜져 있다면 다음 실행 시 바로 사용할 수 있습니다.</li>
+        </ul>
+    </div>
+
+    <p style="text-align: center; font-weight: bold; margin-top: 50px;">이제 AI와 함께 스마트한 코딩을 시작해보세요! 🎉</p>
+</div>
+
+</body>
+</html>
