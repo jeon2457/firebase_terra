@@ -7,6 +7,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import html2canvas from "html2canvas";
 import * as XLSX from "xlsx";
+
+// @ts-ignore
 import { saveAs } from "file-saver";
 
 type Member = {
@@ -288,7 +290,7 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
                                             const paid = passMap[member._id]?.[month] || 0;
                                             const fee = monthlyFees[month] || 20000;
                                             
-                                            // 미래/과거 판단 로직 (PHP와 동일하게)
+                                            // 미래/과거 판단 로직
                                             let isFuture = false;
                                             if (year > todayYear) isFuture = true;
                                             else if (year === todayYear && month > todayMonth) isFuture = true;
