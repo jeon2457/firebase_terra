@@ -388,61 +388,88 @@ export default function MembersViewPage() {
             border: 1px solid #eedca6 !important;
             text-align: center;
             vertical-align: middle;
+            padding: 0.44rem 0;
+            word-break: break-word;
+            line-height: 1.1;
+        }
+        .name-link {
+             font-size: 1.1rem; font-weight: 600; color: #ffffff !important; text-decoration: none !important;
+             font-family: 'Courier New', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important; /* 이름도 고정폭 폰트로 통일 */
+             letter-spacing: 0.5px; /* 글자 간격 통일 */
+             display: inline-block; /* 블록 요소로 만들어 폭 일정하게 */
+             width: 100%; /* 전체 너비 사용 */
+             text-align: center; /* 중앙 정렬 */
+        }
+        .name-link:hover { color: #ffffff !important; text-decoration: none !important; }
+        
+        /* 이름 셀 스타일 추가 */
+        .name_1 {
+            text-align: center;
+            padding: 0.32rem 0;
+            font-size: 13px !important;
+            font-family: 'Courier New', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+        }
+        
+        /* 전화번호 셀 스타일 추가 */
+        .tel_1 {
+            text-align: center;
+            padding: 0.32rem 0;
+            font-size: 13px !important;
+            font-family: 'Courier New', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+        }
+        
+        .name-link {
+            font-size: 13px !important;
+            font-family: 'Courier New', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+            color: #ffffff !important;
+            text-decoration: none !important;
+            display: block;
+            text-align: center;
+        }
+        
+        .sms-icon { cursor: pointer; transition: transform 0.2s; }
+        .sms-icon:hover { transform: scale(1.15); }
+
+        .max-small {
+            width: 1.15rem;
+            height: 1.15rem;
+        }
+
+        /* Address Toggle Logic */
+        .address-header { cursor: pointer; color: #cea71b !important; }
+        .addr-visible { color: #cea71b !important; } 
+        
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
             .header {
-                width: 100%;
-                max-width: 700px;
-                height: 3.5rem;
-                margin: 0 auto;
-                text-align: center;
-                color: #f4f4f4;
-                background-color: rgba(0, 0, 0);
-                padding: 0 15px;
-                display: flex;
+                max-width: 100%;
+                width: 100vw;
+                left: 0;
+                right: 0;
+                margin: 0;
+                height: 60px;
+                flex-direction: row;
                 justify-content: space-between;
                 align-items: center;
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                z-index: 1000;
+                padding: 5px 10px;
             }
 
-            .header-left { display: flex; align-items: center; gap: 10px; }
-            .date-text { color: #cea71bff; font-size: 1.5rem; }
-            .time-text { color: #4A9EFF; font-size: 1.5rem; line-height: 1.1; }
-            .header-right { display: flex; align-items: center; }
-            .user-info-box {
-                font-size: 12px;
-                color: #E3EFFA !important;
-                background: #333;
-                padding: 4px 8px;
-                border-radius: 5px;
-                border: 1px solid #555;
-                white-space: nowrap;
-            }
+            .header-left { gap: 6px; }
+            .date-text { font-size: 1.1rem; color: #f0c420; }
+            .time-text { font-size: 1.1rem; }
+            .user-info-box { font-size: 10px; padding: 2px 6px; }
 
-            /* Marquee Section (wrap2) */
-            .wrap2 {
-                position: fixed;
-                top: 3.5rem;
-                left: 0;
-                right: 0;
-                z-index: 999;
-                width: 100%;
-                max-width: 700px;
-                margin: 0 auto;
-                overflow: hidden;
-                background-image: url('/images/bg.gif');
-                background-color: lightgray;
-                background-position: center;
-                background-repeat: repeat-x;
-                background-size: contain;
-                height: 40px;
-                display: flex;
-                align-items: center;
-                padding: 0 103px 0 93px;
-                box-sizing: border-box;
-            }
+            .wrap2 { top: 3.5rem; padding: 5px 42px 0 60px; height: 40px; }
+            .cube-container { top: 50%; left: 1px; transform: translateY(-50%); }
+            .wrap1 { width: 22px; height: 22px; }
+            .cube { width: 22px; height: 22px; }
+            .cube img { width: 22px; height: 22px; top: 0; left: 0; }
+            .cube img:nth-child(1) { transform: translateZ(11px); }
+            .cube img:nth-child(2) { transform: rotateX(90deg) translateZ(11px); }
+            .cube img:nth-child(3) { transform: rotateX(180deg) translateZ(11px); }
+            .cube img:nth-child(4) { transform: rotateX(270deg) translateZ(11px); }
+
             .custom-table thead th { color: #f0c420; } /* font-size removed */
             .custom-table td { font-size: 12px; padding: 0.32rem 0; }
 
@@ -544,7 +571,7 @@ export default function MembersViewPage() {
                 id="loading-screen"
                 style={{ opacity: isPageReady ? 0 : 1, pointerEvents: isPageReady ? 'none' : 'auto' }}
             >
-                <video src="/images/clova.mp4" autoPlay loop muted playsInline style={{ width: '100px', height: '100px' }} />
+                <video src="/images/clova.mp4" autoPlay loop muted playsInline style={{ width: '200px', height: '200px' }} />
             </div>
 
             <div id="main-content">
