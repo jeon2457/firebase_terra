@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-// import Link from "next/link"; // 사용하지 않으므로 주석 처리 혹은 삭제
+// import Link from "next/link"; 
 import "bootstrap-icons/font/bootstrap-icons.css";
 import axios from "axios";
 
@@ -63,7 +63,6 @@ export default function MembersViewPage() {
         return () => clearTimeout(t);
     }, []);
 
-    // 전화번호 형식 통일 함수
     const formatPhoneNumber = (phone: string) => {
         if (!phone) return '';
         const numbers = phone.replace(/[^0-9]/g, '');
@@ -81,7 +80,6 @@ export default function MembersViewPage() {
         return numbers;
     };
 
-    // [수정됨] 이름 표준화 함수 - 공백 패딩 제거 (CSS 정렬 사용)
     const formatName = (name: string) => {
         if (!name) return '';
         return name.trim(); 
@@ -206,7 +204,7 @@ export default function MembersViewPage() {
                     left: 0;
                     right: 0;
                     z-index: 1000;
-                    box-sizing: border-box; /* 추가: 패딩 포함 너비 계산 */
+                    box-sizing: border-box; 
                 }
 
                 .header-left { display: flex; align-items: center; gap: 10px; }
@@ -328,10 +326,10 @@ export default function MembersViewPage() {
                 .custom-table {
                     width: 100%;
                     border-collapse: collapse;
-                    table-layout: fixed; /* 중요: 고정 레이아웃 */
+                    table-layout: fixed; 
                     border: 1px solid #eedca6;
                     max-width: 700px;
-                    margin: 0 auto; /* 중앙 정렬 */
+                    margin: 0 auto; 
                 }
                 .custom-table thead th {
                     position: sticky;
@@ -364,11 +362,10 @@ export default function MembersViewPage() {
                     text-align: center;
                     vertical-align: middle;
                     padding: 0.44rem 0;
-                    word-break: break-all; /* 내용이 넘치면 줄바꿈 */
+                    word-break: break-all;
                     line-height: 1.1;
                 }
 
-                /* 이름/전화번호 링크 공통 스타일 */
                 .name-link {
                     color: #ffffff !important; 
                     text-decoration: none !important;
@@ -378,7 +375,6 @@ export default function MembersViewPage() {
                 }
                 .name-link:hover { color: #ffffff !important; text-decoration: none !important; }
                 
-                /* 셀 스타일 */
                 .name_1 {
                     text-align: center;
                     padding: 0.32rem 0;
@@ -396,13 +392,12 @@ export default function MembersViewPage() {
                     height: 1.15rem;
                 }
 
-                /* Address Toggle Logic */
                 .address-header { cursor: pointer; color: #cea71b !important; }
                 .addr-visible { color: #cea71b !important; } 
                 
                 
                 /* ========================================= */
-                /* Mobile Responsive (핵심 수정 구간) */
+                /* Mobile Responsive (수정됨) */
                 /* ========================================= */
                 @media (max-width: 768px) {
                     .header {
@@ -421,34 +416,33 @@ export default function MembersViewPage() {
                     .cube { width: 22px; height: 22px; }
                     .cube img { width: 22px; height: 22px; top: 0; left: 0; }
                     
-                    /* 테이블 헤더/본문 폰트 사이즈 조정 */
                     .custom-table thead th { color: #f0c420; font-size: 13px; } 
                     .custom-table td { padding: 0.32rem 0; }
 
                     .custom-span { font-size: 14px; margin: 0 10px; line-height: 30px; }
                     
-                    /* [수정] 모바일 컬럼 너비 재배분 (SMS 공간 확보) */
-                    /* 총합 100%가 되도록 조정 */
                     .col-no { width: 8%; font-size: 12px !important; }
-                    .col-name { width: 18%; font-size: 14px !important; } /* 이름 폰트 키움 */
-                    .col-tel { width: 47%; font-size: 14px !important; } /* 전화번호 폰트 키움 */
-                    .col-addr { width: 15%; font-size: 12px !important; } /* 거주지 폰트 공간 확장 */
-                    .col-sms { width: 12%; font-size: 14px !important; } /* SMS 아이콘 공간 확장 */
+                    .col-name { width: 18%; font-size: 14px !important; } 
+                    .col-tel { width: 47%; font-size: 14px !important; } 
+                    
+                    /* (수정) 거주지 컬럼 제목 및 데이터 폰트 사이즈 -2px (13px -> 11px) */
+                    .col-addr { width: 15%; font-size: 11px !important; }
+                    .address_1 { font-size: 11px !important; } /* 데이터 셀 직접 지정 */
+
+                    .col-sms { width: 12%; font-size: 13px !important; } 
                     
                     .col-remark { display: none; }
                     .hide-mobile { display: none; }
 
-                    /* [수정] 모바일에서 폰트 깨짐 방지를 위해 고정폭 폰트 해제 (Noto Sans 사용) */
                     .name-link {
                         font-family: 'Noto Sans KR', sans-serif !important;
                         font-weight: 500;
                     }
                     
-                    /* 전화번호는 숫자가 잘 보이도록 유지하되 폰트 사이즈 통일 */
                     .member-tel-cell .name-link {
-                        font-family: 'Noto Sans KR', sans-serif !important; /* 이름과 동일 폰트 적용 */
+                        font-family: 'Noto Sans KR', sans-serif !important; 
                         letter-spacing: 0;
-                        white-space: nowrap; /* 줄바꿈 방지 */
+                        white-space: nowrap; 
                     }
                 }
 
@@ -461,7 +455,6 @@ export default function MembersViewPage() {
                     .col-remark { width: 3.75rem; }
                     .col-sms { width: 3.75rem; }
                     
-                    /* PC에서는 약간의 monospace 느낌을 원한다면 유지하되 폰트 통일 */
                     .name-link {
                          font-size: 15px;
                          font-family: 'Noto Sans KR', sans-serif !important;
@@ -473,11 +466,13 @@ export default function MembersViewPage() {
                     vertical-align: middle;
                     padding: 2px;
                 }
+                
+                /* (수정) SMS 아이콘 크기 +1px (16px -> 17px) */
                 .sms-icon {
                     display: block;
                     margin: 0 auto;
-                    max-width: 16px;
-                    max-height: 16px;
+                    max-width: 17px; 
+                    max-height: 17px;
                 }
             `}</style>
 
