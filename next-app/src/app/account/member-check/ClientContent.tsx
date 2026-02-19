@@ -2,9 +2,12 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
+import html2canvas from "html2canvas";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 type Member = {
     _id: string;
@@ -30,7 +33,10 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
     const [passMap, setPassMap] = useState<PassMap>({});
     const [monthlyFees, setMonthlyFees] = useState<{ [month: number]: number }>({});
     const [loading, setLoading] = useState(true);
+    const [imgUrl, setImgUrl] = useState<string | null>(null); // 캡처 이미지 URL
     
+    const captureRef = useRef<HTMLDivElement>(null); // 캡처 영역 참조
+
     const todayYear = new Date().getFullYear();
     const todayMonth = new Date().getMonth() + 1;
 
@@ -56,6 +62,8 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
                 setMembers(res.data.members);
                 setPassMap(res.data.passMap);
                 setMonthlyFees(res.data.monthlyFees);
+            } else {
+                alert(res.data.message || '데이터 로드 실패');
             }
         } catch (error) {
             console.error("Failed to fetch data:", error);
@@ -72,11 +80,13 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
         for (let m = 1; m <= 12; m++) {
             const paid = passMap[memberId]?.[m] || 0;
             const monthFee = monthlyFees[m] || 20000;
+            
+            const isFuture = year > todayYear || (year === todayYear && m > todayMonth);
 
             if (paid) {
                 totalPaid += monthFee;
             } else {
-                if (year < todayYear || (year === todayYear && m <= todayMonth)) {
+                if (!isFuture) {
                     unpaidTotal += monthFee;
                 }
             }
@@ -85,25 +95,87 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
         return { totalPaid, unpaidTotal };
     };
 
-    const downloadExcel = async () => {
-        try {
-            const res = await axios.post('/api/account/member-check/export', {
-                members,
-                year,
-                passMap,
-                monthlyFees
-            });
+    // 엑셀 다운로드 (클라이언트 처리)
+    const downloadExcel = () => {
+        const wb = XLSX.utils.book_new();
+        const wsData: any[][] = [];
 
-            if (res.data.success) {
-                if (res.data.downloadUrl) {
-                    window.open(res.data.downloadUrl, '_blank');
-                } else {
-                    alert('엑셀 파일 생성에 실패했습니다.');
+        // 헤더
+        wsData.push(["회원명", "월", "납부금액", "상태"]);
+
+        members.forEach(member => {
+            const { totalPaid, unpaidTotal } = calculateTotals(member._id);
+            
+            wsData.push([`[${member.name}]`, "", "", ""]); // 회원 구분행
+
+            for (let m = 1; m <= 12; m++) {
+                const paid = passMap[member._id]?.[m] || 0;
+                const monthFee = monthlyFees[m] || 20000;
+                const isFuture = year > todayYear || (year === todayYear && m > todayMonth);
+
+                let statusText = "미납";
+                let amount = monthFee;
+
+                if (paid) {
+                    statusText = "납부완료";
+                } else if (isFuture) {
+                    statusText = "해당없음";
+                    amount = 0;
                 }
+
+                wsData.push([
+                    member.name,
+                    `${m}월`,
+                    amount,
+                    statusText
+                ]);
+            }
+            
+            wsData.push(["합계", "입금액:", totalPaid, "미납액:", unpaidTotal]);
+            wsData.push(["", "", "", ""]); // 공백
+        });
+
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        XLSX.utils.book_append_sheet(wb, ws, `${year}년_납부현황`);
+        const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+        const data = new Blob([excelBuffer], { type: 'application/octet-stream' });
+        saveAs(data, `회비납부상세_${year}.xlsx`);
+    };
+
+    // 이미지 캡처
+    const captureToImage = async () => {
+        if (!captureRef.current) return;
+        
+        try {
+            // 캡처 시 체크박스 등 숨길 요소 처리 (필요시)
+            const canvas = await html2canvas(captureRef.current, {
+                scale: 2, // 고해상도
+                backgroundColor: "#f4f6f9",
+                useCORS: true
+            });
+            
+            const imgData = canvas.toDataURL("image/jpeg", 0.9);
+            setImgUrl(imgData);
+            
+            // 모달 띄우기 (Bootstrap Modal 방식)
+            const modalEl = document.getElementById('imageModal');
+            if (modalEl) {
+                // @ts-ignore
+                const modal = new window.bootstrap.Modal(modalEl);
+                modal.show();
             }
         } catch (error) {
-            alert('엑셀 다운로드에 실패했습니다.');
+            console.error("Capture failed:", error);
+            alert("이미지 생성에 실패했습니다.");
         }
+    };
+
+    // SMS 발송 페이지 이동 (예시)
+    const sendSMS = () => {
+        const ids = members.map(m => m._id).join(',');
+        // 실제 SMS 발송 페이지 경로로 수정하세요
+        alert(`SMS 발송 페이지로 이동: ${ids}`); 
+        // router.push(`/sms/send?members=${ids}`);
     };
 
     if (status === "loading" || loading) {
@@ -112,16 +184,13 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
 
     return (
         <div className="container-fluid py-4" style={{ background: "#f4f6f9", minHeight: "100vh" }}>
-            <style jsx>{`
+            <style jsx global>{`
                 body { 
                     background: #f4f6f9; 
-                    padding: 15px 10px; 
                     font-family: 'Noto Sans KR', sans-serif; 
                 }
                 
-                h4 { 
-                    font-size: 1.3rem; 
-                }
+                h4 { font-size: 1.3rem; font-weight: bold; }
                 
                 .month-card {
                     border-radius: 12px;
@@ -131,7 +200,12 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
+                    text-align: center;
                 }
+                
+                .month-card h6 { font-weight: 700; margin-bottom: 5px; font-size: 1rem; }
+                .month-card p { font-size: 0.85rem; margin-bottom: 4px; opacity: 0.9; }
+                .month-card small { font-weight: 600; font-size: 0.9rem; border-top: 1px solid rgba(255, 255, 255, 0.3); padding-top: 3px; display: block; }
                 
                 .paid {
                     background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
@@ -142,147 +216,171 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
                     background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
                     box-shadow: 0 3px 8px rgba(198, 40, 40, 0.2);
                 }
+
+                .future {
+                    background: linear-gradient(135deg, #757575 0%, #9e9e9e 100%);
+                    box-shadow: 0 3px 8px rgba(117, 117, 117, 0.2);
+                    opacity: 0.7;
+                }
                 
-                .member-card {
+                .card-custom {
                     background: white;
-                    border-radius: 12px;
-                    padding: 20px;
+                    border: none;
+                    border-radius: 15px;
+                    overflow: hidden;
                     margin-bottom: 20px;
                     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-                    border: 1px solid #e0e0e0;
                 }
                 
-                .member-name {
-                    font-size: 1.2rem;
-                    font-weight: 700;
-                    color: #2c3e50;
-                    margin-bottom: 20px;
-                    text-align: center;
-                }
-                
-                .months-grid {
-                    display: grid;
-                    grid-template-columns: repeat(6, 1fr);
+                .card-header-custom {
+                    background: linear-gradient(135deg, #1976d2 0%, #2196f3 100%);
+                    color: white;
+                    padding: 15px 20px;
+                    font-size: 1.1rem;
+                    font-weight: bold;
+                    display: flex;
+                    align-items: center;
                     gap: 10px;
-                    margin-bottom: 20px;
                 }
-                
-                .summary-row {
+
+                .summary-box {
+                    background: #f8f9fa;
+                    border-top: 1px solid #eee;
+                    padding: 15px;
+                    border-radius: 0 0 15px 15px;
                     display: flex;
                     justify-content: space-between;
-                    padding: 15px;
-                    background: #f8f9fa;
-                    border-radius: 8px;
-                    margin-bottom: 15px;
+                    align-items: center;
                 }
-                
-                .summary-label {
-                    font-weight: 600;
-                    color: #495057;
-                }
-                
-                .summary-value {
-                    font-weight: 700;
-                    color: #2c3e50;
-                }
-                
-                .btn-download {
-                    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-                    border: none;
-                    color: white;
-                    padding: 12px 24px;
-                    border-radius: 8px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                }
-                
-                .btn-download:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
-                }
-                
+
+                .summary-item { font-weight: 800; font-size: 1rem; }
+                .text-paid { color: #2e7d32; }
+                .text-unpaid { color: #c62828; }
+
                 @media (max-width: 768px) {
-                    .months-grid {
-                        grid-template-columns: repeat(3, 1fr);
-                        gap: 8px;
-                    }
-                    
-                    .member-card {
-                        padding: 15px;
-                        margin-bottom: 15px;
-                    }
+                    .month-col { width: 50%; }
                 }
             `}</style>
 
             <div className="d-flex justify-content-between align-items-center mb-4">
-                <h3 className="mb-0">회원 납부 상세 확인</h3>
-                <div>
-                    <span className="badge bg-primary">{year}년도</span>
-                </div>
+                <h4 className="mb-0 mx-auto">📋 {year}년 회원 회비 납부 상세</h4>
             </div>
 
-            {members.length === 0 ? (
-                <div className="alert alert-warning text-center">
-                    선택된 회원이 없습니다.
-                </div>
-            ) : (
-                <>
-                    {members.map(member => {
+            {/* 캡처 영역 시작 */}
+            <div id="captureArea" ref={captureRef} style={{ padding: '10px', background: '#f4f6f9' }}>
+                {members.length === 0 ? (
+                    <div className="alert alert-warning text-center p-5">
+                        선택된 회원이 없습니다.
+                    </div>
+                ) : (
+                    members.map(member => {
                         const { totalPaid, unpaidTotal } = calculateTotals(member._id);
                         return (
-                            <div key={member._id} className="member-card">
-                                <div className="member-name">{member.name}</div>
-                                
-                                <div className="months-grid">
-                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(month => {
-                                        const paid = passMap[member._id]?.[month] || 0;
-                                        const monthFee = monthlyFees[month] || 20000;
-                                        const isCurrentYear = year === todayYear;
-                                        const isPastMonth = year < todayYear || (isCurrentYear && month <= todayMonth);
-                                        
-                                        return (
-                                            <div key={month} className={`month-card ${paid ? 'paid' : (isPastMonth ? 'unpaid' : '')}`}>
-                                                <div className="text-center">
-                                                    <div style={{ fontSize: '0.9rem', fontWeight: '600' }}>
-                                                        {month}월
-                                                    </div>
-                                                    <div style={{ fontSize: '0.8rem', marginTop: '4px' }}>
-                                                        {paid ? '납부완료' : (isPastMonth ? `미납 ${monthFee.toLocaleString()}원` : '해당없음')}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
+                            <div key={member._id} className="card-custom">
+                                <div className="card-header-custom">
+                                    <i className="bi bi-person-fill"></i>
+                                    {member.name} 님 납부 현황
                                 </div>
                                 
-                                <div className="summary-row">
-                                    <div>
-                                        <span className="summary-label">입금합계:</span>
-                                        <span className="summary-value ms-2">{totalPaid.toLocaleString()}원</span>
+                                <div className="p-3">
+                                    <div className="row g-2">
+                                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(month => {
+                                            const paid = passMap[member._id]?.[month] || 0;
+                                            const fee = monthlyFees[month] || 20000;
+                                            
+                                            // 미래/과거 판단 로직 (PHP와 동일하게)
+                                            let isFuture = false;
+                                            if (year > todayYear) isFuture = true;
+                                            else if (year === todayYear && month > todayMonth) isFuture = true;
+
+                                            let cardClass = 'unpaid';
+                                            let statusText = '미납안내';
+
+                                            if (paid) {
+                                                cardClass = 'paid';
+                                                statusText = '납부완료';
+                                            } else if (isFuture) {
+                                                cardClass = 'future';
+                                                statusText = '해당없음';
+                                            }
+
+                                            return (
+                                                <div key={month} className="col-6 col-md-3">
+                                                    <div className={`month-card ${cardClass}`}>
+                                                        <h6>{month}월</h6>
+                                                        <p>{statusText}</p>
+                                                        <small>{fee.toLocaleString()}원</small>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
-                                    <div>
-                                        <span className="summary-label">미납금:</span>
-                                        <span className="summary-value ms-2">{unpaidTotal.toLocaleString()}원</span>
+                                </div>
+                                
+                                <div className="summary-box">
+                                    <div className="summary-item">
+                                        <span className="text-secondary small me-2">입금합계:</span>
+                                        <span className="text-paid">{totalPaid.toLocaleString()}원</span>
+                                    </div>
+                                    <div className="summary-item">
+                                        <span className="text-secondary small me-2">미납합계:</span>
+                                        <span className="text-unpaid">{unpaidTotal.toLocaleString()}원</span>
                                     </div>
                                 </div>
                             </div>
                         );
-                    })}
-                    
-                    <div className="text-center mt-4">
-                        <button className="btn-download" onClick={downloadExcel}>
-                            📊 엑셀 다운로드
-                        </button>
-                    </div>
-                </>
+                    })
+                )}
+            </div>
+            {/* 캡처 영역 끝 */}
+
+            {/* 버튼 그룹 */}
+            {members.length > 0 && (
+                <div className="d-flex justify-content-center gap-2 my-4 flex-wrap">
+                    <button className="btn btn-success" onClick={downloadExcel}>
+                        📥 엑셀 다운로드
+                    </button>
+                    <button className="btn btn-warning text-dark fw-bold" onClick={sendSMS}>
+                        📩 미납자 SMS 발송
+                    </button>
+                </div>
             )}
             
-            <div className="d-flex justify-content-center mt-5 mb-4">
-                <button className="btn btn-secondary btn-lg" onClick={() => router.back()}>
-                    ⏪ 뒤로 가기
+            <div className="text-center mt-2 mb-5 d-flex justify-content-center gap-2">
+                 {members.length > 0 && (
+                    <button className="btn btn-primary" onClick={captureToImage}>
+                        🖼️ 데이터 ={">"} 이미지화
+                    </button>
+                 )}
+                <button className="btn btn-secondary" onClick={() => router.back()}>
+                    ⏪ 돌아가기
                 </button>
             </div>
+
+            {/* 이미지 모달 */}
+            <div className="modal fade" id="imageModal" tabIndex={-1} aria-hidden="true">
+                <div className="modal-dialog modal-dialog-centered modal-lg">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title">🖼️ 납부현황 이미지 생성</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body text-center">
+                            <div className="alert alert-info py-2 small">
+                                💡 <b>스마트폰:</b> 이미지를 길게 눌러 저장하세요.<br />
+                                💡 <b>PC:</b> 마우스 우클릭 후 '이미지를 다른 이름으로 저장'
+                            </div>
+                            {imgUrl && <img src={imgUrl} className="img-fluid border rounded" alt="Capture" />}
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary w-100" data-bs-dismiss="modal">닫기</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {/* Bootstrap JS 로드 (모달용) */}
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" async></script>
         </div>
     );
 }
