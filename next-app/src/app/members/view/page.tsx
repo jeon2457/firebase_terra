@@ -67,12 +67,43 @@ export default function MembersViewPage() {
         return () => clearTimeout(t);
     }, []);
 
+    // 전화번호 형식 통일 함수
+    const formatPhoneNumber = (phone: string) => {
+        if (!phone) return '';
+        
+        // 숫자만 추출
+        const numbers = phone.replace(/[^0-9]/g, '');
+        
+        // 형식에 맞게 하이픈 추가
+        if (numbers.length === 11) {
+            // 010-1234-5678
+            return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7)}`;
+        } else if (numbers.length === 10) {
+            // 02-123-4567 or 010-123-4567
+            if (numbers.startsWith('02')) {
+                return `${numbers.slice(0, 2)}-${numbers.slice(2, 5)}-${numbers.slice(5)}`;
+            } else {
+                return `${numbers.slice(0, 3)}-${numbers.slice(3, 6)}-${numbers.slice(6)}`;
+            }
+        } else if (numbers.length === 9) {
+            // 02-12-3456
+            return `${numbers.slice(0, 2)}-${numbers.slice(2, 5)}-${numbers.slice(5)}`;
+        }
+        
+        return numbers; // 형식에 맞지 않으면 숫자만 반환
+    };
+
     const fetchMembers = async () => {
         try {
             const res = await axios.get("/api/members");
             if (res.data.success) {
-                // Filter out specific system/public accounts
-                const filteredMembers = res.data.data.filter((m: any) => m.name !== '공용계정' && m.id !== 'jikji35');
+                // Filter out specific system/public accounts and format phone numbers
+                const filteredMembers = res.data.data
+                    .filter((m: any) => m.name !== '공용계정' && m.id !== 'jikji35')
+                    .map((m: any) => ({
+                        ...m,
+                        tel: formatPhoneNumber(m.tel)
+                    }));
                 setMembers(filteredMembers);
             }
         } catch (error) {
@@ -411,7 +442,7 @@ export default function MembersViewPage() {
     /* 테이블 제목 너비폭 비율 및 폰트크기  */
     .col-no { width: 6%; font-size: 11px !important; } /* NO */
     .col-name { width: 22%; font-size: 13px !important; letter-spacing: 1px !important; } /* 이름 - 폰트 크기 2px 감소 (15px -> 13px) */
-    .col-tel { width: 47%; font-size: 13px !important; letter-spacing: 1px !important; } /* 전화번호 - 폰트 크기 2px 감소 (15px -> 13px) */
+    .col-tel { width: 47%; font-size: 13px !important; letter-spacing: 1px !important; min-width: 140px; } /* 전화번호 - 고정 너비 추가 */
     .col-addr { width: 17%; font-size: 13px !important; } /* 거주지 */
     .col-remark { display: none; } /* Hide remark on mobile */
     .col-sms { width: 12%; font-size: 13px !important; } /* SMS */
@@ -422,14 +453,14 @@ export default function MembersViewPage() {
 @media (min-width: 769px) {
      .col-no { width: 1.56rem; }
      .col-name { width: 6rem; }
-     .col-tel { width: 10.5rem; white-space: nowrap; }
+     .col-tel { width: 10.5rem; white-space: nowrap; min-width: 140px; } /* 고정 너비 유지 */
      .col-addr { width: 2.8rem; }
      .col-remark { width: 3.75rem; }
      .col-sms { width: 3.75rem; }
 }
              .col-no { width: 1.56rem; }
              .col-name { width: 6rem; }
-             .col-tel { width: 10.5rem; white-space: nowrap; }
+             .col-tel { width: 10.5rem; white-space: nowrap; min-width: 140px; } /* 고정 너비 유지 */
              .col-addr { width: 2.8rem; }
              .col-remark { width: 3.75rem; }
              .col-sms { width: 3.75rem; }
@@ -439,7 +470,27 @@ export default function MembersViewPage() {
         .member-tel-cell {
             white-space: nowrap;
             font-variant-numeric: tabular-nums; /* Ensures numbers are same width */
-            font-family: 'Courier New', monospace; /* 고정폭 폰트로 숫자 너비 통일 */
+            font-family: 'Courier New', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important; /* 고정폭 폰트로 숫자 너비 통일 */
+            letter-spacing: 0.5px; /* 숫자 사이 간격 통일 */
+            text-align: center; /* 중앙 정렬 */
+            display: block; /* 블록 요소로 만들어 폭 일정하게 */
+            margin: 0 auto; /* 중앙 정렬 */
+        }
+        
+        .tel_1 a {
+            font-family: 'Courier New', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+            letter-spacing: 0.5px;
+            text-align: center;
+            display: inline-block;
+            width: 100%;
+            font-weight: 500 !important; /* 폰트 두께 통일 */
+        }
+        
+        /* 전화번호 링크에 대한 추가 스타일 - 폭 일정하게 유지 */
+        .tel_1 .name-link {
+            font-family: 'Courier New', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+            font-size: inherit !important; /* 부모 요소의 폰트 크기 상속 */
+            line-height: 1.2 !important; /* 라인 높이 통일 */
         }
 
         /* SMS 아이콘 위치 수정 */
