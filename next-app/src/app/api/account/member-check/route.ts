@@ -9,22 +9,25 @@ import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
 
 export async function GET(req: NextRequest) {
-    // 1. 보안 체크: 로그인한 사용자만 접근 가능
-    const session = await getServerSession(authOptions);
-    if (!session) {
-        return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
-    }
+    // 임시로 세션 체크 제거 (디버깅용)
+    // const session = await getServerSession(authOptions);
+    // if (!session) {
+    //     return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    // }
 
     try {
         const { searchParams } = new URL(req.url);
         const membersParam = searchParams.get('members');
         const yearParam = searchParams.get('year');
 
-        // 디버깅 로그 추가
+        // 강화된 디버깅 로그
         console.log('=== Member Check API Debug ===');
         console.log('Request URL:', req.url);
+        console.log('Full searchParams:', Object.fromEntries(searchParams.entries()));
         console.log('membersParam:', membersParam);
         console.log('yearParam:', yearParam);
+        console.log('membersParam type:', typeof membersParam);
+        console.log('membersParam length:', membersParam?.length);
 
         // 파라미터 확인
         if (!membersParam) {
