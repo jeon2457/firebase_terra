@@ -99,13 +99,13 @@ export default function GuestPage() {
                         </div>
                     </Link>
 
-                    {/* 4. 월회비 납부현황 (링크 없음/준비중) */}
-                    <div className={styles.selectCard} onClick={() => alert("준비중입니다.")}>
+                    {/* 4. 월회비 납부현황 */}
+                    <Link href="/guest/fee/status" className={styles.selectCard}>
                         <div className={`${styles.bookSpine} ${styles.bgCard}`}>
                             <i className={`bi bi-credit-card ${styles.bookIcon}`}></i>
                             <div className={styles.bookTitle}>월회비 납부현황</div>
                         </div>
-                    </div>
+                    </Link>
 
                     {/* 5. 재무 대시보드 (준비중) */}
                     <div className={styles.selectCard} onClick={() => alert("준비중입니다.")}>
