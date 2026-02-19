@@ -124,7 +124,11 @@ export async function GET(req: NextRequest) {
         // 5. 결과 반환
         const result = {
             success: true,
-            members: members.map(m => ({ _id: m._id.toString(), name: m.name })),
+            members: members.map(m => ({ 
+                _id: m._id.toString(), 
+                name: m.name,
+                tel: m.tel || ''
+            })),
             passMap,
             monthlyFees
         };
