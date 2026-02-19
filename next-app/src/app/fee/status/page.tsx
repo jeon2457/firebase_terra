@@ -60,14 +60,6 @@ export default function FeeStatusPage() {
         try {
             const res = await axios.get(`/api/fee/status?year=${year}`);
             if (res.data.success) {
-                console.log('=== 회원 데이터 확인 ===');
-                console.log('회원 수:', res.data.members.length);
-                console.log('회원 ID 샘플:', res.data.members.map((m: any) => ({ 
-                    id: m._id, 
-                    name: m.name, 
-                    idLength: m._id?.toString().length 
-                })));
-                
                 setMembers(res.data.members);
                 setPassMap(res.data.passMap);
                 setMonthlyFees(res.data.monthlyFees);
@@ -308,7 +300,39 @@ export default function FeeStatusPage() {
                     margin-bottom: 8px;
                     margin-left: 5px;
                 }
+
+                /* [추가] 안내 모달 전용 스타일 */
+                .guide-legend {
+                    display: flex;
+                    gap: 10px;
+                    justify-content: center;
+                    margin-bottom: 20px;
+                }
+                .legend-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 10px 15px;
+                    border-radius: 8px;
+                    font-weight: 700;
+                    font-size: 14px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                }
+                .legend-o { background: #e8f5e9; border: 1px solid #c8e6c9; color: #2e7d32; }
+                .legend-x { background: #ffebee; border: 1px solid #ffcdd2; color: #c62828; }
                 
+                .guide-desc-box {
+                    background: #f8f9fa;
+                    border-radius: 8px;
+                    padding: 15px;
+                    font-size: 13px;
+                    color: #444;
+                    margin-top: 15px;
+                    text-align: left;
+                }
+                .guide-desc-box ul { margin: 0; padding-left: 20px; }
+                .guide-desc-box li { margin-bottom: 5px; }
+
                 /* 모바일 반응형 */
                 @media (max-width: 768px) {
                     body { margin: 10px 3px; }
@@ -667,14 +691,12 @@ export default function FeeStatusPage() {
                         padding: 4px;
                         min-width: 28px;
                     }
+
+                    /* [추가] 모바일 안내 모달 내 폰트 조정 */
+                    .legend-item { padding: 8px 12px; font-size: 13px; }
+                    .guide-desc-box { font-size: 12px; padding: 12px; }
                 }
             `}</style>
-
-
-
-
-
-            
 
             <div className="admin-info">
                 {isAdmin ? (
@@ -722,6 +744,7 @@ export default function FeeStatusPage() {
                 전체 회원 수: {members.length}명
             </div>
 
+            {/* 메인 테이블 렌더링 영역 */}
             {members.length === 0 ? (
                 <div className="alert alert-warning text-center">
                     회원 데이터가 없습니다. MongoDB에 회원을 추가해주세요.
@@ -846,17 +869,62 @@ export default function FeeStatusPage() {
                 </div>
             )}
 
-            {/* 안내 모달 */}
+            {/* ======================================================== */}
+            {/* [수정됨] 안내 모달: 예시와 스타일이 강화됨 */}
+            {/* ======================================================== */}
             {showGuideModal && (
                 <div className="modal-overlay" onClick={() => setShowGuideModal(false)}>
-                    <div className="modal-content-custom" style={{ maxWidth: '450px' }} onClick={(e) => e.stopPropagation()}>
-                        <h5 style={{ fontWeight: 800, textAlign: 'center', marginBottom: '15px', color: '#1976d2' }}>
-                            📋 회비납부 현황 보는법 안내
+                    <div className="modal-content-custom" style={{ maxWidth: '400px' }} onClick={(e) => e.stopPropagation()}>
+                        <h5 style={{ fontWeight: 800, textAlign: 'center', marginBottom: '20px', color: '#1976d2' }}>
+                            📋 현황표 보는법
                         </h5>
-                        <p style={{ fontSize: '14px', textAlign: 'center', color: '#666', marginBottom: '15px' }}>
-                            월별 납부 현황이 표시됩니다.<br />
-                            <span style={{ color: 'green', fontWeight: 'bold' }}>O (납부)</span> / <span style={{ color: 'red', fontWeight: 'bold' }}>X (미납)</span>
-                        </p>
+                        
+                        {/* 1. 범례 (O/X) */}
+                        <div className="guide-legend">
+                            <div className="legend-item legend-o">
+                                <span style={{ fontSize: '18px' }}>O</span> 납부 완료
+                            </div>
+                            <div className="legend-item legend-x">
+                                <span style={{ fontSize: '18px' }}>X</span> 미납
+                            </div>
+                        </div>
+
+                        {/* 2. 예시 테이블 */}
+                        <div style={{ marginBottom: '20px' }}>
+                            <h6 style={{ fontSize: '14px', fontWeight: 'bold', color: '#555', marginBottom: '8px' }}>👇 표 예시</h6>
+                            <table className="table table-bordered table-sm text-center mb-0" style={{ fontSize: '13px' }}>
+                                <thead className="table-light">
+                                    <tr>
+                                        <th>이름</th>
+                                        <th>1월</th>
+                                        <th>2월</th>
+                                        <th>...</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>홍길동</td>
+                                        <td style={{ color: 'green', fontWeight: 'bold' }}>O</td>
+                                        <td style={{ color: 'red', fontWeight: 'bold' }}>X</td>
+                                        <td style={{ color: '#999' }}>...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* 3. 상세 설명 */}
+                        <div className="guide-desc-box">
+                            <ul>
+                                <li>
+                                    <strong>입금합계</strong> : {year}년도에 납부한 총 금액
+                                </li>
+                                <li style={{ marginTop: '5px' }}>
+                                    <strong>미납금</strong> : 오늘({todayMonth}월)까지 안 낸 금액<br/>
+                                    <span style={{ fontSize: '11px', color: '#d63384' }}>* 미래의 회비는 미납금에 포함되지 않습니다.</span>
+                                </li>
+                            </ul>
+                        </div>
+
                         <div className="text-center mt-4">
                             <button className="btn btn-dark w-100" onClick={() => setShowGuideModal(false)}>확인 및 닫기</button>
                         </div>
