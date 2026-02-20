@@ -34,6 +34,7 @@ export default function ObituarySmsPage() {
         if (status === "unauthenticated") {
             router.push("/login");
         }
+        document.title = "경조사 문자보내기";
     }, [status, router]);
 
     useEffect(() => {
