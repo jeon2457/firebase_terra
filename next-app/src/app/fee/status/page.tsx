@@ -100,8 +100,6 @@ export default function FeeStatusPage() {
         e.stopPropagation();
         e.preventDefault();
         
-        const target = e.currentTarget as HTMLElement;
-        
         const memberData = passMap[memberId] || {};
         const monthFee = monthlyFees[month] || currentMonthFee;
         
@@ -112,22 +110,12 @@ export default function FeeStatusPage() {
             paid,
             monthFee,
             memberData,
-            monthlyFees
+            monthlyFees,
+            clientX: e.clientX,
+            clientY: e.clientY
         });
         
-        setTooltipTarget(target);
         setTooltipVisible(true);
-    };
-
-    // 툴팁 위치 계산
-    const getTooltipPosition = () => {
-        if (!tooltipTarget) return { top: 0, left: 0 };
-        
-        const rect = tooltipTarget.getBoundingClientRect();
-        return {
-            top: rect.bottom + window.scrollY + 10,
-            left: rect.left + window.scrollX + (rect.width / 2) - 140
-        };
     };
 
     const showChangePopup = (e: React.MouseEvent, memberId: string, month: number, paid: number) => {
@@ -230,7 +218,15 @@ export default function FeeStatusPage() {
     if (currentDate.getMonth() === 11 && currentDate.getDate() >= 1) { years.push(currentYearValue + 1); }
     const uniqueYears = [...new Set(years)].sort((a, b) => a - b);
 
-    const tooltipPos = getTooltipPosition();
+    // 툴팁 위치 계산 (화면 기준 좌표 사용 - 스크롤에影響안받음)
+    const getTooltipStyle = () => {
+        if (!tooltipData?.clientX || !tooltipData?.clientY) return {};
+        return {
+            position: 'fixed' as const,
+            top: tooltipData.clientY + 15,
+            left: tooltipData.clientX - 130
+        };
+    };
 
     return (
         <div className="container-fluid py-4" style={{ background: "#f9f9fa", minHeight: "100vh" }}>
@@ -484,7 +480,7 @@ export default function FeeStatusPage() {
             {/* 회원용 툴팁 */}
             {tooltipVisible && tooltipData && (
                 <>
-                    <div className="tooltip-popup" style={{ top: tooltipPos.top, left: tooltipPos.left }}>
+                    <div className="tooltip-popup" style={getTooltipStyle()}>
                         <div style={{marginBottom:'10px',borderBottom:'1px solid #eee',paddingBottom:'8px'}}>
                             <strong>{tooltipData.memberName}</strong> ({tooltipData.month}월)
                         </div>
