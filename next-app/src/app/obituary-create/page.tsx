@@ -35,6 +35,7 @@ export default function ObituaryCreatePage() {
         if (status === "unauthenticated") {
             router.push("/login");
         }
+        document.title = "부고장 작성";
     }, [status, router]);
 
     useEffect(() => {
