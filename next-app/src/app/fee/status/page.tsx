@@ -39,6 +39,11 @@ export default function FeeStatusPage() {
     const [showPopup, setShowPopup] = useState(false);
     const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
     const [currentTarget, setCurrentTarget] = useState<any>(null);
+    
+    // 툴팁 상태 (모든 사용자가能看到)
+    const [tooltipVisible, setTooltipVisible] = useState(false);
+    const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
+    const [tooltipData, setTooltipData] = useState<any>(null);
 
     const [checkedMembers, setCheckedMembers] = useState<string[]>([]);
     const [checkAll, setCheckAll] = useState(false);
@@ -88,6 +93,38 @@ export default function FeeStatusPage() {
         } finally {
             setLoading(false);
         }
+    };
+
+    // 모든 사용자가能看到하는 툴팁 표시
+    const showTooltip = (e: React.MouseEvent, memberId: string, memberName: string, month: number, paid: number) => {
+        e.stopPropagation();
+        
+        const target = e.target as HTMLElement;
+        const rect = target.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+        
+        // 해당 회원의 모든 월별 데이터 수집
+        const memberData = passMap[memberId] || {};
+        const monthFee = monthlyFees[month] || currentMonthFee;
+        
+        setTooltipData({
+            memberId,
+            memberName,
+            month,
+            paid,
+            monthFee,
+            memberData,
+            monthlyFees
+        });
+        
+        // 툴팁 위치 설정
+        const isRightSide = rect.left > window.innerWidth / 2;
+        setTooltipPosition({
+            top: rect.bottom + scrollTop + 5,
+            left: isRightSide ? (rect.right + scrollLeft - 200) : (rect.left + scrollLeft)
+        });
+        setTooltipVisible(true);
     };
 
     const showChangePopup = (e: React.MouseEvent, memberId: string, month: number, paid: number) => {
@@ -435,8 +472,14 @@ export default function FeeStatusPage() {
                                                 const paid = passMap[member._id]?.[m] || 0;
                                                 return (
                                                     <td key={m}>
-                                                        <span className={`ox ${paid ? 'o' : 'x'} ${!isAdmin ? 'no-access' : ''}`}
-                                                              onClick={(e) => isAdmin && showChangePopup(e, member._id, m, paid)}>
+                                                        <span className={`ox ${paid ? 'o' : 'x'}`}
+                                                              onClick={(e) => {
+                                                                  if (isAdmin) {
+                                                                      showChangePopup(e, member._id, m, paid);
+                                                                  } else {
+                                                                      showTooltip(e, member._id, member.name, m, paid);
+                                                                  }
+                                                              }}>
                                                             {paid ? 'O' : 'X'}
                                                         </span>
                                                     </td>
@@ -496,7 +539,13 @@ export default function FeeStatusPage() {
                                                 return (
                                                     <div key={m} className="mc-month-cell">
                                                         <span className={`m-ox ${paid ? 'o' : 'x'}`}
-                                                              onClick={(e) => isAdmin && showChangePopup(e, member._id, m, paid)}>
+                                                              onClick={(e) => {
+                                                                  if (isAdmin) {
+                                                                      showChangePopup(e, member._id, m, paid);
+                                                                  } else {
+                                                                      showTooltip(e, member._id, member.name, m, paid);
+                                                                  }
+                                                              }}>
                                                             {paid ? 'O' : 'X'}
                                                         </span>
                                                     </div>
@@ -511,7 +560,13 @@ export default function FeeStatusPage() {
                                                 return (
                                                     <div key={m} className="mc-month-cell">
                                                         <span className={`m-ox ${paid ? 'o' : 'x'}`}
-                                                              onClick={(e) => isAdmin && showChangePopup(e, member._id, m, paid)}>
+                                                              onClick={(e) => {
+                                                                  if (isAdmin) {
+                                                                      showChangePopup(e, member._id, m, paid);
+                                                                  } else {
+                                                                      showTooltip(e, member._id, member.name, m, paid);
+                                                                  }
+                                                              }}>
                                                             {paid ? 'O' : 'X'}
                                                         </span>
                                                     </div>
@@ -608,7 +663,51 @@ export default function FeeStatusPage() {
                 </div>
             )}
 
-            {showPopup && <div style={{ position: 'fixed', inset: 0, zIndex: 1999 }} onClick={() => setShowPopup(false)} />}
+            {/* 툴팁 (모든 사용자가能看到) */}
+            {tooltipVisible && tooltipData && (
+                <>
+                    <div 
+                        className="status-popup" 
+                        style={{ 
+                            top: tooltipPosition.top, 
+                            left: tooltipPosition.left,
+                            width: '280px',
+                            textAlign: 'left'
+                        }}
+                    >
+                        <div style={{ marginBottom: '10px', borderBottom: '1px solid #eee', paddingBottom: '8px' }}>
+                            <strong>{tooltipData.memberName}</strong> ({tooltipData.month}월)
+                        </div>
+                        <div style={{ fontSize: '13px', lineHeight: '1.6' }}>
+                            {tooltipData.memberData && Object.entries(tooltipData.memberData).map(([m, paid]) => {
+                                const monthNum = parseInt(m);
+                                const isPaid = paid === 1;
+                                const monthFee = tooltipData.monthlyFees?.[monthNum] || 20000;
+                                return (
+                                    <div key={m} style={{ 
+                                        display: 'flex', 
+                                        justifyContent: 'space-between',
+                                        padding: '3px 0',
+                                        background: monthNum === tooltipData.month ? '#e3f2fd' : 'transparent'
+                                    }}>
+                                        <span>{m}월</span>
+                                        <span style={{ color: isPaid ? 'green' : 'red', fontWeight: 'bold' }}>
+                                            {isPaid ? 'O' : 'X'} ({isPaid ? monthFee.toLocaleString() : '-'}원)
+                                        </span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid #eee', fontSize: '12px', color: '#666' }}>
+                            * 해당 월을 터치하면 상세정보 확인
+                        </div>
+                    </div>
+                    <div 
+                        style={{ position: 'fixed', inset: 0, zIndex: 1999 }} 
+                        onClick={() => setTooltipVisible(false)} 
+                    />
+                </>
+            )}
         </div>
     );
 }
