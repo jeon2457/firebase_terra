@@ -18,6 +18,7 @@ export default function DashboardPage() {
         if (status === "unauthenticated") {
             router.push("/login");
         }
+        document.title = "대시보드";
     }, [status, router]);
 
     useEffect(() => {
