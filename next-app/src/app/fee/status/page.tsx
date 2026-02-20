@@ -90,34 +90,32 @@ export default function FeeStatusPage() {
         }
     };
 
-    // 관리자: 상태 변경 (guest 버전 방식 그대로 사용)
+    // 관리자: 상태 변경 - 스크롤에 영향 안 받게 수정
     const showChangePopup = (el: HTMLElement, memberId: string, month: number, paid: number) => {
         if (!isAdmin) return;
         
         const rect = el.getBoundingClientRect();
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
         
+        // position: fixed를 사용하여 스크롤에 영향 안 받게 함
         setPopupPosition({
-            top: rect.bottom + scrollTop + 8,
-            left: rect.left + scrollLeft - 50
+            top: rect.bottom + 10,
+            left: rect.left - 30
         });
         setPopupMonth(month);
         setCurrentTarget({ memberId, month, paid });
         setShowPopup(true);
     };
 
-    // 일반 회원: 월 표시
+    // 일반 회원: 월 표시 - 스크롤에 영향 안 받게 수정
     const handleShowMonthPopup = (el: HTMLElement, month: number) => {
         if (isAdmin) return;
         
         const rect = el.getBoundingClientRect();
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
         
+        // position: fixed를 사용하여 스크롤에 영향 안 받게 함
         setPopupPosition({
-            top: rect.bottom + scrollTop + 8,
-            left: rect.left + scrollLeft - 50
+            top: rect.bottom + 10,
+            left: rect.left - 30
         });
         setPopupMonth(month);
         setShowPopup(true);
@@ -469,9 +467,9 @@ export default function FeeStatusPage() {
                 <button className="btn btn-secondary btn-lg" onClick={() => router.push('/dashboard')}>⏪ 돌아가기</button>
             </div>
 
-            {/* 팝업 (관리자/회원 공용) */}
+            {/* 팝업 (관리자/회원 공용) - position: fixed */}
             {showPopup && (
-                <div className="month-popup" style={{ position: 'absolute', top: popupPosition.top, left: popupPosition.left, zIndex: 2000 }}>
+                <div className="month-popup" style={{ position: 'fixed', top: popupPosition.top, left: popupPosition.left, zIndex: 2000 }}>
                     <div className="month-popup-arrow"></div>
                     {isAdmin ? (
                         <>

@@ -34,15 +34,14 @@ export default function GuestFeeStatusPage() {
     const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
     const [popupMonth, setPopupMonth] = useState(0);
 
-    // 월별 툴팁형 팝업 표시 함수
+    // 월별 툴팁형 팝업 표시 함수 - 스크롤에 영향 안 받게 수정
     const handleShowMonthPopup = (el: HTMLElement, month: number) => {
         const rect = el.getBoundingClientRect();
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
         
+        // position: fixed를 사용하여 스크롤에 영향 안 받게 함
         setPopupPosition({
-            top: rect.bottom + scrollTop + 8,
-            left: rect.left + scrollLeft - 50
+            top: rect.bottom + 10,  // 바로 아래
+            left: rect.left - 30     // 중앙 정렬
         });
         setPopupMonth(month);
         setShowPopup(true);
