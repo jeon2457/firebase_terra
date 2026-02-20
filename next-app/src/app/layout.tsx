@@ -7,7 +7,7 @@ import Providers from "@/components/Providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "회원관리 시스템",
+  title: "회원정보 시스템",
   description: "Vercel 기반 회원 관리 시스템",
   manifest: "/manifest.json",
   icons: {
