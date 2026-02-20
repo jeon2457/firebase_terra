@@ -33,9 +33,19 @@ export default function VotePage() {
     const [majorityLimit, setMajorityLimit] = useState(0);
 
     useEffect(() => {
+        // 로딩 중에는 아무것도 하지 않음 (로딩 스피너 표시됨)
+        if (status === "loading") {
+            return;
+        }
+        
+        // 인증되지 않은 사용자는 로그인 페이지로 이동
         if (status === "unauthenticated") {
             router.push("/login");
-        } else if (status === "authenticated") {
+            return;
+        }
+        
+        // 인증된 사용자만 투표 데이터 로드
+        if (status === "authenticated") {
             fetchPolls();
             checkVotedStatus();
         }

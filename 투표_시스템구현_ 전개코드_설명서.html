@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학습용 투표 시스템 정보 (HTML)</title>
+    <style>
+        /* 기본 스타일 (CSS) */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f8f9fa;
+            color: #343a40;
+            word-break: break-word; /* 긴 텍스트 줄바꿈 처리 */
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 100%; /* 최대 너비 100% */
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2rem; /* 상대적인 크기 */
+        }
+
+        h2 {
+            color: #28a745;
+            margin-top: 20px;
+            font-size: 1.5rem; /* 상대적인 크기 */
+        }
+
+        h3 {
+            color: #6c757d;
+            margin-top: 10px;
+            font-size: 1.2rem; /* 상대적인 크기 */
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        ul {
+            list-style: disc;
+            margin-left: 20px;
+        }
+
+        pre {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 0.9rem; /* pre 태그 내부 폰트 크기 */
+        }
+
+        code {
+            font-family: monospace;
+        }
+
+        .data-flow {
+            white-space: pre-wrap;
+            font-family: monospace;
+            margin-top: 10px;
+        }
+
+        /* 모바일 반응형 스타일 */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.4rem; /* 폰트 크기 줄임 */
+            }
+
+            h2 {
+                font-size: 1.1rem; /* 폰트 크기 줄임 */
+            }
+
+            h3 {
+                font-size: 0.9rem; /* 폰트 크기 줄임 */
+            }
+
+            p {
+                font-size: 0.85rem; /* 폰트 크기 줄임 */
+            }
+
+            ul {
+                margin-left: 15px;
+                font-size: 0.85rem; /* 폰트 크기 줄임 */
+            }
+
+            pre {
+                font-size: 0.8rem; /* 폰트 크기 줄임 */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>투표 시스템 전개 코드 구현</h1>
+
+        <h2>생성된 파일들</h2>
+        <ul>
+            <li><code>/api/vote/route.ts</code> - 투표 API (데이터 처리)</li>
+            <li><code>/vote/page.tsx</code> - 투표하기 페이지</li>
+            <li><code>/vote/results/page.tsx</code> - 결과 보기 페이지</li>
+        </ul>
+        <br>
+        [알림] 이 설문조사를 운영하려면 각회원들 아이디/비밀번호가 있어야만 가능할것같다.<br> 왜냐하면,투표는 중복으로 할 수가 없기때문이다. 
+        <h2>데이터 흐름 (Data Flow)</h2>
+        <pre class="data-flow">
+┌─────────────────────────────────────────────────────────────────┐
+│                        MongoDB Database                          │
+│  ┌─────────────┐  ┌────────────────┐  ┌───────────────────┐  │
+│  │   polls     │  │ poll_options   │  │   poll_votes     │  │
+│  │ (투표 주제)  │  │  (투표 옵션)    │  │   (투표 기록)     │  │
+│  │ - id        │  │ - poll_id      │  │ - memberId       │  │
+│  │ - title     │  │ - option_text  │  │ - dateOptionId   │  │
+│  │ - endDate   │  │ - votes        │  │ - placeOptionId  │  │
+│  └─────────────┘  └────────────────┘  │ - votedAt        │  │
+│                                        └───────────────────┘  │
+│                         + members 컬렉션 (전체 회원수 계산용)      │
+└─────────────────────────────────────────────────────────────────┘
+                              ▲
+                              │ GET /api/vote
+┌─────────────────────────────┴───────────────────────────────┐
+│                     API Route (Next.js)                      │
+│  GET: polls, poll_options 데이터 조회 + 자동 초기화           │
+│  POST: 투표 저장 + 중복 투표 방지                              │
+└─────────────────────────────────────────────────────────────┘
+                              ▲
+                              │ fetch('/api/vote')
+┌─────────────────────────────┴───────────────────────────────┐
+│                    Pages (React)                             │
+│                                                               │
+│  /vote (투표하기)                                            │
+│    ├── 사용자가 선택지 선택 후 제출                            │
+│    ├── POST /api/vote 로 데이터 전송                          │
+│    └── 중복 투표는 localStorage로 방지                        │
+│                                                               │
+│  /vote/results (결과 보기)                                    │
+│    ├── GET /api/vote 로 데이터 조회                          │
+│    └── 투표수, 퍼센트, 과반수 계산 후 표시                     │
+└─────────────────────────────────────────────────────────────┘
+        </pre>
+
+        <h2>주요 기능</h2>
+        <ul>
+            <li><b>투표 기간</b>: 생성일로부터 10일</li>
+            <li><b>투표 주제</b>:
+                <ul>
+                    <li>Q1. 언제가 가장 좋을까요? (2월, 3월, 4월)</li>
+                    <li>Q2. 어디로 갈까요? (금오산, 팔공산, 황악산)</li>
+                </ul>
+            </li>
+            <li><b>중복 투표 방지</b>: localStorage + MongoDB 중복 확인</li>
+            <li><b>과반수 계산</b>: 전체 회원수의 과반수 달성 시 표시</li>
+            <li><b>결과 정렬</b>: 투표수가 높은 순으로 정렬</li>
+        </ul>
+    </div>
+</body>
+</html>
