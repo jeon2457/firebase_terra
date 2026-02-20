@@ -17,6 +17,10 @@ export default function GuestMembersViewPage() {
     const [timeStr, setTimeStr] = useState("");
     const [dateStr, setDateStr] = useState("");
 
+    // Animation State
+    const [cubeDeg, setCubeDeg] = useState(0);
+    const [isPageReady, setIsPageReady] = useState(false);
+
     useEffect(() => {
         if (status === "unauthenticated") {
             router.push("/login");
@@ -42,6 +46,21 @@ export default function GuestMembersViewPage() {
         return () => clearInterval(timer);
     }, []);
 
+    // Cube Animation Timer
+    useEffect(() => {
+        const cubeTimer = setInterval(() => {
+            setCubeDeg(prev => prev - 90);
+        }, 2000);
+        return () => clearInterval(cubeTimer);
+    }, []);
+
+    useEffect(() => {
+        const t = setTimeout(() => {
+            setIsPageReady(true);
+        }, 2500);
+        return () => clearTimeout(t);
+    }, []);
+
     const formatPhoneNumber = (phone: string) => {
         if (!phone) return '';
         const numbers = phone.replace(/[^0-9]/g, '');
@@ -53,6 +72,8 @@ export default function GuestMembersViewPage() {
             } else {
                 return `${numbers.slice(0, 3)}-${numbers.slice(3, 6)}-${numbers.slice(6)}`;
             }
+        } else if (numbers.length === 9) {
+            return `${numbers.slice(0, 2)}-${numbers.slice(2, 5)}-${numbers.slice(5)}`;
         }
         return numbers;
     };
@@ -112,15 +133,39 @@ export default function GuestMembersViewPage() {
                     background: transparent;
                 }
                 a { text-decoration: none !important; }
-                
-                /* Container */
+                #loading-screen {
+                    position: fixed;
+                    width: 100%;
+                    height: 100%;
+                    background: #363434;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    transition: opacity 0.5s ease;
+                    z-index: 9999;
+                    inset: 0;
+                }
+                #loading-screen video {
+                    width: 200px;
+                    height: 200px;
+                    max-width: 90vw;
+                    max-height: 90vh;
+                    object-fit: contain;
+                }
+                @media (max-width: 768px) {
+                    #loading-screen video {
+                        width: 150px;
+                        height: 150px;
+                    }
+                }
+                #main-content {
+                    display: ${isPageReady ? "block" : "none"};
+                }
                 .container {
                     max-width: 700px;
                     margin: 0 auto;
                     padding: 0;
                 }
-
-                /* Header */
                 .header {
                     width: 100%;
                     max-width: 700px;
@@ -140,7 +185,6 @@ export default function GuestMembersViewPage() {
                     z-index: 1000;
                     box-sizing: border-box; 
                 }
-
                 .header-left { display: flex; align-items: center; gap: 10px; }
                 .date-text { color: #cea71bff; font-size: 1.5rem; }
                 .time-text { color: #4A9EFF; font-size: 1.5rem; line-height: 1.1; }
@@ -163,8 +207,6 @@ export default function GuestMembersViewPage() {
                     border: none;
                     cursor: pointer;
                 }
-
-                /* Marquee Section */
                 .wrap2 {
                     position: fixed;
                     top: 3.5rem;
@@ -175,21 +217,84 @@ export default function GuestMembersViewPage() {
                     max-width: 700px;
                     margin: 0 auto;
                     overflow: hidden;
-                    background-color: #333;
+                    background-image: url('/images/bg.gif');
+                    background-color: lightgray;
+                    background-position: center;
+                    background-repeat: repeat-x;
+                    background-size: contain;
                     height: 40px;
                     display: flex;
                     align-items: center;
-                    justify-content: center;
+                    padding: 0 103px 0 93px;
                     box-sizing: border-box;
                 }
-                
-                .marquee-text {
-                    color: #ffffff;
-                    font-size: 18px;
-                    font-weight: bold;
+                .cube-container {
+                    position: absolute;
+                    top: 7px;
+                    left: 10px;
+                    z-index: 1001;
                 }
-
-                /* Table */
+                .wrap1 {
+                    width: 25px;
+                    height: 25px;
+                    perspective: 500px;
+                    transform-style: preserve-3d;
+                    position: relative;
+                    padding: 0;
+                }
+                .cube {
+                    width: 25px;
+                    height: 25px;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    transform-style: preserve-3d;
+                    transform: rotateX(${cubeDeg}deg);
+                    transition: transform 0.6s ease;
+                }
+                .cube img {
+                    position: absolute;
+                    top: 3px;
+                    left: -3px;
+                    width: 25px;
+                    height: 25px;
+                    backface-visibility: hidden;
+                    display: block;
+                }
+                .cube img:nth-child(1) { transform: translateZ(12.5px); }
+                .cube img:nth-child(2) { transform: rotateX(90deg) translateZ(12.5px); }
+                .cube img:nth-child(3) { transform: rotateX(180deg) translateZ(12.5px); }
+                .cube img:nth-child(4) { transform: rotateX(270deg) translateZ(12.5px); }
+                .marquee-container {
+                    width: 100%;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    box-sizing: border-box;
+                    display: flex;
+                    align-items: center;
+                }
+                .marquee {
+                    display: flex;
+                    align-items: center;
+                    animation: marquee 15s linear infinite;
+                    font-size: 18px;
+                    color: #ffffff;
+                    padding-left: 100%;
+                }
+                @keyframes marquee {
+                    0% { transform: translateX(0); }
+                    10% { transform: translateX(-50px); }
+                    90% { transform: translateX(calc(-100% + 50px)); }
+                    100% { transform: translateX(-100%); }
+                }
+                .custom-span {
+                    display: inline-block;
+                    font-size: 18px;
+                    line-height: 30px;
+                    margin: 1px 20px 5px 17px;
+                    padding: 0;
+                    vertical-align: middle;
+                }
                 .table-container {
                     padding-top: calc(3.25rem + 30px);
                     padding-bottom: 2px;
@@ -206,9 +311,11 @@ export default function GuestMembersViewPage() {
                     position: sticky;
                     top: calc(3.5rem + 39px);
                     z-index: 998;
-                    background: #444;
+                    background: url('/images/background_mable-1.jpg') center center / cover no-repeat !important;
                     color: #cea71bff !important;
+                    text-shadow: 0 0 10px rgba(240, 196, 32, 0.4), 1px 1px 2px #000;
                     font-weight: bold;
+                    border-bottom: 1px solid #444;
                     border: 1px solid #eedca6 !important;
                     text-align: center;
                     vertical-align: middle;
@@ -221,7 +328,9 @@ export default function GuestMembersViewPage() {
                     border: 1px solid #eedca6 !important;
                 }
                 .custom-table tbody tr:hover { background: rgba(255,255,255,0.06); }
-
+                .custom-table tbody tr:first-child td {
+                    padding-top: calc(0.44rem + 12px);
+                }
                 .custom-table td {
                     border: 1px solid #eedca6 !important;
                     text-align: center;
@@ -230,92 +339,159 @@ export default function GuestMembersViewPage() {
                     word-break: break-all;
                     line-height: 1.1;
                 }
-
                 .name-link {
                     color: #ffffff !important; 
                     text-decoration: none !important;
                     display: block;
                     width: 100%;
                     text-align: center;
-                    font-size: 15px;
                 }
-                .name-link:hover { color: #4A9EFF !important; }
-
-                .tel-link {
-                    color: #4A9EFF !important;
-                    text-decoration: none !important;
-                }
-                
-                /* Mobile */
+                .name-link:hover { color: #ffffff !important; text-decoration: none !important; }
+                .name_1 { text-align: center; padding: 0.32rem 0; }
+                .tel_1 { text-align: center; padding: 0.32rem 0; }
+                .sms-icon { cursor: pointer; transition: transform 0.2s; }
+                .sms-icon:hover { transform: scale(1.15); }
+                .max-small { width: 1.15rem; height: 1.15rem; }
+                .address-header { cursor: pointer; color: #cea71b !important; }
+                .addr-visible { color: #cea71b !important; }
                 @media (max-width: 768px) {
                     .header { height: 60px; padding: 5px 10px; }
-                    .date-text { font-size: 1.1rem; }
+                    .header-left { gap: 6px; }
+                    .date-text { font-size: 1.1rem; color: #f0c420; }
                     .time-text { font-size: 1.1rem; }
-                    .user-info-box { font-size: 10px; }
-                    .wrap2 { top: 3.5rem; height: 40px; }
-                    .marquee-text { font-size: 14px; }
-                    .custom-table thead th { font-size: 13px; }
+                    .user-info-box { font-size: 10px; padding: 2px 6px; }
+                    .wrap2 { top: 3.5rem; padding: 5px 42px 0 60px; height: 40px; }
+                    .cube-container { top: 50%; left: 1px; transform: translateY(-50%); }
+                    .wrap1 { width: 22px; height: 22px; }
+                    .cube { width: 22px; height: 22px; }
+                    .cube img { width: 22px; height: 22px; top: 0; left: 0; }
+                    .custom-table thead th { color: #f0c420; font-size: 13px; } 
+                    .custom-table td { padding: 0.32rem 0; }
+                    .custom-span { font-size: 14px; margin: 0 10px; line-height: 30px; }
+                    .col-no { width: 8%; font-size: 12px !important; }
+                    .col-name { width: 18%; font-size: 14px !important; } 
+                    .col-tel { width: 47%; font-size: 14px !important; } 
+                    .col-addr { width: 15%; font-size: 11px !important; }
+                    .address_1 { font-size: 11px !important; }
+                    .col-sms { width: 12%; font-size: 13px !important; } 
+                    .col-remark { display: none; }
+                    .hide-mobile { display: none; }
+                    .name-link {
+                        font-family: 'Noto Sans KR', sans-serif !important;
+                        font-weight: 500;
+                    }
+                    .member-tel-cell .name-link {
+                        font-family: 'Noto Sans KR', sans-serif !important; 
+                        letter-spacing: 0;
+                        white-space: nowrap; 
+                    }
                 }
+                @media (min-width: 769px) {
+                    .col-no { width: 1.56rem; }
+                    .col-name { width: 6rem; min-width: 80px; }
+                    .col-tel { width: 10.5rem; white-space: nowrap; min-width: 140px; }
+                    .col-addr { width: 2.8rem; }
+                    .col-remark { width: 3.75rem; }
+                    .col-sms { width: 3.75rem; }
+                    .name-link { font-size: 15px; font-family: 'Noto Sans KR', sans-serif !important; }
+                }
+                .sms_1 { text-align: center; vertical-align: middle; padding: 2px; }
+                .sms-icon { display: block; margin: 0 auto; max-width: 17px; max-height: 17px; }
             `}</style>
 
-            <div className="container">
-                {/* Header */}
-                <div className="header">
-                    <div className="header-left">
-                        <span className="date-text">{dateStr}</span>
-                        <span className="time-text">{timeStr}</span>
-                    </div>
-                    <div className="header-right">
-                        <div className="user-info-box">{userDisplayText}</div>
-                        <button className="back-btn" onClick={() => router.push('/dashboard')}>←뒤로</button>
-                    </div>
-                </div>
-
-                <div className="table-container">
-                    <div className="wrap2">
-                        <span className="marquee-text">📱 전화연락망 (열람 전용)</span>
-                    </div>
-
-                    <table className="custom-table">
-                        <thead>
-                            <tr>
-                                <th style={{width: '15%'}}>NO</th>
-                                <th style={{width: '30%'}}>이름</th>
-                                <th style={{width: '55%'}}>전화번호</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {members.map((member, index) => (
-                                <tr key={member._id}>
-                                    <td>{index + 1}</td>
-                                    <td>
-                                        <span className="name-link">{member.name}</span>
-                                    </td>
-                                    <td>
-                                        <a href={`tel:${member.tel}`} className="tel-link">
-                                            {member.tel}
-                                        </a>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+            <div id="loading-screen" style={{ opacity: isPageReady ? 0 : 1, pointerEvents: isPageReady ? 'none' : 'auto' }}>
+                <video src="/images/clova.mp4" autoPlay loop muted playsInline style={{ width: '200px', height: '200px' }} />
             </div>
 
-            {/* Floating Back Button */}
-            <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 2000 }}>
-                <button
-                    onClick={() => router.push('/dashboard')}
-                    style={{
-                        width: '50px', height: '50px', borderRadius: '50%', border: 'none',
-                        background: 'rgba(10, 132, 255, 0.8)', color: '#fff', fontSize: '20px',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-                        backdropFilter: 'blur(4px)', boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
-                    }}
-                >
-                    <i className="bi bi-arrow-left"></i>
-                </button>
+            <div id="main-content">
+                <div className="container">
+                    <div className="header">
+                        <div className="header-left">
+                            <span className="date-text">{dateStr}</span>
+                            <span className="time-text">{timeStr}</span>
+                        </div>
+                        <div className="header-right">
+                            <div className="user-info-box">{userDisplayText}</div>
+                            <button className="back-btn" onClick={() => router.push('/dashboard')}>←뒤로</button>
+                        </div>
+                    </div>
+
+                    <div className="table-container">
+                        <div className="wrap2">
+                            <div className="cube-container">
+                                <div className="wrap1">
+                                    <div className="cube">
+                                        <img src="/images/mail_1.png" alt="이메일" />
+                                        <img src="/images/chat_1.png" alt="채팅" />
+                                        <img src="/images/phone_1.png" alt="전화" />
+                                        <img src="/images/sms_1.png" alt="문자" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="marquee-container">
+                                <div className="marquee">
+                                    <img src="/images/aa.gif" width="25" height="25" alt="" />
+                                    <img src="/images/dd.gif" width="25" height="25" alt="" />
+                                    <span className="custom-span">직지초35회 김천지부 동기연락망</span>
+                                    <img src="/images/dd.gif" width="25" height="25" alt="" />
+                                    <img src="/images/aa.gif" width="25" height="25" alt="" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <table className="custom-table">
+                            <thead>
+                                <tr>
+                                    <th className="col-no"><span>NO</span></th>
+                                    <th className="col-name"><span>이름</span></th>
+                                    <th className="col-tel"><span>전화번호</span></th>
+                                    <th className="col-addr address-header"><span className="addr-visible">거주지</span></th>
+                                    <th className="col-remark hide-mobile"><span>비고</span></th>
+                                    <th className="col-sms"><span>SMS</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {members.map((member, index) => (
+                                    <tr key={member._id}>
+                                        <td className="no_1">{index + 1}</td>
+                                        <td className="name_1">
+                                            <a href={`tel:${member.tel}`} className="name-link">
+                                                {member.name}
+                                            </a>
+                                        </td>
+                                        <td className="tel_1 member-tel-cell">
+                                            <a href={`tel:${member.tel}`} className="name-link">
+                                                {member.tel}
+                                            </a>
+                                        </td>
+                                        <td className="address_1">{member.addr}</td>
+                                        <td className="remark_1 hide-mobile">{member.remark}</td>
+                                        <td className="sms_1">
+                                            <a href={`sms:${member.sms || member.tel}`}>
+                                                <img src="/images/sms-4.png" alt="SMS" className="max-small sms-icon" />
+                                            </a>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 2000 }}>
+                    <button
+                        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                        style={{
+                            width: '40px', height: '40px', borderRadius: '50%', border: 'none',
+                            background: 'rgba(10, 132, 255, 0.7)', color: '#fff', fontSize: '20px',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                            backdropFilter: 'blur(4px)', boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
+                        }}
+                    >
+                        <i className="bi bi-arrow-up"></i>
+                    </button>
+                </div>
             </div>
         </div>
     );
