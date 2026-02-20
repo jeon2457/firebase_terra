@@ -36,6 +36,7 @@ function ReceiptViewContent() {
         } else if (status === "authenticated") {
             fetchImages();
         }
+        document.title = "영수증 열람";
     }, [status, currentYear, currentMonth]);
 
     const fetchImages = async () => {

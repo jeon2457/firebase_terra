@@ -22,6 +22,7 @@ export default function ReceiptUploadPage() {
         if (status === "unauthenticated") {
             router.push("/login");
         }
+        document.title = "영수증 업로드";
     }, [status, router]);
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {

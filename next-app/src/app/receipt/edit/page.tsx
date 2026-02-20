@@ -44,6 +44,7 @@ function ReceiptEditContent() {
             }
             fetchImages();
         }
+        document.title = "영수증 편집";
     }, [status, currentYear, currentMonth]);
 
     const fetchImages = async () => {

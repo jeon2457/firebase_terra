@@ -18,6 +18,7 @@ export default function BackupPage() {
         if (status === "unauthenticated") {
             router.push("/login");
         }
+        document.title = "데이터베이스 백업/복구";
     }, [status, router]);
 
     const addLog = (message: string, color: string = "#0f0") => {
