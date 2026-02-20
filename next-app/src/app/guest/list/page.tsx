@@ -12,6 +12,7 @@ export default function GuestListPage() {
     const router = useRouter();
 
     useEffect(() => {
+        document.title = "전화연락망 열람";
         if (status !== "authenticated") return;
         const ensureTheme = async () => {
             const res = await fetch("/api/theme");
