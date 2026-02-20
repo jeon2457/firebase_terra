@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 
@@ -26,8 +26,6 @@ export default function FeeStatusPage() {
     const [passMap, setPassMap] = useState<PassMap>({});
     const [monthlyFees, setMonthlyFees] = useState<{ [month: number]: number }>({});
     const [currentMonthFee, setCurrentMonthFee] = useState(20000);
-    const [lastApplyYear, setLastApplyYear] = useState(new Date().getFullYear());
-    const [lastApplyMonth, setLastApplyMonth] = useState(1);
     const [loading, setLoading] = useState(true);
 
     const [showFeeModal, setShowFeeModal] = useState(false);
@@ -40,10 +38,10 @@ export default function FeeStatusPage() {
     const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
     const [currentTarget, setCurrentTarget] = useState<any>(null);
     
-    // 툴팁 상태 (모든 사용자가能看到)
-    const [tooltipVisible, setTooltipVisible] = useState(false);
-    const [tooltipData, setTooltipData] = useState<any>(null);
-    const [tooltipTarget, setTooltipTarget] = useState<HTMLElement | null>(null);
+    // 툴팁 상태
+    const [showTooltip, setShowTooltip] = useState(false);
+    const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
+    const [tooltipMonth, setTooltipMonth] = useState(0);
 
     const [checkedMembers, setCheckedMembers] = useState<string[]>([]);
     const [checkAll, setCheckAll] = useState(false);
@@ -61,10 +59,15 @@ export default function FeeStatusPage() {
                     setYearDropdownOpen(false);
                 }
             }
+            // 툴팁 외부 클릭 시 닫기
+            if (showPopup || showTooltip) {
+                setShowPopup(false);
+                setShowTooltip(false);
+            }
         };
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [yearDropdownOpen]);
+    }, [yearDropdownOpen, showPopup, showTooltip]);
 
     useEffect(() => {
         if (status === "unauthenticated") {
@@ -83,8 +86,6 @@ export default function FeeStatusPage() {
                 setPassMap(res.data.passMap);
                 setMonthlyFees(res.data.monthlyFees);
                 setCurrentMonthFee(res.data.currentMonthFee);
-                setLastApplyYear(res.data.lastApplyYear);
-                setLastApplyMonth(res.data.lastApplyMonth);
                 setFeeAmount(res.data.currentMonthFee);
             }
         } catch (error) {
@@ -95,46 +96,40 @@ export default function FeeStatusPage() {
         }
     };
 
-    // 모든 사용자가能看到하는 툴팁 표시
-    const showTooltip = (e: React.MouseEvent, memberId: string, memberName: string, month: number, paid: number) => {
-        e.stopPropagation();
-        e.preventDefault();
-        
-        const memberData = passMap[memberId] || {};
-        const monthFee = monthlyFees[month] || currentMonthFee;
-        
-        setTooltipData({
-            memberId,
-            memberName,
-            month,
-            paid,
-            monthFee,
-            memberData,
-            monthlyFees,
-            clientX: e.clientX,
-            clientY: e.clientY
-        });
-        
-        setTooltipVisible(true);
-    };
-
+    // 관리자: 상태 변경 팝업
     const showChangePopup = (e: React.MouseEvent, memberId: string, month: number, paid: number) => {
         if (!isAdmin) return;
         e.stopPropagation();
+        e.preventDefault();
 
-        const target = e.target as HTMLElement;
+        const target = e.currentTarget;
         const rect = target.getBoundingClientRect();
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-        
-        const isRightSide = rect.left > window.innerWidth / 2;
         
         setPopupPosition({
-            top: rect.bottom + scrollTop + 5,
-            left: isRightSide ? (rect.right + scrollLeft - 150) : (rect.left + scrollLeft)
+            top: rect.bottom + window.scrollY + 8,
+            left: rect.left + window.scrollX - 50
         });
         setCurrentTarget({ memberId, month, paid });
         setShowPopup(true);
+        setShowTooltip(false);
+    };
+
+    // 일반 회원: 툴팁 표시 (guest 버전과 동일 방식)
+    const showMonthTooltip = (e: React.MouseEvent, month: number) => {
+        if (isAdmin) return;
+        e.stopPropagation();
+        e.preventDefault();
+
+        const target = e.currentTarget;
+        const rect = target.getBoundingClientRect();
+        
+        setTooltipPosition({
+            top: rect.bottom + window.scrollY + 8,
+            left: rect.left + window.scrollX - 50
+        });
+        setTooltipMonth(month);
+        setShowTooltip(true);
+        setShowPopup(false);
     };
 
     const confirmChange = async () => {
@@ -218,16 +213,6 @@ export default function FeeStatusPage() {
     if (currentDate.getMonth() === 11 && currentDate.getDate() >= 1) { years.push(currentYearValue + 1); }
     const uniqueYears = [...new Set(years)].sort((a, b) => a - b);
 
-    // 툴팁 위치 계산 (화면 기준 좌표 사용 - 스크롤에影響안받음)
-    const getTooltipStyle = () => {
-        if (!tooltipData?.clientX || !tooltipData?.clientY) return {};
-        return {
-            position: 'fixed' as const,
-            top: tooltipData.clientY + 15,
-            left: tooltipData.clientX - 130
-        };
-    };
-
     return (
         <div className="container-fluid py-4" style={{ background: "#f9f9fa", minHeight: "100vh" }}>
             <style jsx>{`
@@ -249,37 +234,33 @@ export default function FeeStatusPage() {
                 .modal-content-custom { background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 400px; }
                 .total-members-info { font-size: 14px; color: #555; font-weight: 700; margin-bottom: 8px; margin-left: 5px; }
 
-                /* 툴팁 스타일 */
-                .tooltip-popup { 
-                    position: absolute; 
-                    background: white; 
-                    border: 2px solid #1976d2; 
-                    border-radius: 12px; 
-                    box-shadow: 0 8px 30px rgba(0,0,0,0.3); 
-                    padding: 15px; 
-                    z-index: 3000; 
-                    width: 260px; 
-                    text-align: left;
+                /* 툴팁 스타일 (guest 버전과 동일) */
+                .month-popup {
+                    display: block;
+                    background: white;
+                    border: 1px solid #999;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                    padding: 12px;
+                    text-align: center;
+                    width: 120px;
                 }
-                .tooltip-popup::before {
-                    content: '';
+                .month-popup-arrow {
                     position: absolute;
-                    top: -10px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    border-width: 0 10px 10px 10px;
-                    border-style: solid;
-                    border-color: transparent transparent #1976d2 transparent;
+                    top: -6px;
+                    left: 50px;
+                    width: 10px;
+                    height: 10px;
+                    background: white;
+                    border-left: 1px solid #999;
+                    border-top: 1px solid #999;
+                    transform: rotate(45deg);
                 }
-                .tooltip-popup::after {
-                    content: '';
-                    position: absolute;
-                    top: -7px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    border-width: 0 9px 9px 9px;
-                    border-style: solid;
-                    border-color: transparent transparent white transparent;
+                .month-popup-msg {
+                    margin-bottom: 0;
+                    font-weight: bold;
+                    font-size: 14px;
+                    color: #333;
                 }
 
                 .mobile-header-bar { display: grid; grid-template-columns: 35px 75px 1fr; border: 1px solid #333; border-radius: 5px; overflow: hidden; margin-bottom: 10px; background: #fff; font-size: 13px; font-weight: 700; text-align: center; }
@@ -389,7 +370,10 @@ export default function FeeStatusPage() {
                                                 const paid = passMap[member._id]?.[m] || 0;
                                                 return (
                                                     <td key={m}>
-                                                        <span className={`ox ${paid?'o':'x'}`} onClick={(e) => isAdmin ? showChangePopup(e, member._id, m, paid) : showTooltip(e, member._id, member.name, m, paid)}>
+                                                        <span 
+                                                            className={`ox ${paid?'o':'x'}`} 
+                                                            onClick={(e) => isAdmin ? showChangePopup(e, member._id, m, paid) : showMonthTooltip(e, m)}
+                                                        >
                                                             {paid?'O':'X'}
                                                         </span>
                                                     </td>
@@ -424,7 +408,7 @@ export default function FeeStatusPage() {
                                                 const paid = passMap[member._id]?.[m] || 0;
                                                 return (
                                                     <div key={m} className="mc-month-cell">
-                                                        <span className={`m-ox ${paid?'o':'x'}`} onClick={(e) => isAdmin ? showChangePopup(e, member._id, m, paid) : showTooltip(e, member._id, member.name, m, paid)}>
+                                                        <span className={`m-ox ${paid?'o':'x'}`} onClick={(e) => isAdmin ? showChangePopup(e, member._id, m, paid) : showMonthTooltip(e, m)}>
                                                             {paid?'O':'X'}
                                                         </span>
                                                     </div>
@@ -436,7 +420,7 @@ export default function FeeStatusPage() {
                                                 const paid = passMap[member._id]?.[m] || 0;
                                                 return (
                                                     <div key={m} className="mc-month-cell">
-                                                        <span className={`m-ox ${paid?'o':'x'}`} onClick={(e) => isAdmin ? showChangePopup(e, member._id, m, paid) : showTooltip(e, member._id, member.name, m, paid)}>
+                                                        <span className={`m-ox ${paid?'o':'x'}`} onClick={(e) => isAdmin ? showChangePopup(e, member._id, m, paid) : showMonthTooltip(e, m)}>
                                                             {paid?'O':'X'}
                                                         </span>
                                                     </div>
@@ -468,38 +452,22 @@ export default function FeeStatusPage() {
             {/* 관리자용 팝업 */}
             {showPopup && (
                 <div className="status-popup" style={{ top: popupPosition.top, left: popupPosition.left }}>
-                    <p style={{fontWeight:'bold',fontSize:'13px'}}>{currentTarget?.month}월 - {currentTarget?.paid===1?'미납→납부':'납부→미납'}?</p>
+                    <div className="month-popup-arrow"></div>
+                    <p style={{fontWeight:'bold',fontSize:'13px',marginBottom:'5px'}}>{currentTarget?.month}월</p>
+                    <p style={{fontSize:'12px',marginBottom:'8px'}}>{currentTarget?.paid===1?'미납→납부':'납부→미납'}?</p>
                     <div className="d-flex gap-2 justify-content-center">
                         <button className="btn btn-primary btn-sm" onClick={confirmChange}>변경</button>
                         <button className="btn btn-secondary btn-sm" onClick={() => setShowPopup(false)}>취소</button>
                     </div>
                 </div>
             )}
-            {showPopup && <div style={{position:'fixed',inset:0,zIndex:1999} } onClick={() => setShowPopup(false)} />}
 
-            {/* 회원용 툴팁 */}
-            {tooltipVisible && tooltipData && (
-                <>
-                    <div className="tooltip-popup" style={getTooltipStyle()}>
-                        <div style={{marginBottom:'10px',borderBottom:'1px solid #eee',paddingBottom:'8px'}}>
-                            <strong>{tooltipData.memberName}</strong> ({tooltipData.month}월)
-                        </div>
-                        <div style={{fontSize:'13px',lineHeight:'1.6'}}>
-                            {Object.entries(tooltipData.memberData || {}).map(([m, paid]) => {
-                                const monthNum = parseInt(m);
-                                const isPaid = paid === 1;
-                                const monthFee = tooltipData.monthlyFees?.[monthNum] || 20000;
-                                return (
-                                    <div key={m} style={{display:'flex',justifyContent:'space-between',padding:'3px 0',background:monthNum===tooltipData.month?'#e3f2fd':'transparent'}}>
-                                        <span>{m}월</span>
-                                        <span style={{color:isPaid?'green':'red',fontWeight:'bold'}}>{isPaid?'O':'X'} ({isPaid?monthFee.toLocaleString():'-'}원)</span>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                    <div style={{position:'fixed',inset:0,zIndex:2999}} onClick={() => setTooltipVisible(false)} />
-                </>
+            {/* 일반 회원용 툴팁 (guest 버전과 동일) */}
+            {showTooltip && (
+                <div className="month-popup" style={{ top: tooltipPosition.top, left: tooltipPosition.left }}>
+                    <div className="month-popup-arrow"></div>
+                    <p className="month-popup-msg">{tooltipMonth}월</p>
+                </div>
             )}
 
             {/* 모달들 */}
