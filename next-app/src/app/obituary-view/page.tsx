@@ -529,19 +529,7 @@ function ObituaryViewContent() {
 }
 
 export default function ObituaryViewPage() {
-    const { data: session, status } = useSession();
-    const router = useRouter();
-
-    useEffect(() => {
-        if (status === "unauthenticated") {
-            router.push("/login");
-        }
-    }, [status, router]);
-
-    if (status === "loading") {
-        return <div className="text-center mt-5">Loading...</div>;
-    }
-
+    // 로그인 없이所有人都能看到 부고장 (공개 페이지)
     return (
         <Suspense fallback={<div className="text-center mt-5">Loading...</div>}>
             <ObituaryViewContent />

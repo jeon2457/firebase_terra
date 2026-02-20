@@ -1,14 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { MongoClient, ObjectId } from 'mongodb';
 
-const uri = process.env.MONGODB_URI!;
-const client = new MongoClient(uri);
+// MongoDB 연결 캐시
+let cachedClient: MongoClient | null = null;
+
+async function getClient() {
+    if (cachedClient) {
+        return cachedClient;
+    }
+    const uri = process.env.MONGODB_URI!;
+    cachedClient = new MongoClient(uri);
+    await cachedClient.connect();
+    return cachedClient;
+}
 
 export async function POST(request: NextRequest) {
+    let client: MongoClient | null = null;
     try {
         const obituaryData = await request.json();
         
-        await client.connect();
+        client = await getClient();
         const database = client.db('vercel_mongodb');
         const collection = database.collection('obituaries');
         
@@ -27,17 +38,16 @@ export async function POST(request: NextRequest) {
             success: false, 
             error: '부고장 저장에 실패했습니다.' 
         }, { status: 500 });
-    } finally {
-        await client.close();
     }
 }
 
 export async function GET(request: NextRequest) {
+    let client: MongoClient | null = null;
     try {
         const { searchParams } = new URL(request.url);
         const id = searchParams.get('id');
         
-        await client.connect();
+        client = await getClient();
         const database = client.db('vercel_mongodb');
         const collection = database.collection('obituaries');
         
@@ -57,7 +67,5 @@ export async function GET(request: NextRequest) {
             success: false, 
             error: '부고장 조회에 실패했습니다.' 
         }, { status: 500 });
-    } finally {
-        await client.close();
     }
 }
