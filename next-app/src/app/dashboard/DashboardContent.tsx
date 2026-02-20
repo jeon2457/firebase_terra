@@ -375,10 +375,18 @@ export default function DashboardContent({ theme = "book" }: Props) {
         if (!session?.user) return "사용자";
         const user = session.user as any;
         let name = user.name || "사용자";
+        
+        // Get position from remark field
+        const position = user.remark;
+        
         if (user.user_level >= 10) {
             name += " (관리자)";
         } else {
-            name += " 님";
+            // For guests (user_level < 10), show position if available (회장 or 총무)
+            if (position && (position.includes("회장") || position.includes("총무"))) {
+                name += ` ${position}`;
+            }
+            name += "님";
         }
         return name;
     }, [session]);
@@ -971,7 +979,10 @@ export default function DashboardContent({ theme = "book" }: Props) {
                     <>
                         <h2 className="section-title">회원관리 도서관{theme !== "book" ? ` (${theme})` : ""}</h2>
                         <div className="admin-info">
-                            👤 내 정보: <strong>{userDisplayName}</strong> (Level {(session?.user as any)?.user_level || 0})
+                            👤 내 정보: <strong>{userDisplayName}</strong>
+                            {(session?.user as any)?.user_level >= 10 && (
+                                <span> (Level {(session?.user as any)?.user_level || 0})</span>
+                            )}
                             {(theme === "list" && (session?.user as any)?.user_level < 10) && (
                                 <button
                                     className="btn btn-sm btn-outline-secondary ms-2"
