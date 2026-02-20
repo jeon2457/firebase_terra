@@ -113,7 +113,17 @@ export default function GuestMembersViewPage() {
 
     const userLevel = (session?.user as any)?.user_level || 0;
     const userName = (session?.user as any)?.name || "Guest";
-    const userDisplayText = userLevel >= 10 ? `관리자: ${userName}님` : `회원: ${userName}님`;
+    const userRemark = (session?.user as any)?.remark || "";
+    
+    // Show position for chairman (회장) or treasurer (총무)
+    const userDisplayText = userLevel >= 10 
+        ? `관리자: ${userName}님` 
+        : (userRemark.includes("회장") || userRemark.includes("총무"))
+            ? `회원: ${userName} ${userRemark}님`
+            : `회원: ${userName}님`;
+    
+    // Check if current user is chairman or treasurer
+    const isChairmanOrTreasurer = userRemark.includes(" 회장") || userRemark.includes("총무") || userRemark === "회장" || userRemark === "총무";
 
     return (
         <div className="wrapper">
@@ -199,11 +209,11 @@ export default function GuestMembersViewPage() {
                     white-space: nowrap;
                 }
                 .back-btn {
-                    font-size: 12px;
+                    font-size: 8px;
                     color: #fff;
                     background: #4A9EFF;
-                    padding: 4px 10px;
-                    border-radius: 5px;
+                    padding: 3px 6px;
+                    border-radius: 4px;
                     border: none;
                     cursor: pointer;
                 }
@@ -465,7 +475,28 @@ export default function GuestMembersViewPage() {
                                                 {member.tel}
                                             </a>
                                         </td>
-                                        <td className="address_1">{member.addr}</td>
+                                        <td className="address_1">
+                                            {isChairmanOrTreasurer ? (
+                                                member.remark?.includes("회장") || member.remark?.includes("총무") ? (
+                                                    <a
+                                                        href={`sms:${members
+                                                            .filter(m => m.tel && m.tel !== member.tel)
+                                                            .map(m => m.tel.replace(/-/g, ''))
+                                                            .join(',')}`}
+                                                        style={{ color: '#ffffff', textDecoration: 'none', cursor: 'pointer', fontWeight: 700 }}
+                                                        title="전체 회원에게 문자 보내기"
+                                                    >
+                                                        {member.addr}
+                                                    </a>
+                                                ) : (
+                                                    <span style={{ color: '#ffffff', textDecoration: 'none', cursor: 'default', fontWeight: 700 }}>
+                                                        {member.addr}
+                                                    </span>
+                                                )
+                                            ) : (
+                                                member.addr
+                                            )}
+                                        </td>
                                         <td className="remark_1 hide-mobile">{member.remark}</td>
                                         <td className="sms_1">
                                             <a href={`sms:${member.sms || member.tel}`}>
