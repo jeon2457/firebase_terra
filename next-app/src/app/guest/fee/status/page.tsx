@@ -38,10 +38,11 @@ export default function GuestFeeStatusPage() {
     const handleShowMonthPopup = (el: HTMLElement, month: number) => {
         const rect = el.getBoundingClientRect();
         
+        // 툴팁 이동 - 좌측으로 5픽셀 추가 이동
         // position: fixed를 사용하여 스크롤에 영향 안 받게 함
         setPopupPosition({
             top: rect.bottom + 10,  // 바로 아래
-            left: rect.left - 38     // 중앙 정렬 (약간 좌측)
+            left: rect.left - 43     // 중앙 정렬 (좌측 이동)
         });
         setPopupMonth(month);
         setShowPopup(true);
