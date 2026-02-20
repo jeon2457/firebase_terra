@@ -38,15 +38,18 @@ function ObituaryViewContent() {
     useEffect(() => {
         if (id) {
             fetchObituary();
-            fetchMembers();
-            // URL에서 mode=view 파라미터 확인
-            const urlParams = new URLSearchParams(window.location.search);
-            setIsViewMode(urlParams.get('mode') === 'view');
+            // view 모드일 때는 회원 목록 조회 안 함
+            const viewMode = searchParams.get('mode') === 'view';
+            setIsViewMode(viewMode);
+            
+            if (!viewMode) {
+                fetchMembers();
+            }
         } else {
             setError('부고장 ID가 없습니다.');
             setLoading(false);
         }
-    }, [id]);
+    }, [id, searchParams]);
 
     const fetchObituary = async () => {
         try {
