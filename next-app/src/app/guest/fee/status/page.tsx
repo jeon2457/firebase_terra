@@ -30,6 +30,23 @@ export default function GuestFeeStatusPage() {
 
     const [showGuideModal, setShowGuideModal] = useState(false);
     const [yearDropdownOpen, setYearDropdownOpen] = useState(false);
+    const [showPopup, setShowPopup] = useState(false);
+    const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
+    const [popupMonth, setPopupMonth] = useState(0);
+
+    // 월별 툴팁형 팝업 표시 함수
+    const handleShowMonthPopup = (el: HTMLElement, month: number) => {
+        const rect = el.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+        
+        setPopupPosition({
+            top: rect.bottom + scrollTop + 8,
+            left: rect.left + scrollLeft - 50
+        });
+        setPopupMonth(month);
+        setShowPopup(true);
+    };
 
     const todayMonth = new Date().getMonth() + 1;
     const todayYear = new Date().getFullYear();
@@ -320,7 +337,13 @@ export default function GuestFeeStatusPage() {
                                                 const paid = passMap[member._id]?.[m] || 0;
                                                 return (
                                                     <td key={m}>
-                                                        <span className={`ox ${paid ? 'o' : 'x'}`} data-month={m} data-paid={paid}>
+                                                        <span 
+                                                            className={`ox ${paid ? 'o' : 'x'}`} 
+                                                            data-month={m} 
+                                                            data-paid={paid}
+                                                            onClick={(e) => handleShowMonthPopup(e.currentTarget, m)}
+                                                            style={{ cursor: 'pointer' }}
+                                                        >
                                                             {paid ? 'O' : 'X'}
                                                         </span>
                                                     </td>
@@ -356,7 +379,12 @@ export default function GuestFeeStatusPage() {
                                                 const paid = passMap[member._id]?.[m] || 0;
                                                 return (
                                                     <div key={m} className="mc-month-cell">
-                                                        <span className={`m-ox ${paid ? 'o' : 'x'}`}>
+                                                        <span 
+                                                            className={`m-ox ${paid ? 'o' : 'x'}`}
+                                                            data-month={m}
+                                                            onClick={(e) => handleShowMonthPopup(e.currentTarget, m)}
+                                                            style={{ cursor: 'pointer' }}
+                                                        >
                                                             {paid ? 'O' : 'X'}
                                                         </span>
                                                     </div>
@@ -368,7 +396,12 @@ export default function GuestFeeStatusPage() {
                                                 const paid = passMap[member._id]?.[m] || 0;
                                                 return (
                                                     <div key={m} className="mc-month-cell">
-                                                        <span className={`m-ox ${paid ? 'o' : 'x'}`}>
+                                                        <span 
+                                                            className={`m-ox ${paid ? 'o' : 'x'}`}
+                                                            data-month={m}
+                                                            onClick={(e) => handleShowMonthPopup(e.currentTarget, m)}
+                                                            style={{ cursor: 'pointer' }}
+                                                        >
                                                             {paid ? 'O' : 'X'}
                                                         </span>
                                                     </div>
@@ -392,6 +425,23 @@ export default function GuestFeeStatusPage() {
                             );
                         })}
                     </div>
+                    
+                    {/* 월별 툴팁형 팝업 */}
+                    {showPopup && (
+                        <div 
+                            className="month-popup"
+                            style={{
+                                display: 'block',
+                                position: 'fixed',
+                                top: popupPosition.top,
+                                left: popupPosition.left,
+                                zIndex: 2000,
+                            }}
+                        >
+                            <div className="month-popup-arrow"></div>
+                            <p className="month-popup-msg">{popupMonth}월</p>
+                        </div>
+                    )}
                 </>
             )}
 
@@ -486,7 +536,7 @@ export default function GuestFeeStatusPage() {
                 </div>
             )}
             
-            {/* Modal Overlay Style */}
+            {/* Modal Overlay Style & Month Popup */}
             <style jsx>{`
                 .modal-overlay {
                     position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999;
@@ -494,6 +544,34 @@ export default function GuestFeeStatusPage() {
                 }
                 .modal-content-custom {
                     background: white; padding: 25px; border-radius: 12px; width: 95%; max-width: 420px;
+                }
+                /* 월별 툴팁형 팝업 스타일 */
+                .month-popup {
+                    display: none;
+                    background: white;
+                    border: 1px solid #999;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                    padding: 12px;
+                    text-align: center;
+                    width: 120px;
+                }
+                .month-popup-arrow {
+                    position: absolute;
+                    top: -6px;
+                    left: 55px;
+                    width: 10px;
+                    height: 10px;
+                    background: white;
+                    border-left: 1px solid #999;
+                    border-top: 1px solid #999;
+                    transform: rotate(45deg);
+                }
+                .month-popup-msg {
+                    margin-bottom: 0;
+                    font-weight: bold;
+                    font-size: 14px;
+                    color: #333;
                 }
             `}</style>
         </div>
