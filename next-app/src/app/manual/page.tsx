@@ -13,6 +13,7 @@ export default function ManualPage() {
         if (status === "unauthenticated") {
             router.push("/login");
         }
+        document.title = "시스템 매뉴얼";
     }, [status, router]);
 
     const copyTree = () => {
