@@ -28,15 +28,19 @@ export async function GET() {
           </div>
           
           <p style="font-size: 16px; line-height: 1.6;">
-            데이터베이스를 유지하려면 정기적으로 사이트에 접속하여 activity를 발생시켜주세요.
+            아래 버튼을 클릭하여 MongoDB activity를 발생시켜주세요.
           </p>
           
           <div style="text-align: center; margin: 30px 0;">
-            <a href="https://vercel-terraone.vercel.app" 
-               style="display: inline-block; background: #1976d2; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">
-              사이트 접속하기 →
+            <a href="https://vercel-terraone.vercel.app/guest/members/view" 
+               style="display: inline-block; background: #28a745; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+              🗂️ MongoDB activity 활동 체크 →
             </a>
           </div>
+          
+          <p style="font-size: 14px; color: #666; line-height: 1.6;">
+            * 버튼을 클릭하면 회원연락망 페이지가 열리며, 데이터베이스 읽기 활동이 발생합니다.
+          </p>
           
           <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
           
