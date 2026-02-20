@@ -41,7 +41,7 @@ export default function GuestFeeStatusPage() {
         // position: fixed를 사용하여 스크롤에 영향 안 받게 함
         setPopupPosition({
             top: rect.bottom + 10,  // 바로 아래
-            left: rect.left - 30     // 중앙 정렬
+            left: rect.left - 38     // 중앙 정렬 (약간 좌측)
         });
         setPopupMonth(month);
         setShowPopup(true);

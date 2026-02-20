@@ -99,7 +99,7 @@ export default function FeeStatusPage() {
         // position: fixed를 사용하여 스크롤에 영향 안 받게 함
         setPopupPosition({
             top: rect.bottom + 10,
-            left: rect.left - 30
+            left: rect.left - 38
         });
         setPopupMonth(month);
         setCurrentTarget({ memberId, month, paid });
