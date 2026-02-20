@@ -17,7 +17,32 @@ export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     
     const router = useRouter();
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
+
+    // [수정] 로딩 중에는 간단한 로딩 화면 표시 (이미지 플래시 방지)
+    if (status === "loading") {
+        return (
+            <div style={{
+                height: '100vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+            }}>
+                <img 
+                    src="/images/clova.png" 
+                    alt="로고" 
+                    style={{ 
+                        width: '80px', 
+                        height: '80px', 
+                        borderRadius: '50%', 
+                        border: '4px solid rgba(255,255,255,0.3)',
+                        opacity: 0.8
+                    }}
+                />
+            </div>
+        );
+    }
 
     useEffect(() => {
         if (session) {
