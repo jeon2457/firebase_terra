@@ -21,6 +21,7 @@ export default function MemberEditListPage() {
         } else if (status === "authenticated") {
             fetchMembers();
         }
+        document.title = "회원 편집";
     }, [status, router]);
 
     const fetchMembers = async () => {

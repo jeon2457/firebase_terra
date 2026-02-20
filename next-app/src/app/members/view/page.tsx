@@ -29,6 +29,7 @@ export default function MembersViewPage() {
         } else if (status === "authenticated") {
             fetchMembers();
         }
+        document.title = "회원연락망 열람";
     }, [status, router]);
 
     // Clock Timer

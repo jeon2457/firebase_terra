@@ -31,6 +31,7 @@ export default function MemberInputPage() {
         if (status === "unauthenticated") {
             router.push("/login");
         }
+        document.title = "회원 등록";
     }, [status, router]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
