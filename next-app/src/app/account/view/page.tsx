@@ -248,7 +248,7 @@ function AccountViewContent() {
                                     <td>{idx + 1}</td>
                                     <td>{tr.date ? tr.date.split(' ')[0] : '-'}</td>
                                     <td>{tr.category}</td>
-                                    <td className="text-end fw-bold text-primary">{formatNumber(tr.amount)}</td>
+                                    <td className="text-end fw-bold">{formatNumber(tr.amount)}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -259,7 +259,7 @@ function AccountViewContent() {
                             </tr>
                             <tr>
                                 <td colSpan={3} className="text-end">월수입 누계(1~{currentMonth}월):</td>
-                                <td className="text-end">{formatNumber(cumulativeIncome)}</td>
+                                <td className="text-end text-primary">{formatNumber(cumulativeIncome)}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -287,18 +287,18 @@ function AccountViewContent() {
                                     <td>{idx + 1}</td>
                                     <td>{tr.date ? tr.date.split(' ')[0] : '-'}</td>
                                     <td>{tr.category}</td>
-                                    <td className="text-end fw-bold text-danger">{formatNumber(tr.amount)}</td>
+                                    <td className="text-end fw-bold">{formatNumber(tr.amount)}</td>
                                 </tr>
                             ))}
                         </tbody>
                         <tfoot className="table-light fw-bold">
                             <tr>
                                 <td colSpan={3} className="text-end">월지출 합계:</td>
-                                <td className="text-end text-danger">{formatNumber(monthExpenseTotal)}</td>
+                                <td className="text-end text-primary">{formatNumber(monthExpenseTotal)}</td>
                             </tr>
                             <tr>
                                 <td colSpan={3} className="text-end">월지출 누계(1~{currentMonth}월):</td>
-                                <td className="text-end">{formatNumber(cumulativeExpense)}</td>
+                                <td className="text-end text-primary">{formatNumber(cumulativeExpense)}</td>
                             </tr>
                         </tfoot>
                     </table>
