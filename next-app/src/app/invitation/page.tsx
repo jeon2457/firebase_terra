@@ -41,6 +41,7 @@ export default function InvitationPage() {
         if (status === "unauthenticated") {
             router.push("/login");
         }
+        document.title = "부고장 · 청첩장 만들기";
     }, [status, router]);
 
     useEffect(() => {
