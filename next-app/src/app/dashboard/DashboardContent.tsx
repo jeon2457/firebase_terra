@@ -363,7 +363,6 @@ export default function DashboardContent({ theme = "book" }: Props) {
         "/guest/members/view",
         "/account/view",
         "/receipt/view",
-        "/fee/status",
         "/guest/fee/status",
         "#financial",
         "#excel",
