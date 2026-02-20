@@ -33,12 +33,12 @@ export const authOptions = {
                 if (!isValid) {
                     // Fallback for plain text if migration is in progress (optional)
                     if (credentials.password === user.password) {
-                        return { id: user.id, name: user.name, user_level: user.user_level };
+                        return { id: user.id, name: user.name, user_level: user.user_level, remark: user.remark };
                     }
                     throw new Error("아이디 또는 비밀번호가 일치하지 않습니다.");
                 }
 
-                return { id: user.id, name: user.name, user_level: user.user_level };
+                return { id: user.id, name: user.name, user_level: user.user_level, remark: user.remark };
             }
         })
     ],
@@ -50,6 +50,7 @@ export const authOptions = {
             if (user) {
                 token.id = user.id;
                 token.user_level = user.user_level;
+                token.remark = user.remark;
             }
             return token;
         },
@@ -57,6 +58,7 @@ export const authOptions = {
             if (token) {
                 session.user.id = token.id;
                 session.user.user_level = token.user_level;
+                session.user.remark = token.remark;
             }
             return session;
         }
