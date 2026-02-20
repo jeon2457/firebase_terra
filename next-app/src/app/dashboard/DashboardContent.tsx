@@ -343,6 +343,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
     const menuItems = [
 
         { title: "회원관리", icon: <Phone />, color: "bg-tel", path: "/members" },
+        { title: "전화연락망 열람", icon: <Phone />, color: "bg-tel", path: "/guest/members/view" },
         { title: "사용내역 입력", icon: <Pencil />, color: "bg-input", path: "/account/input" },
         { title: "사용내역 편집", icon: <Pencil />, color: "bg-edit", path: "/account/edit" },
         { title: "사용내역 열람", icon: <Eye />, color: "bg-view", path: "/account/view" },
@@ -359,7 +360,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
     ];
 
     const guestSpecificPaths = [
-        "/members/view",
+        "/guest/members/view",
         "/account/view",
         "/receipt/view",
         "/fee/status",
