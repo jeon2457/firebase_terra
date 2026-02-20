@@ -25,6 +25,7 @@ export default function ThemePage() {
         if (status === "unauthenticated") {
             router.push("/login");
         }
+        document.title = "디자인 테마 설정";
     }, [status, router]);
 
     useEffect(() => {

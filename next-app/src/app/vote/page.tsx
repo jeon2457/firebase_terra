@@ -49,6 +49,7 @@ export default function VotePage() {
             fetchPolls();
             checkVotedStatus();
         }
+        document.title = "투표하기";
     }, [status, router]);
 
     const fetchPolls = async () => {
