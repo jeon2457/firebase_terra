@@ -509,7 +509,7 @@ export default function GuestMembersViewPage() {
                         </table>
                     </div>
                 </div>
-
+                {/* 위로가기 버튼 */}
                 <div style={{ position: 'fixed', bottom: '2px', right: '28px', zIndex: 2000 }}>
                     <button
                         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
