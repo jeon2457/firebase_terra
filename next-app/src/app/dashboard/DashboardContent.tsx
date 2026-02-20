@@ -244,6 +244,13 @@ export default function DashboardContent({ theme = "book" }: Props) {
     const openMenuPath = async (path: string) => {
         const selected = menuItems.find(m => m.path === path);
         if (!selected) return;
+        
+        // 게스트는 월회비 입금현황을 /guest/fee/status로 이동
+        if (path === "/fee/status" && (session?.user as any)?.user_level < 10) {
+            router.push("/guest/fee/status");
+            return;
+        }
+        
         if (selected.path === "#financial") {
             const success = await loadFinancialData();
             if (success) setShowFinancial(true);
@@ -363,6 +370,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
         "/guest/members/view",
         "/account/view",
         "/receipt/view",
+        "/fee/status",
         "/guest/fee/status",
         "#financial",
         "#excel",
