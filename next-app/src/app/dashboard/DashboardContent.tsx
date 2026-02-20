@@ -359,9 +359,11 @@ export default function DashboardContent({ theme = "book" }: Props) {
     ];
 
     const guestSpecificPaths = [
+        "/members",
         "/members/view",
         "/account/view",
         "/receipt/view",
+        "/fee/status",
         "/guest/fee/status",
         "#financial",
         "#excel",
