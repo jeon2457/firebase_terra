@@ -241,7 +241,7 @@ export default function GuestMembersViewPage() {
                 .cube-container {
                     position: absolute;
                     top: 7px;
-                    left: 10px;
+                    left: 12px;
                     z-index: 1001;
                 }
                 .wrap1 {
@@ -371,7 +371,7 @@ export default function GuestMembersViewPage() {
                     .time-text { font-size: 1.1rem; }
                     .user-info-box { font-size: 10px; padding: 2px 6px; }
                     .wrap2 { top: 3.5rem; padding: 5px 42px 0 60px; height: 40px; }
-                    .cube-container { top: 50%; left: 1px; transform: translateY(-50%); }
+                    .cube-container { top: 50%; left: 3px; transform: translateY(-50%); }
                     .wrap1 { width: 22px; height: 22px; }
                     .cube { width: 22px; height: 22px; }
                     .cube img { width: 22px; height: 22px; top: 0; left: 0; }
