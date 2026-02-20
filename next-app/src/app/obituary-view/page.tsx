@@ -142,36 +142,23 @@ function ObituaryViewContent() {
     };
 
     const copyToClipboard = async () => {
-        if (!obituary) return;
-
-        const text = `
-${obituary.intro}
-
-■ 고인 정보
-故人 성함: ${obituary.deceasedName}
-향년: ${obituary.age}세
-별세일: ${obituary.deathDate}
-${obituary.deathTime ? `별세시간: ${obituary.deathTime}` : ''}
-
-■ 빈소 정보
-빈소 위치: ${obituary.funeralHome}
-${obituary.funeralAddress ? `빈소 주소: ${obituary.funeralAddress}` : ''}
-발인일시: ${obituary.departureTime}
-장지: ${obituary.cemetery}
-
-■ 상주 정보
-${obituary.mourners}
-
-${obituary.bankInfo ? `■ 마음 전하실 곳\n${obituary.bankInfo}` : ''}
-
-${obituary.message}
-        `.trim();
-
+        // 현재 페이지의 URL을 복사
+        const url = window.location.href;
+        
         try {
-            await navigator.clipboard.writeText(text);
-            alert('부고장이 복사되었습니다. 카카오톡/문자에 붙여넣기 하세요.');
+            await navigator.clipboard.writeText(url);
+            alert('부고장 주소가 복사되었습니다. 카카오톡/문자에 붙여넣기 하세요.');
         } catch {
-            alert('복사되었습니다.');
+            // 폴백: 다른 브라우저를 위한 방법
+            const textArea = document.createElement('textarea');
+            textArea.value = url;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert('부고장 주소가 복사되었습니다. 카카오톡/문자에 붙여넣기 하세요.');
         }
     };
 
