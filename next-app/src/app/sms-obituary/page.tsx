@@ -54,6 +54,7 @@ export default function SmsObituaryPage() {
         if (status === "unauthenticated") {
             router.push("/login");
         }
+        document.title = "부고장 문자발송";
     }, [status, router]);
 
     useEffect(() => {

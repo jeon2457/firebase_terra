@@ -53,6 +53,7 @@ export default function SmsWeddingPage() {
         if (status === "unauthenticated") {
             router.push("/login");
         }
+        document.title = "청첩장 문자발송";
     }, [status, router]);
 
     useEffect(() => {
