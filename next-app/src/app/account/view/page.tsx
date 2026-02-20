@@ -56,6 +56,7 @@ function AccountViewContent() {
         } else if (status === "authenticated") {
             fetchData();
         }
+        document.title = "사용내역 열람";
     }, [status, currentYear]);
 
     const fetchData = async () => {

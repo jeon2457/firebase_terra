@@ -69,6 +69,7 @@ export default function FeeStatusPage() {
         } else if (status === "authenticated") {
             fetchData();
         }
+        document.title = "월회비 입금현황";
     }, [status, year]);
 
     const fetchData = async () => {

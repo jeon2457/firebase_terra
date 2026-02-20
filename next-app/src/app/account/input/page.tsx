@@ -36,6 +36,7 @@ export default function AccountInputPage() {
                 time: `${hours}:${minutes}`
             }));
         }
+        document.title = "사용내역 입력";
     }, [status, router]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

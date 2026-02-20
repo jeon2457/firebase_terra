@@ -27,6 +27,7 @@ export default function GuestMembersViewPage() {
         } else if (status === "authenticated") {
             fetchMembers();
         }
+        document.title = "전화연락망 열람";
     }, [status, router]);
 
     // Clock Timer

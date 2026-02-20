@@ -57,6 +57,7 @@ function AccountEditContent() {
             }
             fetchData();
         }
+        document.title = "사용내역 편집";
     }, [status, currentYear]);
 
     const fetchData = async () => {
