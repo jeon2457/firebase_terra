@@ -514,7 +514,7 @@ export default function GuestMembersViewPage() {
                     <button
                         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                         style={{
-                            width: '40px', height: '40px', borderRadius: '50%', border: 'none',
+                            width: '30px', height: '30px', borderRadius: '50%', border: 'none',
                             background: 'rgba(10, 132, 255, 0.7)', color: '#fff', fontSize: '20px',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
                             backdropFilter: 'blur(4px)', boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
