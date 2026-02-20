@@ -125,7 +125,14 @@ export default function MembersViewPage() {
 
     const userLevel = (session?.user as any)?.user_level || 0;
     const userName = (session?.user as any)?.name || "Guest";
-    const userDisplayText = userLevel >= 10 ? `관리자: ${userName}님` : `회원: ${userName}님`;
+    const userRemark = (session?.user as any)?.remark || "";
+    
+    // Show position for chairman (회장) or treasurer (총무)
+    const userDisplayText = userLevel >= 10 
+        ? `관리자: ${userName}님` 
+        : (userRemark.includes("회장") || userRemark.includes("총무"))
+            ? `회원: ${userName} ${userRemark}님`
+            : `회원: ${userName}님`;
 
     return (
         <div className="wrapper">
