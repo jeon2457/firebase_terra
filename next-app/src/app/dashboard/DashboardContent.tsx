@@ -359,7 +359,6 @@ export default function DashboardContent({ theme = "book" }: Props) {
     ];
 
     const guestSpecificPaths = [
-        "/members",
         "/members/view",
         "/account/view",
         "/receipt/view",
@@ -1009,7 +1008,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
                                 <div
                                     key={idx}
                                     className={`icon-item ${selectedPage === item.path ? 'active' : ''}`}
-                                    onClick={() => setSelectedPage(item.path)}
+                                    onClick={() => openMenuPath(item.path)}
                                 >
                                     <div className={`icon-box icon-${item.color}`}>
                                         {item.icon}
@@ -1026,7 +1025,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
                                 <div
                                     key={idx}
                                     className={`list-item ${selectedPage === item.path ? 'active' : ''}`}
-                                    onClick={() => setSelectedPage(item.path)}
+                                    onClick={() => openMenuPath(item.path)}
                                 >
                                     <div className="list-left">
                                         <div className="list-icon">{item.icon}</div>
