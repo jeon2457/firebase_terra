@@ -145,16 +145,19 @@ function ObituaryViewContent() {
     };
 
     const copyToClipboard = async () => {
-        // 현재 페이지의 URL을 복사
-        const url = window.location.href;
+        // 공유용 URL 생성 (mode=view 파라미터 추가)
+        const baseUrl = `${window.location.origin}${window.location.pathname}`;
+        const params = new URLSearchParams(window.location.search);
+        params.set('mode', 'view');
+        const shareUrl = `${baseUrl}?${params.toString()}`;
         
         try {
-            await navigator.clipboard.writeText(url);
+            await navigator.clipboard.writeText(shareUrl);
             alert('부고장 주소가 복사되었습니다. 카카오톡/문자에 붙여넣기 하세요.');
         } catch {
             // 폴백: 다른 브라우저를 위한 방법
             const textArea = document.createElement('textarea');
-            textArea.value = url;
+            textArea.value = shareUrl;
             textArea.style.position = 'fixed';
             textArea.style.left = '-999999px';
             document.body.appendChild(textArea);
