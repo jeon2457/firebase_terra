@@ -497,8 +497,13 @@ function ObituaryViewContent() {
                                 </>
                             )}
 
-                            <div style={{ textAlign: 'center', marginTop: '40px', fontSize: '1.1rem' }}>
-                                {obituary.message}
+                            <div style={{ textAlign: 'center', marginTop: '40px', fontSize: '1.1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                                <img 
+                                    src="/images/gukha.png" 
+                                    alt="추모" 
+                                    style={{ height: '1.2em', verticalAlign: 'middle' }}
+                                />
+                                <span>{obituary.message}</span>
                             </div>
                         </div>
 
