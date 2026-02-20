@@ -510,7 +510,7 @@ export default function GuestMembersViewPage() {
                     </div>
                 </div>
 
-                <div style={{ position: 'fixed', bottom: '2px', right: '25px', zIndex: 2000 }}>
+                <div style={{ position: 'fixed', bottom: '2px', right: '28px', zIndex: 2000 }}>
                     <button
                         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                         style={{
