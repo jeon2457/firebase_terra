@@ -136,7 +136,17 @@ export default function GuestFeeStatusPage() {
             <style jsx>{`
                 body { background: #f9f9f9; margin: 20px 5px 10px 5px; }
                 
-                .admin-info { text-align: right; font-size: 15px; color: #6c757d; margin-bottom: 20px; }
+                .admin-info { text-align: right; margin-bottom: 20px; }
+                .user-info-box {
+                    font-size: 13px;
+                    color: #6c757d;
+                    background: #f1f3f5;
+                    padding: 4px 12px;
+                    border-radius: 20px;
+                    border: 1px solid #dee2e6;
+                    display: inline-flex;
+                    align-items: center;
+                }
                 .header-box { display: grid; grid-template-columns: auto 1fr auto; align-items: center; margin-bottom: 10px; gap: 10px; }
                 .title-btn { background: #1976d2; color: #fff; padding: 14px 28px; border-radius: 30px; font-weight: 800; font-size: 18px; white-space: nowrap; }
                 .fee-btn { background: #eee; padding: 8px 15px; border-radius: 6px; white-space: nowrap; cursor: default; transition: background 0.2s; }
@@ -239,7 +249,11 @@ export default function GuestFeeStatusPage() {
                     .header-box > div:nth-child(2) { order: 1; display: flex; justify-content: center; }
                     .header-box > div:nth-child(1) { order: 2; display: flex; justify-content: flex-start; }
                     .header-box > div:nth-child(3) { order: 3; display: flex; justify-content: flex-end; gap: 8px; }
-                    .admin-info { text-align: right; font-size: 12px; margin-bottom: 20px; }
+                    .admin-info { text-align: right; margin-bottom: 15px; }
+                    .user-info-box {
+                        font-size: 11px;
+                        padding: 3px 10px;
+                    }
                     .help-btn { padding: 6px 10px; font-size: 12px; border-radius: 12px; }
                     .title-btn { font-size: 16px; padding: 10px 20px; text-align: center; width: 100%; }
                     .fee-btn { font-size: 11px; padding: 6px 10px; white-space: nowrap; }
@@ -259,8 +273,13 @@ export default function GuestFeeStatusPage() {
             `}</style>
 
             <div className="admin-info">
-                <span className="badge bg-dark">전용 열람 모드</span>
-                👤 <strong>{(session?.user as any)?.name || '방문자'}</strong> (데이터 조회 가능)
+                <div className="user-info-box">
+                    👤 {session?.user ? (
+                        <><strong>{(session?.user as any)?.name}</strong> 님 ({(session?.user as any)?.remark || '회원'})</>
+                    ) : (
+                        "방문자"
+                    )}
+                </div>
             </div>
 
             <div className="header-box">
