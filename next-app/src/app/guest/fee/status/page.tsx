@@ -28,7 +28,11 @@ export default function GuestFeeStatusPage() {
     const [currentMonthFee, setCurrentMonthFee] = useState(20000);
     const [loading, setLoading] = useState(true);
 
+    const [showFeeModal, setShowFeeModal] = useState(false);
     const [showGuideModal, setShowGuideModal] = useState(false);
+    const [feeYear, setFeeYear] = useState(new Date().getFullYear());
+    const [feeMonth, setFeeMonth] = useState(new Date().getMonth() + 1);
+    const [feeAmount, setFeeAmount] = useState(20000);
     const [yearDropdownOpen, setYearDropdownOpen] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
     const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
@@ -84,6 +88,9 @@ export default function GuestFeeStatusPage() {
                 setPassMap(res.data.passMap);
                 setMonthlyFees(res.data.monthlyFees);
                 setCurrentMonthFee(res.data.currentMonthFee);
+                setFeeYear(res.data.lastApplyYear || new Date().getFullYear());
+                setFeeMonth(res.data.lastApplyMonth || 1);
+                setFeeAmount(res.data.currentMonthFee);
             }
         } catch (error) {
             console.error("Failed to fetch data:", error);
@@ -149,10 +156,24 @@ export default function GuestFeeStatusPage() {
                 }
                 .header-box { display: grid; grid-template-columns: auto 1fr auto; align-items: center; margin-bottom: 10px; gap: 10px; }
                 .title-btn { background: #1976d2; color: #fff; padding: 14px 28px; border-radius: 30px; font-weight: 800; font-size: 18px; white-space: nowrap; }
-                .fee-btn { background: #eee; padding: 8px 15px; border-radius: 6px; white-space: nowrap; cursor: default; transition: background 0.2s; }
+                .fee-btn { background: #eee; padding: 8px 15px; border-radius: 6px; white-space: nowrap; cursor: pointer; transition: background 0.2s; }
                 .fee-btn:hover { background: #ddd; }
                 .help-btn { background: #fff3e0; color: #f57c00; border: 1px solid #ffe0b2; padding: 8px 15px; border-radius: 15px; font-weight: bold; cursor: pointer; white-space: nowrap; }
                 .help-btn:hover { background: #ffe0b2; }
+
+                .fee-notice-box {
+                    background-color: #fff0f3;
+                    border: 1px solid #ffe3e3;
+                    border-radius: 8px;
+                    padding: 15px;
+                    margin-bottom: 20px;
+                    text-align: center;
+                    color: #d63384;
+                    font-weight: 700;
+                    font-size: 14px;
+                    line-height: 1.5;
+                    box-shadow: 0 2px 5px rgba(214, 51, 132, 0.05);
+                }
                 
                 /* PC Table Styles */
                 .ox { font-weight: bold; font-size: 18px; padding: 8px; display: inline-block; min-width: 32px; cursor: default; }
@@ -311,7 +332,7 @@ export default function GuestFeeStatusPage() {
                 </div>
                 <div className="d-flex align-items-center gap-2">
                     <button className="help-btn" onClick={() => setShowGuideModal(true)}>❓ 보는법</button>
-                    <div className="fee-btn" style={{ cursor: 'default' }}>
+                    <div className="fee-btn" onClick={() => setShowFeeModal(true)}>
                         월회비: {currentMonthFee.toLocaleString()}원
                     </div>
                 </div>
@@ -470,6 +491,45 @@ export default function GuestFeeStatusPage() {
             {/* ======================================================== */}
             {/* [수정됨] 안내 모달: 이미지 디자인 반영 */}
             {/* ======================================================== */}
+            {/* 월회비 확인 모달 (게스트용 - 수정 불가) */}
+            {showFeeModal && (
+                <div className="modal-overlay" onClick={() => setShowFeeModal(false)}>
+                    <div className="modal-content-custom" onClick={e => e.stopPropagation()}>
+                        <div className="text-center mb-3">
+                            <h5 style={{ fontWeight: 800, color: '#1976d2', margin: 0 }}>
+                                💰 월회비 정보 (읽기 전용)
+                            </h5>
+                        </div>
+
+                        <div className="mb-3">
+                            <label className="form-label fw-bold">적용 연도/월</label>
+                            <div className="d-flex gap-2">
+                                <input type="number" className="form-control" value={feeYear} disabled />
+                                <select className="form-select" value={feeMonth} disabled>
+                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => <option key={m} value={m}>{m}월</option>)}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="mb-4">
+                            <label className="form-label fw-bold">현재 월회비 (원)</label>
+                            <input type="number" className="form-control" value={feeAmount} disabled />
+                        </div>
+
+                        <div className="fee-notice-box">
+                            👉 {feeYear}년 {feeMonth}월부터 월회비가 {feeAmount?.toLocaleString()}원으로 변경되었습니다.
+                        </div>
+
+                        <div className="text-center text-muted mb-3" style={{ fontSize: '12px' }}>
+                            ※ 게스트 모드에서는 정보 수정이 불가능합니다.
+                        </div>
+
+                        <div className="d-flex gap-2 justify-content-center">
+                            <button className="btn btn-secondary w-100 fw-bold" onClick={() => setShowFeeModal(false)}>닫기</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {showGuideModal && (
                 <div className="modal-overlay" onClick={() => setShowGuideModal(false)}>
                     <div className="modal-content-custom" onClick={(e) => e.stopPropagation()}>
