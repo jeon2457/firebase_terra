@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../../auth/[...nextauth]/route';
 import dbConnect from '@/lib/mongodb';
 import AccountPass from '@/models/AccountPass';
+import mongoose from 'mongoose';
 
 export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
@@ -15,11 +16,13 @@ export async function POST(req: NextRequest) {
         const { memberId, year, month, paid } = await req.json();
 
         // 기존 레코드 찾기 또는 생성
-        const existing = await AccountPass.findOne({
-            member_id: memberId,
+        const query = {
+            member_id: new mongoose.Types.ObjectId(memberId),
             pay_year: year,
             pay_month: month
-        });
+        };
+
+        const existing = await AccountPass.findOne(query);
 
         if (existing) {
             // 업데이트
@@ -28,9 +31,7 @@ export async function POST(req: NextRequest) {
         } else {
             // 새로 생성
             await AccountPass.create({
-                member_id: memberId,
-                pay_year: year,
-                pay_month: month,
+                ...query,
                 paid: paid
             });
         }

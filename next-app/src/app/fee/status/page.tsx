@@ -124,35 +124,43 @@ export default function FeeStatusPage() {
     };
 
     const [currentTarget, setCurrentTarget] = useState<any>(null);
+    const [updating, setUpdating] = useState(false);
 
     const confirmChange = async () => {
-        if (!currentTarget) return;
+        if (!currentTarget || updating) return;
         const { memberId, month, paid } = currentTarget;
         const newPaid = paid === 1 ? 0 : 1;
 
+        setUpdating(true);
         try {
             const res = await axios.post('/api/fee/update', {
                 memberId, year, month, paid: newPaid
             });
 
-            // 성공 시 상태 업데이트
-            setPassMap((prev: PassMap) => {
-                const memberPass = prev[memberId] || {};
-                return {
-                    ...prev,
-                    [memberId]: {
-                        ...memberPass,
-                        [month]: newPaid
-                    }
-                };
-            });
+            if (res.data.success) {
+                // 성공 시 상태 업데이트
+                setPassMap((prev: PassMap) => {
+                    const memberPass = prev[memberId] || {};
+                    return {
+                        ...prev,
+                        [memberId]: {
+                            ...memberPass,
+                            [month]: newPaid
+                        }
+                    };
+                });
 
-            // 팝업 닫기
-            setShowPopup(false);
-            setCurrentTarget(null);
-        } catch (error) {
+                // 팝업 닫기
+                setShowPopup(false);
+                setCurrentTarget(null);
+            } else {
+                alert('업데이트 실패: ' + (res.data.message || '서버 오류'));
+            }
+        } catch (error: any) {
             console.error('Update failed:', error);
-            alert('업데이트 실패');
+            alert('업데이트 과정에서 오류가 발생했습니다: ' + (error.response?.data?.message || error.message));
+        } finally {
+            setUpdating(false);
         }
     };
 
@@ -488,10 +496,12 @@ export default function FeeStatusPage() {
                     {isAdmin ? (
                         <>
                             <p className="month-popup-msg">{popupMonth}월</p>
-                            <p style={{ fontSize: '12px', marginBottom: '8px' }}>{currentTarget?.paid === 1 ? '미납→납부' : '납부→미납'}?</p>
+                            <p style={{ fontSize: '12px', marginBottom: '8px' }}>{currentTarget?.paid === 1 ? '납부→미납' : '미납→납부'}?</p>
                             <div className="d-flex gap-2 justify-content-center">
-                                <button type="button" className="btn btn-primary btn-sm" onClick={confirmChange}>변경</button>
-                                <button type="button" className="btn btn-secondary btn-sm" onClick={() => setShowPopup(false)}>취소</button>
+                                <button type="button" className="btn btn-primary btn-sm" onClick={confirmChange} disabled={updating}>
+                                    {updating ? '처리중...' : '변경'}
+                                </button>
+                                <button type="button" className="btn btn-secondary btn-sm" onClick={() => setShowPopup(false)} disabled={updating}>취소</button>
                             </div>
                         </>
                     ) : (
