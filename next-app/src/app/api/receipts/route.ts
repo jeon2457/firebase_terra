@@ -12,8 +12,7 @@ cloudinary.config({
 });
 
 export async function GET(req: NextRequest) {
-    const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    // GET 요청은 세션 없이도 허용
 
     const searchParams = req.nextUrl.searchParams;
     const year = searchParams.get('year');
@@ -42,12 +41,12 @@ export async function POST(req: NextRequest) {
     try {
         await dbConnect();
         const { url, notice } = await req.json();
-        
+
         // 한국 시간으로 변환
         const now = new Date();
         const koreaTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
         const datetime = koreaTime.toISOString().replace('T', ' ').substring(0, 19);
-        
+
         const newImage = new Image({
             url,
             notice,

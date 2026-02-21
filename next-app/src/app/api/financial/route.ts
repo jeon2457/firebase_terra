@@ -7,10 +7,7 @@ import { authOptions } from "../auth/[...nextauth]/route";
 
 export async function GET(req: NextRequest) {
     try {
-        const session = await getServerSession(authOptions);
-        if (!session) {
-            return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
-        }
+        // GET 요청은 세션 없이도 허용
 
         const year = req.nextUrl.searchParams.get('year') || new Date().getFullYear().toString();
 

@@ -6,9 +6,7 @@ import User from "@/models/User";
 import bcrypt from "bcryptjs";
 
 export async function GET(req: NextRequest) {
-    const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
-
+    // GET 요청은 세션 없이도 허용
     try {
         await dbConnect();
 
@@ -22,7 +20,8 @@ export async function GET(req: NextRequest) {
                 tel: { $ne: '', $exists: true }
             };
 
-        const members = await User.find(query).sort({ name: 1 });
+        // 보안: 비밀번호 필드는 절대 반환하지 않음
+        const members = await User.find(query).select("-password").sort({ name: 1 });
         return NextResponse.json({ success: true, data: members });
     } catch (error) {
         return NextResponse.json({ success: false, message: "Server Error" }, { status: 500 });

@@ -7,10 +7,7 @@ import AccountPass from '@/models/AccountPass';
 import MonthlyFeeHistory from '@/models/MonthlyFeeHistory';
 
 export async function GET(req: NextRequest) {
-    const session = await getServerSession(authOptions);
-    if (!session) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    // GET 요청은 세션 없이도 허용
 
     const searchParams = req.nextUrl.searchParams;
     const year = parseInt(searchParams.get('year') || new Date().getFullYear().toString());
@@ -23,7 +20,7 @@ export async function GET(req: NextRequest) {
 
         // 2. 해당 연도의 모든 납부 현황 조회
         const passRecords = await AccountPass.find({ pay_year: year });
-        
+
         // passMap 생성 (member_id -> { month -> paid })
         const passMap: any = {};
         passRecords.forEach((record: any) => {

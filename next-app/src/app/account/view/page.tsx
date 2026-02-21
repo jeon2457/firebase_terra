@@ -51,9 +51,7 @@ function AccountViewContent() {
     }, [yearDropdownOpen]);
 
     useEffect(() => {
-        if (status === "unauthenticated") {
-            router.push("/login");
-        } else if (status === "authenticated") {
+        if (status !== "loading") {
             fetchData();
         }
         document.title = "사용내역 열람";
@@ -125,17 +123,17 @@ function AccountViewContent() {
     const currentDate = new Date();
     const currentYearValue = currentDate.getFullYear();
     const years = [];
-    
+
     // 5년 전부터 현재까지
     for (let i = 5; i >= 0; i--) {
         years.push(currentYearValue - i);
     }
-    
+
     // 12월 1일 이후에만 다음 해 자동 추가
     if (currentDate.getMonth() === 11 && currentDate.getDate() >= 1) {
         years.push(currentYearValue + 1);
     }
-    
+
     // 중복 제거 및 정렬
     const uniqueYears = [...new Set(years)].sort((a, b) => a - b);
     const months = Array.from({ length: 12 }, (_, i) => i + 1);
@@ -185,22 +183,22 @@ function AccountViewContent() {
                 <div className="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
                     <h4 className="m-0 fw-bold text-primary">📊 사용내역서 보기</h4>
                     <div className="position-relative year-dropdown-container">
-                        <button className="btn btn-primary dropdown-toggle rounded-pill px-3 shadow-sm year-dropdown-btn" 
-                                onClick={() => setYearDropdownOpen(!yearDropdownOpen)}
-                                style={{ fontWeight: '600' }}>
+                        <button className="btn btn-primary dropdown-toggle rounded-pill px-3 shadow-sm year-dropdown-btn"
+                            onClick={() => setYearDropdownOpen(!yearDropdownOpen)}
+                            style={{ fontWeight: '600' }}>
                             📅 {currentYear}년
                         </button>
                         {yearDropdownOpen && (
-                            <div className="dropdown-menu show position-absolute end-0 mt-1 shadow" 
-                                 style={{ maxHeight: '250px', overflowY: 'auto', minWidth: '120px' }}>
+                            <div className="dropdown-menu show position-absolute end-0 mt-1 shadow"
+                                style={{ maxHeight: '250px', overflowY: 'auto', minWidth: '120px' }}>
                                 {uniqueYears.map(y => (
-                                    <button key={y} 
-                                            className={`dropdown-item ${y === currentYear ? 'active' : ''}`} 
-                                            onClick={() => {
-                                                setCurrentYear(y);
-                                                setYearDropdownOpen(false);
-                                            }}
-                                            style={{ fontWeight: y === currentYear ? '600' : 'normal', fontSize: '0.9rem' }}>
+                                    <button key={y}
+                                        className={`dropdown-item ${y === currentYear ? 'active' : ''}`}
+                                        onClick={() => {
+                                            setCurrentYear(y);
+                                            setYearDropdownOpen(false);
+                                        }}
+                                        style={{ fontWeight: y === currentYear ? '600' : 'normal', fontSize: '0.9rem' }}>
                                         {y}년 {y === new Date().getFullYear() ? '(현재)' : ''} {y === new Date().getFullYear() + 1 ? '(다음해)' : ''}
                                     </button>
                                 ))}

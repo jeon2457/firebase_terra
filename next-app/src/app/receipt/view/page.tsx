@@ -31,9 +31,7 @@ function ReceiptViewContent() {
     }, []);
 
     useEffect(() => {
-        if (status === "unauthenticated") {
-            router.push("/login");
-        } else if (status === "authenticated") {
+        if (status !== "loading") {
             fetchImages();
         }
         document.title = "영수증 열람";
@@ -71,21 +69,21 @@ function ReceiptViewContent() {
     }, [yearDropdownOpen]);
 
     const years = [];
-    
+
     // 5년 전부터 현재까지의 년도 생성, 그리고 다음 해까지 포함
     const currentDate = new Date();
     const currentYearValue = currentDate.getFullYear();
-    
+
     // 5년 전부터 현재까지
     for (let i = 5; i >= 0; i--) {
         years.push(currentYearValue - i);
     }
-    
+
     // 12월 1일 이후에만 다음 해 자동 추가
     if (currentDate.getMonth() === 11 && currentDate.getDate() >= 1) {
         years.push(currentYearValue + 1);
     }
-    
+
     // 중복 제거 및 정렬
     const uniqueYears = [...new Set(years)].sort((a, b) => a - b);
     const months = Array.from({ length: 12 }, (_, i) => i + 1);
@@ -186,8 +184,8 @@ function ReceiptViewContent() {
                     <div className="d-flex justify-content-between align-items-center mb-4">
                         <h4 className="m-0 fw-bold text-primary">영수증 보관함</h4>
                         <div className="position-relative year-dropdown-container">
-                            <button className="btn btn-dark btn-sm dropdown-toggle rounded-pill px-3" 
-                                    onClick={() => setYearDropdownOpen(!yearDropdownOpen)}>
+                            <button className="btn btn-dark btn-sm dropdown-toggle rounded-pill px-3"
+                                onClick={() => setYearDropdownOpen(!yearDropdownOpen)}>
                                 {currentYear}년
                             </button>
                             {yearDropdownOpen && (

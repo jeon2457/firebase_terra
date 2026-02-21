@@ -24,13 +24,12 @@ export default function MembersViewPage() {
     const [isPageReady, setIsPageReady] = useState(false);
 
     useEffect(() => {
-        if (status === "unauthenticated") {
-            router.push("/login");
-        } else if (status === "authenticated") {
+        // 로그인이 안 되어 있어도 데이터는 가져옴
+        if (status !== "loading") {
             fetchMembers();
         }
         document.title = "회원연락망 열람";
-    }, [status, router]);
+    }, [status]);
 
     // Clock Timer
     useEffect(() => {
@@ -83,7 +82,7 @@ export default function MembersViewPage() {
 
     const formatName = (name: string) => {
         if (!name) return '';
-        return name.trim(); 
+        return name.trim();
     };
 
     const fetchMembers = async () => {
@@ -127,13 +126,15 @@ export default function MembersViewPage() {
     const userLevel = (session?.user as any)?.user_level || 0;
     const userName = (session?.user as any)?.name || "Guest";
     const userRemark = (session?.user as any)?.remark || "";
-    
+
     // Show position for chairman (회장) or treasurer (총무)
-    const userDisplayText = userLevel >= 10 
-        ? `관리자: ${userName}님` 
-        : (userRemark.includes("회장") || userRemark.includes("총무"))
-            ? `회원: ${userName} ${userRemark}님`
-            : `회원: ${userName}님`;
+    const userDisplayText = session?.user
+        ? (userLevel >= 10
+            ? `관리자: ${userName}님`
+            : (userRemark.includes("회장") || userRemark.includes("총무"))
+                ? `회원: ${userName} ${userRemark}님`
+                : `회원: ${userName}님`)
+        : "방문자님";
 
     return (
         <div className="wrapper">

@@ -37,7 +37,7 @@ export default function GuestFeeStatusPage() {
     // 월별 툴팁형 팝업 표시 함수 - 스크롤에 영향 안 받게 수정
     const handleShowMonthPopup = (el: HTMLElement, month: number) => {
         const rect = el.getBoundingClientRect();
-        
+
         // 툴팁 이동 - 좌측으로 5픽셀 추가 이동
         // position: fixed를 사용하여 스크롤에 영향 안 받게 함
         setPopupPosition({
@@ -69,9 +69,7 @@ export default function GuestFeeStatusPage() {
     }, [yearDropdownOpen]);
 
     useEffect(() => {
-        if (status === "unauthenticated") {
-            router.push("/login");
-        } else if (status === "authenticated") {
+        if (status !== "loading") {
             fetchData();
         }
         document.title = "월회비 입금현황";
@@ -122,15 +120,15 @@ export default function GuestFeeStatusPage() {
     const years = [];
     const currentDate = new Date();
     const currentYearValue = currentDate.getFullYear();
-    
+
     for (let i = 5; i >= 0; i--) {
         years.push(currentYearValue - i);
     }
-    
+
     if (currentDate.getMonth() === 11 && currentDate.getDate() >= 1) {
         years.push(currentYearValue + 1);
     }
-    
+
     const uniqueYears = [...new Set(years)].sort((a, b) => a - b);
 
     return (
@@ -262,27 +260,27 @@ export default function GuestFeeStatusPage() {
 
             <div className="admin-info">
                 <span className="badge bg-dark">전용 열람 모드</span>
-                👤 <strong>{(session?.user as any)?.name || '회원'}</strong> (데이터 조회 가능)
+                👤 <strong>{(session?.user as any)?.name || '방문자'}</strong> (데이터 조회 가능)
             </div>
 
             <div className="header-box">
                 <div className="position-relative year-dropdown-container">
-                    <button className="btn btn-primary dropdown-toggle rounded-pill px-3 shadow-sm" 
-                            onClick={() => setYearDropdownOpen(!yearDropdownOpen)}
-                            style={{ fontWeight: '600' }}>
+                    <button className="btn btn-primary dropdown-toggle rounded-pill px-3 shadow-sm"
+                        onClick={() => setYearDropdownOpen(!yearDropdownOpen)}
+                        style={{ fontWeight: '600' }}>
                         📅 {year}년
                     </button>
                     {yearDropdownOpen && (
-                        <div className="dropdown-menu show position-absolute end-0 mt-1 shadow" 
-                             style={{ maxHeight: '250px', overflowY: 'auto', minWidth: '120px' }}>
+                        <div className="dropdown-menu show position-absolute end-0 mt-1 shadow"
+                            style={{ maxHeight: '250px', overflowY: 'auto', minWidth: '120px' }}>
                             {uniqueYears.map(y => (
-                                <button key={y} 
-                                        className={`dropdown-item ${y === year ? 'active' : ''}`} 
-                                        onClick={() => {
-                                            setYear(y);
-                                            setYearDropdownOpen(false);
-                                        }}
-                                        style={{ fontWeight: y === year ? '600' : 'normal', fontSize: '0.9rem' }}>
+                                <button key={y}
+                                    className={`dropdown-item ${y === year ? 'active' : ''}`}
+                                    onClick={() => {
+                                        setYear(y);
+                                        setYearDropdownOpen(false);
+                                    }}
+                                    style={{ fontWeight: y === year ? '600' : 'normal', fontSize: '0.9rem' }}>
                                     {y}년 {y === new Date().getFullYear() ? '(현재)' : ''} {y === new Date().getFullYear() + 1 ? '(다음해)' : ''}
                                 </button>
                             ))}
@@ -338,9 +336,9 @@ export default function GuestFeeStatusPage() {
                                                 const paid = passMap[member._id]?.[m] || 0;
                                                 return (
                                                     <td key={m}>
-                                                        <span 
-                                                            className={`ox ${paid ? 'o' : 'x'}`} 
-                                                            data-month={m} 
+                                                        <span
+                                                            className={`ox ${paid ? 'o' : 'x'}`}
+                                                            data-month={m}
                                                             data-paid={paid}
                                                             onClick={(e) => handleShowMonthPopup(e.currentTarget, m)}
                                                             style={{ cursor: 'pointer' }}
@@ -376,11 +374,11 @@ export default function GuestFeeStatusPage() {
                                     <div className="mc-left-name">{member.name}</div>
                                     <div className="mc-right">
                                         <div className="mc-row-months mc-half-1">
-                                            {[1,2,3,4,5,6].map(m => {
+                                            {[1, 2, 3, 4, 5, 6].map(m => {
                                                 const paid = passMap[member._id]?.[m] || 0;
                                                 return (
                                                     <div key={m} className="mc-month-cell">
-                                                        <span 
+                                                        <span
                                                             className={`m-ox ${paid ? 'o' : 'x'}`}
                                                             data-month={m}
                                                             onClick={(e) => handleShowMonthPopup(e.currentTarget, m)}
@@ -393,11 +391,11 @@ export default function GuestFeeStatusPage() {
                                             })}
                                         </div>
                                         <div className="mc-row-months mc-half-2">
-                                            {[7,8,9,10,11,12].map(m => {
+                                            {[7, 8, 9, 10, 11, 12].map(m => {
                                                 const paid = passMap[member._id]?.[m] || 0;
                                                 return (
                                                     <div key={m} className="mc-month-cell">
-                                                        <span 
+                                                        <span
                                                             className={`m-ox ${paid ? 'o' : 'x'}`}
                                                             data-month={m}
                                                             onClick={(e) => handleShowMonthPopup(e.currentTarget, m)}
@@ -426,10 +424,10 @@ export default function GuestFeeStatusPage() {
                             );
                         })}
                     </div>
-                    
+
                     {/* 월별 툴팁형 팝업 */}
                     {showPopup && (
-                        <div 
+                        <div
                             className="month-popup"
                             style={{
                                 display: 'block',
@@ -462,7 +460,7 @@ export default function GuestFeeStatusPage() {
                                 📋 회비납부 현황 보는법 안내
                             </h5>
                         </div>
-                        
+
                         {/* Description */}
                         <div className="text-center mb-3" style={{ fontSize: '13px', color: '#555' }}>
                             <p className="mb-1">예:) 아래 예시와 같이 월별 납부 현황이 표시됩니다.</p>
@@ -536,7 +534,7 @@ export default function GuestFeeStatusPage() {
                     </div>
                 </div>
             )}
-            
+
             {/* Modal Overlay Style & Month Popup */}
             <style jsx>{`
                 .modal-overlay {
