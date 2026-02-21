@@ -130,22 +130,16 @@ export default function FeeStatusPage() {
     const [updating, setUpdating] = useState(false);
 
     const confirmChange = async () => {
-        if (!currentTarget) { alert('currentTarget이 없습니다.'); return; }
-        if (updating) { alert('이미 처리 중입니다.'); return; }
+        if (!currentTarget || updating) return;
 
         const { memberId, month, paid } = currentTarget;
         const newPaid = paid === 1 ? 0 : 1;
 
-        // alert(`디버그: memberId=${memberId}, year=${year}, month=${month}, newPaid=${newPaid}`);
-
         setUpdating(true);
         try {
-            // console.log('API 호출 시작:', '/api/fee/update');
             const res = await axios.post('/api/fee/update', {
                 memberId, year, month, paid: newPaid
             });
-
-            // console.log('API 응답 수신:', res.data);
 
             if (res.data.success) {
                 // 성공 시 상태 업데이트
@@ -163,15 +157,12 @@ export default function FeeStatusPage() {
                 // 팝업 닫기
                 setShowPopup(false);
                 setCurrentTarget(null);
-                alert('정상적으로 반영되었습니다.');
             } else {
-                alert('서버 응답 오류 (success false): ' + (res.data.message || '알 수 없는 이유'));
+                alert('업데이트 실패: ' + (res.data.message || '서버 오류'));
             }
         } catch (error: any) {
             console.error('Update failed:', error);
-            const errorMsg = error.response?.data?.message || error.message;
-            const status = error.response?.status;
-            alert(`업데이트 실패!\n상태 코드: ${status || 'N/A'}\n메시지: ${errorMsg}`);
+            alert('업데이트 과정에서 오류가 발생했습니다.');
         } finally {
             setUpdating(false);
         }
