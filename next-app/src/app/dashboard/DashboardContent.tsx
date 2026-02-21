@@ -70,7 +70,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
         const user = session.user as any;
         let name = user.name || "사용자";
         const position = user.remark;
-        
+
         if (user.user_level >= 10) {
             name += " (관리자)";
         } else {
@@ -84,7 +84,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
 
     useEffect(() => {
         if (theme !== "glass" && theme !== "tech") return;
-        
+
         const canvas = spaceCanvasRef.current;
         if (!canvas) return;
 
@@ -142,13 +142,13 @@ export default function DashboardContent({ theme = "book" }: Props) {
 
         const drawSpace = () => {
             if (!isRunning) return;
-            
+
             try {
                 if (!canvas || !ctx || w === 0 || h === 0) {
                     animationId = requestAnimationFrame(drawSpace);
                     return;
                 }
-                
+
                 ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
                 ctx.fillRect(0, 0, w, h);
 
@@ -158,7 +158,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
                 for (let i = 0; i < starCount; i++) {
                     const s = stars[i];
                     if (s.z <= 0) continue;
-                    
+
                     const x = s.x / (s.z / w);
                     const y = s.y / (s.z / w);
 
@@ -269,9 +269,9 @@ export default function DashboardContent({ theme = "book" }: Props) {
                     console.warn("Resize handler error:", e);
                 }
             };
-            
+
             window.addEventListener("resize", handleResize);
-            
+
             return () => {
                 isRunning = false;
                 if (animationId) {
@@ -300,12 +300,12 @@ export default function DashboardContent({ theme = "book" }: Props) {
     const openMenuPath = async (path: string) => {
         const selected = menuItems.find(m => m.path === path);
         if (!selected) return;
-        
+
         if (path === "/fee/status" && (session?.user as any)?.user_level < 10) {
             router.push("/guest/fee/status");
             return;
         }
-        
+
         if (selected.path === "#financial") {
             const success = await loadFinancialData();
             if (success) setShowFinancial(true);
@@ -416,6 +416,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
         { title: "재무 대시보드", icon: <PieChart />, color: "bg-financial", path: "#financial" },
         { title: "엑셀 리포트", icon: <FileSpreadsheet />, color: "bg-excel", path: "#excel" },
         { title: "다음 지도 만들기", icon: <MapIcon />, color: "bg-map", path: "/map/create" },
+        { title: "실시간 위치공유", icon: <MapIcon />, color: "bg-location", path: "/map/location-share" },
         { title: "각종 모임 활동", icon: <Users />, color: "bg-activities", path: "/activities" },
         { title: "데이터베이스 백업", icon: <Database />, color: "bg-activities", path: "/backup" },
         { title: "시스템 매뉴얼", icon: <BookOpen />, color: "bg-manual", path: "/manual" },
@@ -429,6 +430,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
         "/guest/fee/status",
         "#financial",
         "#excel",
+        "/map/location-share",
     ];
 
     const filteredMenuItems = (session?.user as any)?.user_level >= 10
@@ -642,6 +644,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
         .glass-menu-icon.glass-icon-bg-financial { color: #FFCC00 !important; }
         .glass-menu-icon.glass-icon-bg-excel { color: #30D158 !important; }
         .glass-menu-icon.glass-icon-bg-map { color: #00C7BE !important; }
+        .glass-menu-icon.glass-icon-bg-location { color: #26A69A !important; }
         .glass-menu-icon.glass-icon-bg-activities { color: #FF9500 !important; }
         .glass-menu-icon.glass-icon-bg-manual { color: #8E8E93 !important; }
 
@@ -751,6 +754,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
         .bg-financial .book-title { color: #333; }
         .bg-excel { background: #1D6F42; border-left: 5px solid #0f4c2c; }
         .bg-map { background: #2980b9; border-left: 5px solid #1f6391; }
+        .bg-location { background: #00897B; border-left: 5px solid #00695c; }
         .bg-activities { background: #e67e22; border-left: 5px solid #d35400; }
         .bg-manual { background: #7f8c8d; border-left: 5px solid #626567; }
 
@@ -828,6 +832,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
         .icon-bg-financial { background: linear-gradient(180deg, #FFD700, #FFA000); }
         .icon-bg-excel { background: linear-gradient(180deg, #1D6F42, #43A047); }
         .icon-bg-map { background: linear-gradient(180deg, #0ea5e9, #0369a1); }
+        .icon-bg-location { background: linear-gradient(180deg, #26A69A, #00897B); }
         .icon-bg-activities { background: linear-gradient(180deg, #fb923c, #ea580c); }
         .icon-bg-manual { background: linear-gradient(180deg, #94a3b8, #475569); }
 
