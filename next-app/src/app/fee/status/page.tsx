@@ -134,15 +134,26 @@ export default function FeeStatusPage() {
             const res = await axios.post('/api/fee/update', {
                 memberId, year, month, paid: newPaid
             });
-            if (res.data.success) {
-                setPassMap(prev => ({
+            
+            // 성공 시 상태 업데이트
+            setPassMap((prev: PassMap) => {
+                const memberPass = prev[memberId] || {};
+                return {
                     ...prev,
-                    [memberId]: { ...prev[memberId], [month]: newPaid }
-                }));
-            }
-        } catch (error) { alert('업데이트 실패'); }
-        setShowPopup(false);
-        setCurrentTarget(null);
+                    [memberId]: {
+                        ...memberPass,
+                        [month]: newPaid
+                    }
+                };
+            });
+            
+            // 팝업 닫기
+            setShowPopup(false);
+            setCurrentTarget(null);
+        } catch (error) { 
+            console.error('Update failed:', error);
+            alert('업데이트 실패'); 
+        }
     };
 
     const saveFee = async () => {
@@ -212,10 +223,11 @@ export default function FeeStatusPage() {
                 body { background: #f9f9fa; margin: 20px 5px 10px 5px; }
                 .admin-info { text-align: right; font-size: 15px; color: #6c757d; margin-bottom: 20px; }
                 .header-box { display: grid; grid-template-columns: auto 1fr auto; align-items: center; margin-bottom: 10px; gap: 10px; }
-                .title-btn { background: #1976d2; color: #fff; padding: 14px 28px; border-radius: 30px; font-weight: 800; font-size: 18px; white-space: nowrap; }
-                .fee-btn { background: #eee; padding: 8px 15px; border-radius: 6px; white-space: nowrap; cursor: pointer; transition: background 0.2s; }
+                .title-btn { background: #1976d2; color: #fff; padding: 11px 22px; border-radius: 30px; font-weight: 800; font-size: 14px; white-space: nowrap; }
+                .year-btn { background: #1976d2; color: #fff; padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 13px; white-space: nowrap; }
+                .fee-btn { background: #eee; padding: 6px 13px; border-radius: 6px; white-space: nowrap; cursor: pointer; transition: background 0.2s; font-size: 12px; }
                 .fee-btn:hover { background: #ddd; }
-                .help-btn { background: #fff3e0; color: #f57c00; border: 1px solid #ffe0b2; padding: 8px 15px; border-radius: 15px; font-weight: bold; cursor: pointer; white-space: nowrap; }
+                .help-btn { background: #fff3e0; color: #f57c00; border: 1px solid #ffe0b2; padding: 6px 13px; border-radius: 15px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 12px; }
                 .help-btn:hover { background: #ffe0b2; }
                 
                 .ox { cursor: pointer; font-weight: bold; font-size: 18px; padding: 8px; display: inline-block; min-width: 32px; }
@@ -307,7 +319,7 @@ export default function FeeStatusPage() {
 
             <div className="header-box">
                 <div className="position-relative year-dropdown-container">
-                    <button className="btn btn-primary dropdown-toggle rounded-pill px-3" onClick={() => setYearDropdownOpen(!yearDropdownOpen)}>
+                    <button className="btn btn-primary dropdown-toggle rounded-pill px-2 year-btn" onClick={() => setYearDropdownOpen(!yearDropdownOpen)}>
                         📅 {year}년
                     </button>
                     {yearDropdownOpen && (
