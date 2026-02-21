@@ -478,8 +478,8 @@ export default function FeeStatusPage() {
                             <p className="month-popup-msg">{popupMonth}월</p>
                             <p style={{fontSize:'12px',marginBottom:'8px'}}>{currentTarget?.paid===1?'미납→납부':'납부→미납'}?</p>
                             <div className="d-flex gap-2 justify-content-center">
-                                <button className="btn btn-primary btn-sm" onClick={confirmChange}>변경</button>
-                                <button className="btn btn-secondary btn-sm" onClick={() => setShowPopup(false)}>취소</button>
+                                <button type="button" className="btn btn-primary btn-sm" onClick={confirmChange}>변경</button>
+                                <button type="button" className="btn btn-secondary btn-sm" onClick={() => setShowPopup(false)}>취소</button>
                             </div>
                         </>
                     ) : (
