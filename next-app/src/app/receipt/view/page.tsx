@@ -177,10 +177,31 @@ function ReceiptViewContent() {
                     max-height: 90vh;
                     border-radius: 5px;
                 }
+                .user-info-box {
+                    font-size: 11px;
+                    color: #666;
+                    background: #f8f9fa;
+                    padding: 3px 10px;
+                    border-radius: 20px;
+                    border: 1px solid #eee;
+                    display: inline-flex;
+                    align-items: center;
+                    margin-bottom: 10px;
+                }
             `}</style>
 
             <div className="header-section shadow-sm sticky-top">
                 <div className="container" style={{ maxWidth: '800px' }}>
+                    {/* User Info Display */}
+                    <div className="text-end">
+                        <div className="user-info-box">
+                            👤 {session?.user ? (
+                                <><strong>{(session?.user as any)?.name}</strong> 님 ({(session?.user as any)?.remark || '회원'})</>
+                            ) : (
+                                "방문자"
+                            )}
+                        </div>
+                    </div>
                     <div className="d-flex justify-content-between align-items-center mb-4">
                         <h4 className="m-0 fw-bold text-primary">영수증 보관함</h4>
                         <div className="position-relative year-dropdown-container">

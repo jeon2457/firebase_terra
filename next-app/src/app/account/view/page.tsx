@@ -173,12 +173,34 @@ function AccountViewContent() {
                         font-size: 11px;
                         padding: 6px 2px;
                     }
-                    .year-dropdown-btn {
-                         font-size: 0.63rem !important; /* 30% 더 축소 */
-                         padding: 0.35rem 0.7rem !important; /* 30% 더 축소 */
-                     }
+                     .year-dropdown-btn {
+                          font-size: 0.63rem !important; /* 30% 더 축소 */
+                          padding: 0.35rem 0.7rem !important; /* 30% 더 축소 */
+                      }
+                    }
+                    .user-info-box {
+                        font-size: 11px;
+                        color: #6c757d;
+                        background: #f1f3f5;
+                        padding: 3px 10px;
+                        border-radius: 20px;
+                        border: 1px solid #dee2e6;
+                        display: inline-flex;
+                        align-items: center;
+                        margin-bottom: 10px;
                     }
                 `}</style>
+
+                {/* User Info Display */}
+                <div className="text-end">
+                    <div className="user-info-box">
+                        👤 {session?.user ? (
+                            <><strong>{(session?.user as any)?.name}</strong> 님 ({(session?.user as any)?.remark || '회원'})</>
+                        ) : (
+                            "방문자"
+                        )}
+                    </div>
+                </div>
 
                 <div className="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
                     <h4 className="m-0 fw-bold text-primary">📊 사용내역서 보기</h4>
