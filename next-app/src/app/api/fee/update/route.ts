@@ -5,40 +5,54 @@ import dbConnect from '@/lib/mongodb';
 import AccountPass from '@/models/AccountPass';
 import mongoose from 'mongoose';
 
+export async function GET() {
+    return NextResponse.json({ success: true, message: 'Fee update API is reachable' });
+}
+
 export async function POST(req: NextRequest) {
-    const session = await getServerSession(authOptions);
-    if (!session || (session.user as any).user_level < 10) {
-        return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
-    }
-
+    console.log('Fee update POST request received');
     try {
-        await dbConnect();
-        const { memberId, year, month, paid } = await req.json();
+        const session = await getServerSession(authOptions);
+        console.log('Session check:', session ? 'User level ' + (session.user as any)?.user_level : 'No session');
 
-        // 기존 레코드 찾기 또는 생성
+        if (!session || (session.user as any).user_level < 10) {
+            return NextResponse.json({ success: false, message: 'Unauthorized: Admin level required' }, { status: 401 });
+        }
+
+        await dbConnect();
+        const body = await req.json();
+        console.log('Request body:', body);
+        const { memberId, year, month, paid } = body;
+
+        if (!memberId || !year || !month) {
+            return NextResponse.json({ success: false, message: 'Missing required fields' }, { status: 400 });
+        }
+
+        // Mongoose automatically casts string to ObjectId if specified in Schema
         const query = {
-            member_id: new mongoose.Types.ObjectId(memberId),
+            member_id: memberId,
             pay_year: year,
             pay_month: month
         };
 
         const existing = await AccountPass.findOne(query);
+        console.log('Existing record found:', existing ? 'Yes' : 'No');
 
         if (existing) {
-            // 업데이트
             existing.paid = paid;
             await existing.save();
+            console.log('Existing record updated');
         } else {
-            // 새로 생성
             await AccountPass.create({
                 ...query,
                 paid: paid
             });
+            console.log('New record created');
         }
 
         return NextResponse.json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error updating fee status:', error);
-        return NextResponse.json({ success: false, message: 'Server Error' }, { status: 500 });
+        return NextResponse.json({ success: false, message: 'Server Error: ' + error.message }, { status: 500 });
     }
 }
