@@ -2,7 +2,7 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {
     Phone,
@@ -63,6 +63,24 @@ export default function DashboardContent({ theme = "book" }: Props) {
 
     const [showExcel, setShowExcel] = useState(false);
     const [excelConfig, setExcelConfig] = useState({ year: new Date().getFullYear(), type: 'all' });
+
+    // Safe user display name computation
+    const userDisplayName = (() => {
+        if (!session?.user) return "사용자";
+        const user = session.user as any;
+        let name = user.name || "사용자";
+        const position = user.remark;
+        
+        if (user.user_level >= 10) {
+            name += " (관리자)";
+        } else {
+            if (position && (position.includes("회장") || position.includes("총무"))) {
+                name += ` ${position}`;
+            }
+            name += "님";
+        }
+        return name;
+    })();
 
     useEffect(() => {
         if (theme !== "glass" && theme !== "tech") return;
@@ -126,7 +144,6 @@ export default function DashboardContent({ theme = "book" }: Props) {
             if (!isRunning) return;
             
             try {
-                // Check if canvas is still valid
                 if (!canvas || !ctx || w === 0 || h === 0) {
                     animationId = requestAnimationFrame(drawSpace);
                     return;
@@ -234,9 +251,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
 
                 animationId = requestAnimationFrame(drawSpace);
             } catch (error) {
-                // Silently handle any canvas errors to prevent app crash
                 console.warn("Canvas animation error, continuing:", error);
-                // Continue animation loop even if error occurs
                 if (isRunning) {
                     animationId = requestAnimationFrame(drawSpace);
                 }
@@ -286,7 +301,6 @@ export default function DashboardContent({ theme = "book" }: Props) {
         const selected = menuItems.find(m => m.path === path);
         if (!selected) return;
         
-        // 게스트는 월회비 입금현황을 /guest/fee/status로 이동
         if (path === "/fee/status" && (session?.user as any)?.user_level < 10) {
             router.push("/guest/fee/status");
             return;
@@ -420,26 +434,6 @@ export default function DashboardContent({ theme = "book" }: Props) {
     const filteredMenuItems = (session?.user as any)?.user_level >= 10
         ? menuItems
         : menuItems.filter(item => guestSpecificPaths.includes(item.path));
-
-    const userDisplayName = useMemo(() => {
-        if (!session?.user) return "사용자";
-        const user = session.user as any;
-        let name = user.name || "사용자";
-        
-        // Get position from remark field
-        const position = user.remark;
-        
-        if (user.user_level >= 10) {
-            name += " (관리자)";
-        } else {
-            // For guests (user_level < 10), show position if available (회장 or 총무)
-            if (position && (position.includes("회장") || position.includes("총무"))) {
-                name += ` ${position}`;
-            }
-            name += "님";
-        }
-        return name;
-    }, [session]);
 
     const wrapStyle: React.CSSProperties =
         theme === "glass"
