@@ -433,6 +433,11 @@ export default function MembersViewPage() {
                         padding: calc(0.32rem + 5px) 0; 
                     }
                     
+                    /* NO 열 숫자 크기 3px 감소 */
+                    .no_1 {
+                        font-size: 9px !important;
+                    }
+                    
                     /* 아이콘 크기 2px 증가 */
                     .sms-icon {
                         max-width: 19px !important;
