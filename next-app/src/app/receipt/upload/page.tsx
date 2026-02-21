@@ -160,7 +160,10 @@ export default function ReceiptUploadPage() {
                     <div className="info-box">
                         <Info size={16} className="me-2 text-primary" />
                         <strong>안내:</strong><br />
-                        이미지를 업로드한 후 "DB에 저장" 버튼을 눌러야 영수증 열람 페이지에서 확인이 가능합니다.
+                        이미지를 Cloudinary에 업로드한 후 "DB에 저장" 버튼을 눌러야 영수증 열람 페이지에서 확인이 가능합니다.
+                        - Cloudinary파일크기 제한: 이미지 최대 10MB
+                        - MongoDB Atlas 저장 용량: 최대 512MB
+
                     </div>
 
                     <div className="d-flex gap-3">
