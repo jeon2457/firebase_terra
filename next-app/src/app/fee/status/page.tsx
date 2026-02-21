@@ -251,6 +251,20 @@ export default function FeeStatusPage() {
                 .modal-content-custom { background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 400px; }
                 .total-members-info { font-size: 14px; color: #555; font-weight: 700; margin-bottom: 8px; margin-left: 5px; }
 
+                .fee-notice-box {
+                    background-color: #fff0f3;
+                    border: 1px solid #ffe3e3;
+                    border-radius: 8px;
+                    padding: 15px;
+                    margin-bottom: 20px;
+                    text-align: center;
+                    color: #d63384;
+                    font-weight: 700;
+                    font-size: 15px;
+                    line-height: 1.5;
+                    box-shadow: 0 2px 5px rgba(214, 51, 132, 0.05);
+                }
+
                 /* 툴팁 스타일 (guest 버전과 100% 동일) */
                 .month-popup {
                     display: block;
@@ -528,9 +542,13 @@ export default function FeeStatusPage() {
                                 </select>
                             </div>
                         </div>
-                        <div className="mb-3">
-                            <label>월회비</label>
+                        <div className="mb-4">
+                            <label className="form-label fw-bold">변경할 월회비 (원)</label>
                             <input type="number" className="form-control" value={feeAmount} onChange={e => setFeeAmount(parseInt(e.target.value))} />
+                        </div>
+
+                        <div className="fee-notice-box">
+                            👉 {feeYear}년 {feeMonth}월부터 월회비가 {feeAmount?.toLocaleString()}원으로 변경되었습니다.
                         </div>
                         <div className="d-flex gap-2 justify-content-end">
                             <button className="btn btn-secondary" onClick={() => setShowFeeModal(false)}>취소</button>
