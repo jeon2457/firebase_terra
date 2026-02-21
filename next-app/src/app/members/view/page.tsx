@@ -427,10 +427,10 @@ export default function MembersViewPage() {
                     .custom-table thead th { 
                         color: #f0c420; 
                         font-size: 13px; 
-                        padding: calc(0.44rem + 3px) 0;
+                        padding: calc(0.44rem + 5px) 0;
                     } 
                     .custom-table td { 
-                        padding: calc(0.32rem + 3px) 0; 
+                        padding: calc(0.32rem + 5px) 0; 
                     }
                     
                     /* 아이콘 크기 2px 증가 */
