@@ -31,7 +31,7 @@ export default function MapCreatePage() {
     const [selectedCoords, setSelectedCoords] = useState<any>(null);
     const [isMapPreviewed, setIsMapPreviewed] = useState(false);
     const [kakaoLoaded, setKakaoLoaded] = useState(false);
-    
+
     // PHP 코드의 기본값 적용
     const [noticeText, setNoticeText] = useState(`📖 모임제목:
 📅 모임날짜:
@@ -56,6 +56,7 @@ export default function MapCreatePage() {
                 router.push("/dashboard");
             }
         }
+        document.title = "지도만들기";
     }, [status, session, router]);
 
     const handleKakaoLoad = () => {
@@ -125,7 +126,7 @@ export default function MapCreatePage() {
                     content: `<div style="padding:5px;font-size:12px;text-align:center;">${selectedPlace?.place_name}</div>`
                 });
                 infowindow.open(map, marker);
-                
+
                 container.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }, 100);
@@ -133,53 +134,53 @@ export default function MapCreatePage() {
 
     // ✅ [핵심] 이 위치로 지도 보내기 (저장)
     const handleSend = async () => {
-    if (!isMapPreviewed) {
-        alert("먼저 '지도 미리보기' 버튼을 눌러 지도를 확인해주세요!");
-        return;
-    }
-
-    if (!selectedPlace || !selectedCoords) {
-        alert("장소를 선택해주세요!");
-        return;
-    }
-
-    const lat = selectedCoords.getLat();
-    const lng = selectedCoords.getLng();
-
-    try {
-        console.log('Sending data:', {
-            addr: selectedPlace.place_name,
-            lat,
-            lng,
-            notice: noticeText
-        });
-
-        const res = await axios.post('/api/map/save', {
-            addr: selectedPlace.place_name,
-            lat,
-            lng,
-            notice: noticeText
-        }, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        console.log('API Response:', res.data);
-
-        if (res.data.success) {
-            alert('지도가 저장되었습니다!');
-            localStorage.setItem('modalNoticeText', noticeText);
-            router.push(`/map/view?addr=${encodeURIComponent(selectedPlace.place_name)}&lat=${lat}&lng=${lng}`);
-        } else {
-            alert('DB 저장에 실패했습니다: ' + (res.data.message || '알 수 없는 오류'));
+        if (!isMapPreviewed) {
+            alert("먼저 '지도 미리보기' 버튼을 눌러 지도를 확인해주세요!");
+            return;
         }
-    } catch (error: any) {
-        console.error('저장 오류:', error);
-        console.error('에러 상세:', error.response?.data);
-        alert('서버 통신 중 오류가 발생했습니다: ' + (error.response?.data?.message || error.message));
-    }
-};
+
+        if (!selectedPlace || !selectedCoords) {
+            alert("장소를 선택해주세요!");
+            return;
+        }
+
+        const lat = selectedCoords.getLat();
+        const lng = selectedCoords.getLng();
+
+        try {
+            console.log('Sending data:', {
+                addr: selectedPlace.place_name,
+                lat,
+                lng,
+                notice: noticeText
+            });
+
+            const res = await axios.post('/api/map/save', {
+                addr: selectedPlace.place_name,
+                lat,
+                lng,
+                notice: noticeText
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log('API Response:', res.data);
+
+            if (res.data.success) {
+                alert('지도가 저장되었습니다!');
+                localStorage.setItem('modalNoticeText', noticeText);
+                router.push(`/map/view?addr=${encodeURIComponent(selectedPlace.place_name)}&lat=${lat}&lng=${lng}`);
+            } else {
+                alert('DB 저장에 실패했습니다: ' + (res.data.message || '알 수 없는 오류'));
+            }
+        } catch (error: any) {
+            console.error('저장 오류:', error);
+            console.error('에러 상세:', error.response?.data);
+            alert('서버 통신 중 오류가 발생했습니다: ' + (error.response?.data?.message || error.message));
+        }
+    };
 
     if (status === "loading") return <div className="text-center mt-5">Loading...</div>;
 
@@ -191,13 +192,13 @@ export default function MapCreatePage() {
                 onReady={handleKakaoLoad}
             />
 
-            <h4 className="page-title text-center mb-4">📍 모임 장소 설정</h4>
+            <h4 className="page-title text-center mb-4">📍 모임장소 설정</h4>
 
             <div className="search-box input-group mb-3">
-                <input 
-                    type="text" 
-                    className="form-control" 
-                    placeholder="장소명 (예: 강남역 스타벅스)" 
+                <input
+                    type="text"
+                    className="form-control"
+                    placeholder="장소명 (예: 강남역 스타벅스)"
                     value={keyword}
                     onChange={(e) => setKeyword(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -207,10 +208,10 @@ export default function MapCreatePage() {
 
             {/* 검색 결과 리스트 */}
             {places.length > 0 && (
-                <div className="list-group mb-3 shadow-sm" style={{maxHeight: '200px', overflowY: 'auto'}}>
+                <div className="list-group mb-3 shadow-sm" style={{ maxHeight: '200px', overflowY: 'auto' }}>
                     {places.map((place, idx) => (
-                        <button 
-                            key={idx} 
+                        <button
+                            key={idx}
                             className={`list-group-item list-group-item-action ${selectedPlace?.x === place.x ? 'active' : ''}`}
                             onClick={() => handleSelectPlace(place)}
                         >
@@ -223,17 +224,17 @@ export default function MapCreatePage() {
 
             <div className="mb-3">
                 <label className="form-label fw-bold small">안내문구 작성</label>
-                <textarea 
-                    className="form-control" 
+                <textarea
+                    className="form-control"
                     rows={6}
                     value={noticeText}
                     onChange={(e) => setNoticeText(e.target.value)}
-                    style={{fontSize: '0.9rem'}}
+                    style={{ fontSize: '0.9rem' }}
                 ></textarea>
             </div>
 
             {/* 지도 미리보기 영역 */}
-            <div id="map" className="mb-4 bg-light rounded" style={{height: isMapPreviewed ? '300px' : '0', transition: 'height 0.3s', overflow: 'hidden'}}></div>
+            <div id="map" className="mb-4 bg-light rounded" style={{ height: isMapPreviewed ? '300px' : '0', transition: 'height 0.3s', overflow: 'hidden' }}></div>
 
             <div className="d-grid gap-2">
                 <button className="btn btn-secondary" onClick={handlePreview}>
@@ -246,9 +247,9 @@ export default function MapCreatePage() {
                     🔎 저장된 지도 보기
                 </button>
             </div>
-            
+
             <div className="text-center mt-4">
-                 <button className="btn btn-link text-secondary text-decoration-none" onClick={() => router.back()}>← 뒤로가기</button>
+                <button className="btn btn-link text-secondary text-decoration-none" onClick={() => router.back()}>← 뒤로가기</button>
             </div>
 
             <style jsx>{`

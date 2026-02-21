@@ -73,6 +73,7 @@ function MapViewContent() {
         } else if (status === "authenticated") {
             loadLocationData();
         }
+        document.title = "지도보기";
     }, [status, router]);
 
     const loadLocationData = async () => {
@@ -114,17 +115,17 @@ function MapViewContent() {
     };
 
     useEffect(() => {
-        console.log('Init effect triggered:', { 
-            kakaoLoaded, 
-            locationData: !!locationData, 
+        console.log('Init effect triggered:', {
+            kakaoLoaded,
+            locationData: !!locationData,
             mapInitialized,
             isLoading,
-            container: !!mapContainerRef.current 
+            container: !!mapContainerRef.current
         });
 
         if (kakaoLoaded && locationData && !mapInitialized && !isLoading && mapContainerRef.current) {
             console.log('Initializing map...');
-            
+
             // 약간의 지연을 주어 DOM이 완전히 준비되도록 함
             const timer = setTimeout(() => {
                 initializeMap();
@@ -187,9 +188,9 @@ function MapViewContent() {
 
     const openTmap = () => {
         if (!locationData) return;
-        
+
         const tmapUrl = `tmap://route?goalname=${encodeURIComponent(locationData.addr)}&goalx=${locationData.lng}&goaly=${locationData.lat}`;
-        
+
         const iframe = document.createElement('iframe');
         iframe.style.display = 'none';
         iframe.src = tmapUrl;
@@ -206,7 +207,7 @@ function MapViewContent() {
                 if (confirm('TMAP 앱이 설치되어 있지 않습니다.\n앱 스토어로 이동하시겠습니까?')) {
                     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
                     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-                    
+
                     if (isMobile) {
                         if (isIOS) {
                             window.open('https://apps.apple.com/kr/app/tmap/id431589174', '_blank');
@@ -220,14 +221,14 @@ function MapViewContent() {
     };
 
     const openNaverMap = () => {
-    if (!locationData) return;
-    // 바로 도착지로 설정된 길찾기 URL
-    // 형식: /directions/-/위도,경도,장소명/
-    // - 는 현재 위치(출발지)를 의미
-    // 장소 검색 페이지 → 출발/도착 선택 버튼 표시
-    const url = `https://map.naver.com/v5/search/${encodeURIComponent(locationData.addr)}`;
-    window.open(url, '_blank');
-};
+        if (!locationData) return;
+        // 바로 도착지로 설정된 길찾기 URL
+        // 형식: /directions/-/위도,경도,장소명/
+        // - 는 현재 위치(출발지)를 의미
+        // 장소 검색 페이지 → 출발/도착 선택 버튼 표시
+        const url = `https://map.naver.com/v5/search/${encodeURIComponent(locationData.addr)}`;
+        window.open(url, '_blank');
+    };
 
     if (status === "loading" || isLoading) {
         return (
@@ -343,13 +344,13 @@ function MapViewContent() {
                     </div>
 
                     <div style={{ position: 'relative' }}>
-                        <div 
-                            id="map" 
+                        <div
+                            id="map"
                             ref={mapContainerRef}
-                            style={{ 
-                                width: '100%', 
-                                height: '400px', 
-                                borderRadius: '15px', 
+                            style={{
+                                width: '100%',
+                                height: '400px',
+                                borderRadius: '15px',
                                 marginBottom: '20px',
                                 background: '#e9ecef',
                                 boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
@@ -387,9 +388,9 @@ function MapViewContent() {
                         </button>
                     )}
 
-                    <button 
-                        className="btn-nav" 
-                        style={{ backgroundColor: '#6c757d' }} 
+                    <button
+                        className="btn-nav"
+                        style={{ backgroundColor: '#6c757d' }}
                         onClick={() => router.push('/dashboard')}
                     >
                         ⏪ 돌아가기
@@ -400,8 +401,8 @@ function MapViewContent() {
                     <p style={{ fontSize: '18px', color: '#666', marginBottom: '20px' }}>
                         저장된 지도 정보가 없습니다.
                     </p>
-                    <button 
-                        className="btn btn-primary btn-lg" 
+                    <button
+                        className="btn btn-primary btn-lg"
                         onClick={() => router.push('/map/create')}
                         style={{ padding: '12px 30px', fontSize: '16px' }}
                     >
@@ -416,9 +417,9 @@ function MapViewContent() {
                         <h4 style={{ marginBottom: '20px', color: '#FF6F00', fontWeight: 'bold' }}>
                             📢 모임 안내
                         </h4>
-                        <pre style={{ 
-                            whiteSpace: 'pre-wrap', 
-                            fontSize: '14px', 
+                        <pre style={{
+                            whiteSpace: 'pre-wrap',
+                            fontSize: '14px',
                             lineHeight: '1.8',
                             background: '#f8f9fa',
                             padding: '15px',
@@ -428,8 +429,8 @@ function MapViewContent() {
                         }}>
                             {noticeText}
                         </pre>
-                        <button 
-                            className="btn btn-secondary w-100" 
+                        <button
+                            className="btn btn-secondary w-100"
                             style={{ padding: '12px', fontSize: '16px', fontWeight: 'bold' }}
                             onClick={() => setShowModal(false)}
                         >
