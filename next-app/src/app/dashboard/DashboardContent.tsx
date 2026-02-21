@@ -66,6 +66,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
 
     useEffect(() => {
         if (theme !== "glass" && theme !== "tech") return;
+        
         const canvas = spaceCanvasRef.current;
         if (!canvas) return;
 
@@ -76,6 +77,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
         let h = 0;
         let dpr = 1;
         let animationId = 0;
+        let isRunning = true;
 
         const starCount = 300;
         const speed = 1.0;
@@ -98,134 +100,173 @@ export default function DashboardContent({ theme = "book" }: Props) {
         }> = [];
 
         const initSpace = () => {
-            w = window.innerWidth;
-            h = window.innerHeight;
-            dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-            canvas.width = Math.floor(w * dpr);
-            canvas.height = Math.floor(h * dpr);
-            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-            stars = [];
-            for (let i = 0; i < starCount; i++) {
-                stars.push({
-                    x: Math.random() * w - w / 2,
-                    y: Math.random() * h - h / 2,
-                    z: Math.random() * w,
-                    px: 0,
-                    py: 0,
-                });
+            try {
+                w = window.innerWidth;
+                h = window.innerHeight;
+                dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+                canvas.width = Math.floor(w * dpr);
+                canvas.height = Math.floor(h * dpr);
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                stars = [];
+                for (let i = 0; i < starCount; i++) {
+                    stars.push({
+                        x: Math.random() * w - w / 2,
+                        y: Math.random() * h - h / 2,
+                        z: Math.random() * w,
+                        px: 0,
+                        py: 0,
+                    });
+                }
+            } catch (e) {
+                console.warn("Failed to initialize canvas:", e);
             }
         };
 
         const drawSpace = () => {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
-            ctx.fillRect(0, 0, w, h);
-
-            ctx.save();
-            ctx.translate(w / 2, h / 2);
-
-            for (let i = 0; i < starCount; i++) {
-                const s = stars[i];
-                const x = s.x / (s.z / w);
-                const y = s.y / (s.z / w);
-
-                if (s.px !== 0) {
-                    ctx.strokeStyle = `rgba(255, 255, 255, ${Math.min(1, 1.5 - s.z / w)})`;
-                    ctx.lineWidth = Math.max(0.8, (1 - s.z / w) * 3);
-                    ctx.lineCap = "round";
-                    ctx.beginPath();
-                    ctx.moveTo(s.px, s.py);
-                    ctx.lineTo(x, y);
-                    ctx.stroke();
+            if (!isRunning) return;
+            
+            try {
+                // Check if canvas is still valid
+                if (!canvas || !ctx || w === 0 || h === 0) {
+                    animationId = requestAnimationFrame(drawSpace);
+                    return;
                 }
+                
+                ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
+                ctx.fillRect(0, 0, w, h);
 
-                s.px = x;
-                s.py = y;
-                s.z -= speed;
-
-                if (s.z <= 0) {
-                    s.x = Math.random() * w - w / 2;
-                    s.y = Math.random() * h - h / 2;
-                    s.z = w;
-                    s.px = 0;
-                    s.py = 0;
-                }
-            }
-
-            ctx.restore();
-
-            if (meteors.length < maxMeteors && Math.random() < meteorSpawnChancePerFrame) {
-                const startX = Math.random() * w;
-                const startY = -40 - Math.random() * 120;
-                const baseSpeed = 12 + Math.random() * 10;
-                const angle = (Math.PI * (115 + Math.random() * 20)) / 180;
-                const vx = Math.cos(angle) * baseSpeed;
-                const vy = Math.sin(angle) * baseSpeed;
-
-                meteors.push({
-                    x: startX,
-                    y: startY,
-                    vx,
-                    vy,
-                    life: 0,
-                    maxLife: 45 + Math.floor(Math.random() * 35),
-                    length: 260 + Math.random() * 220,
-                    headRadius: 2.2 + Math.random() * 2.8,
-                    alpha: 0.95,
-                });
-            }
-
-            if (meteors.length) {
                 ctx.save();
-                ctx.globalCompositeOperation = "lighter";
+                ctx.translate(w / 2, h / 2);
 
-                for (const m of meteors) {
-                    m.life += 1;
-                    m.x += m.vx;
-                    m.y += m.vy;
+                for (let i = 0; i < starCount; i++) {
+                    const s = stars[i];
+                    if (s.z <= 0) continue;
+                    
+                    const x = s.x / (s.z / w);
+                    const y = s.y / (s.z / w);
 
-                    const progress = m.life / m.maxLife;
-                    const fade = Math.max(0, 1 - progress);
-                    const a = m.alpha * fade;
+                    if (s.px !== 0) {
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${Math.min(1, 1.5 - s.z / w)})`;
+                        ctx.lineWidth = Math.max(0.8, (1 - s.z / w) * 3);
+                        ctx.lineCap = "round";
+                        ctx.beginPath();
+                        ctx.moveTo(s.px, s.py);
+                        ctx.lineTo(x, y);
+                        ctx.stroke();
+                    }
 
-                    const tx = m.x - m.vx;
-                    const ty = m.y - m.vy;
-                    const lx = tx - (m.vx * m.length) / 18;
-                    const ly = ty - (m.vy * m.length) / 18;
+                    s.px = x;
+                    s.py = y;
+                    s.z -= speed;
 
-                    const grad = ctx.createLinearGradient(tx, ty, lx, ly);
-                    grad.addColorStop(0, `rgba(255,255,255,${a})`);
-                    grad.addColorStop(0.12, `rgba(160,220,255,${a * 0.65})`);
-                    grad.addColorStop(1, `rgba(0,0,0,0)`);
-
-                    ctx.strokeStyle = grad;
-                    ctx.lineWidth = 2.2;
-                    ctx.lineCap = "round";
-                    ctx.beginPath();
-                    ctx.moveTo(tx, ty);
-                    ctx.lineTo(lx, ly);
-                    ctx.stroke();
-
-                    ctx.fillStyle = `rgba(255,255,255,${a})`;
-                    ctx.beginPath();
-                    ctx.arc(tx, ty, m.headRadius, 0, Math.PI * 2);
-                    ctx.fill();
+                    if (s.z <= 0) {
+                        s.x = Math.random() * w - w / 2;
+                        s.y = Math.random() * h - h / 2;
+                        s.z = w;
+                        s.px = 0;
+                        s.py = 0;
+                    }
                 }
 
-                meteors = meteors.filter(m => m.life < m.maxLife && m.x < w + 200 && m.y < h + 200);
                 ctx.restore();
+
+                if (meteors.length < maxMeteors && Math.random() < meteorSpawnChancePerFrame) {
+                    const startX = Math.random() * w;
+                    const startY = -40 - Math.random() * 120;
+                    const baseSpeed = 12 + Math.random() * 10;
+                    const angle = (Math.PI * (115 + Math.random() * 20)) / 180;
+                    const vx = Math.cos(angle) * baseSpeed;
+                    const vy = Math.sin(angle) * baseSpeed;
+
+                    meteors.push({
+                        x: startX,
+                        y: startY,
+                        vx,
+                        vy,
+                        life: 0,
+                        maxLife: 45 + Math.floor(Math.random() * 35),
+                        length: 260 + Math.random() * 220,
+                        headRadius: 2.2 + Math.random() * 2.8,
+                        alpha: 0.95,
+                    });
+                }
+
+                if (meteors.length) {
+                    ctx.save();
+                    ctx.globalCompositeOperation = "lighter";
+
+                    for (const m of meteors) {
+                        m.life += 1;
+                        m.x += m.vx;
+                        m.y += m.vy;
+
+                        const progress = m.life / m.maxLife;
+                        const fade = Math.max(0, 1 - progress);
+                        const a = m.alpha * fade;
+
+                        const tx = m.x - m.vx;
+                        const ty = m.y - m.vy;
+                        const lx = tx - (m.vx * m.length) / 18;
+                        const ly = ty - (m.vy * m.length) / 18;
+
+                        const grad = ctx.createLinearGradient(tx, ty, lx, ly);
+                        grad.addColorStop(0, `rgba(255,255,255,${a})`);
+                        grad.addColorStop(0.12, `rgba(160,220,255,${a * 0.65})`);
+                        grad.addColorStop(1, `rgba(0,0,0,0)`);
+
+                        ctx.strokeStyle = grad;
+                        ctx.lineWidth = 2.2;
+                        ctx.lineCap = "round";
+                        ctx.beginPath();
+                        ctx.moveTo(tx, ty);
+                        ctx.lineTo(lx, ly);
+                        ctx.stroke();
+
+                        ctx.fillStyle = `rgba(255,255,255,${a})`;
+                        ctx.beginPath();
+                        ctx.arc(tx, ty, m.headRadius, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+
+                    meteors = meteors.filter(m => m.life < m.maxLife && m.x < w + 200 && m.y < h + 200);
+                    ctx.restore();
+                }
+
+                animationId = requestAnimationFrame(drawSpace);
+            } catch (error) {
+                // Silently handle any canvas errors to prevent app crash
+                console.warn("Canvas animation error, continuing:", error);
+                // Continue animation loop even if error occurs
+                if (isRunning) {
+                    animationId = requestAnimationFrame(drawSpace);
+                }
             }
-
-            animationId = requestAnimationFrame(drawSpace);
         };
 
-        initSpace();
-        drawSpace();
+        try {
+            initSpace();
+            drawSpace();
 
-        window.addEventListener("resize", initSpace);
-        return () => {
-            window.removeEventListener("resize", initSpace);
-            if (animationId) cancelAnimationFrame(animationId);
-        };
+            const handleResize = () => {
+                try {
+                    initSpace();
+                } catch (e) {
+                    console.warn("Resize handler error:", e);
+                }
+            };
+            
+            window.addEventListener("resize", handleResize);
+            
+            return () => {
+                isRunning = false;
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                }
+                window.removeEventListener("resize", handleResize);
+            };
+        } catch (error) {
+            console.error("Failed to initialize canvas animation:", error);
+        }
     }, [theme]);
 
     const loadFinancialData = async () => {
