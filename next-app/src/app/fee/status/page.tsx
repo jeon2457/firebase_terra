@@ -94,9 +94,9 @@ export default function FeeStatusPage() {
     // 관리자: 상태 변경 - 스크롤에 영향 안 받게 수정
     const showChangePopup = (el: HTMLElement, memberId: string, month: number, paid: number) => {
         if (!isAdmin) return;
-        
+
         const rect = el.getBoundingClientRect();
-        
+
         // 툴팁 이동 - 좌측으로 5픽셀 추가 이동
         // position: fixed를 사용하여 스크롤에 영향 안 받게 함
         setPopupPosition({
@@ -111,9 +111,9 @@ export default function FeeStatusPage() {
     // 일반 회원: 월 표시 - 스크롤에 영향 안 받게 수정
     const handleShowMonthPopup = (el: HTMLElement, month: number) => {
         if (isAdmin) return;
-        
+
         const rect = el.getBoundingClientRect();
-        
+
         // position: fixed를 사용하여 스크롤에 영향 안 받게 함
         setPopupPosition({
             top: rect.bottom + 10,
@@ -131,10 +131,10 @@ export default function FeeStatusPage() {
         const newPaid = paid === 1 ? 0 : 1;
 
         try {
-            const res = await axios.post('/api/fee/update/route', {
+            const res = await axios.post('/api/fee/update', {
                 memberId, year, month, paid: newPaid
             });
-            
+
             // 성공 시 상태 업데이트
             setPassMap((prev: PassMap) => {
                 const memberPass = prev[memberId] || {};
@@ -146,13 +146,13 @@ export default function FeeStatusPage() {
                     }
                 };
             });
-            
+
             // 팝업 닫기
             setShowPopup(false);
             setCurrentTarget(null);
-        } catch (error) { 
+        } catch (error) {
             console.error('Update failed:', error);
-            alert('업데이트 실패'); 
+            alert('업데이트 실패');
         }
     };
 
@@ -196,11 +196,11 @@ export default function FeeStatusPage() {
     };
 
     const goMemberCheck = () => {
-        if (checkedMembers.length === 0) { 
-            alert('회원을 선택하세요.'); 
-            return; 
+        if (checkedMembers.length === 0) {
+            alert('회원을 선택하세요.');
+            return;
         }
-        
+
         const ids = checkedMembers.join(',');
         const url = `/account/member-check?members=${ids}&year=${year}`;
         router.push(url);
@@ -356,12 +356,12 @@ export default function FeeStatusPage() {
                                 <tr>
                                     {isAdmin && <th><input type="checkbox" checked={checkAll} onChange={handleCheckAll} /></th>}
                                     <th>이름</th>
-                                    <th colSpan={6} style={{background:'#e3f2fd'}}>상반기</th>
-                                    <th colSpan={6} style={{background:'#fff3e0'}}>하반기</th>
+                                    <th colSpan={6} style={{ background: '#e3f2fd' }}>상반기</th>
+                                    <th colSpan={6} style={{ background: '#fff3e0' }}>하반기</th>
                                     <th>입금합계</th><th>미납금</th>
                                 </tr>
                                 <tr>
-                                    {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => <th key={m}>{m}월</th>)}
+                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => <th key={m}>{m}월</th>)}
                                 </tr>
                             </thead>
                             <tbody>
@@ -371,12 +371,12 @@ export default function FeeStatusPage() {
                                         <tr key={member._id}>
                                             {isAdmin && <td><input type="checkbox" checked={checkedMembers.includes(member._id)} onChange={() => handleCheckMember(member._id)} /></td>}
                                             <td>{member.name}</td>
-                                            {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => {
+                                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => {
                                                 const paid = passMap[member._id]?.[m] || 0;
                                                 return (
                                                     <td key={m}>
-                                                        <span 
-                                                            className={`ox ${paid?'o':'x'}`} 
+                                                        <span
+                                                            className={`ox ${paid ? 'o' : 'x'}`}
                                                             onClick={(e) => {
                                                                 const target = e.currentTarget;
                                                                 if (isAdmin) {
@@ -386,7 +386,7 @@ export default function FeeStatusPage() {
                                                                 }
                                                             }}
                                                         >
-                                                            {paid?'O':'X'}
+                                                            {paid ? 'O' : 'X'}
                                                         </span>
                                                     </td>
                                                 );
@@ -412,16 +412,16 @@ export default function FeeStatusPage() {
                             const { totalPaid, unpaidTotal } = calculateTotals(member._id);
                             return (
                                 <div className="mobile-card" key={member._id}>
-                                    <div className="mc-left-chk">{isAdmin && <input type="checkbox" checked={checkedMembers.includes(member._id)} onChange={() => handleCheckMember(member._id)} style={{transform:'scale(1.2)'}}/>}</div>
+                                    <div className="mc-left-chk">{isAdmin && <input type="checkbox" checked={checkedMembers.includes(member._id)} onChange={() => handleCheckMember(member._id)} style={{ transform: 'scale(1.2)' }} />}</div>
                                     <div className="mc-left-name">{member.name}</div>
                                     <div className="mc-right">
                                         <div className="mc-row-months mc-half-1">
-                                            {[1,2,3,4,5,6].map(m => {
+                                            {[1, 2, 3, 4, 5, 6].map(m => {
                                                 const paid = passMap[member._id]?.[m] || 0;
                                                 return (
                                                     <div key={m} className="mc-month-cell">
-                                                        <span 
-                                                            className={`m-ox ${paid?'o':'x'}`} 
+                                                        <span
+                                                            className={`m-ox ${paid ? 'o' : 'x'}`}
                                                             onClick={(e) => {
                                                                 const target = e.currentTarget;
                                                                 if (isAdmin) {
@@ -431,19 +431,19 @@ export default function FeeStatusPage() {
                                                                 }
                                                             }}
                                                         >
-                                                            {paid?'O':'X'}
+                                                            {paid ? 'O' : 'X'}
                                                         </span>
                                                     </div>
                                                 );
                                             })}
                                         </div>
                                         <div className="mc-row-months mc-half-2">
-                                            {[7,8,9,10,11,12].map(m => {
+                                            {[7, 8, 9, 10, 11, 12].map(m => {
                                                 const paid = passMap[member._id]?.[m] || 0;
                                                 return (
                                                     <div key={m} className="mc-month-cell">
-                                                        <span 
-                                                            className={`m-ox ${paid?'o':'x'}`} 
+                                                        <span
+                                                            className={`m-ox ${paid ? 'o' : 'x'}`}
                                                             onClick={(e) => {
                                                                 const target = e.currentTarget;
                                                                 if (isAdmin) {
@@ -453,7 +453,7 @@ export default function FeeStatusPage() {
                                                                 }
                                                             }}
                                                         >
-                                                            {paid?'O':'X'}
+                                                            {paid ? 'O' : 'X'}
                                                         </span>
                                                     </div>
                                                 );
@@ -488,7 +488,7 @@ export default function FeeStatusPage() {
                     {isAdmin ? (
                         <>
                             <p className="month-popup-msg">{popupMonth}월</p>
-                            <p style={{fontSize:'12px',marginBottom:'8px'}}>{currentTarget?.paid===1?'미납→납부':'납부→미납'}?</p>
+                            <p style={{ fontSize: '12px', marginBottom: '8px' }}>{currentTarget?.paid === 1 ? '미납→납부' : '납부→미납'}?</p>
                             <div className="d-flex gap-2 justify-content-center">
                                 <button type="button" className="btn btn-primary btn-sm" onClick={confirmChange}>변경</button>
                                 <button type="button" className="btn btn-secondary btn-sm" onClick={() => setShowPopup(false)}>취소</button>
@@ -503,23 +503,23 @@ export default function FeeStatusPage() {
             {/* 모달들 */}
             {showFeeModal && (
                 <div className="modal-overlay" onClick={() => setShowFeeModal(false)}>
-                    <div className="modal-content-custom" onClick={e=>e.stopPropagation()}>
+                    <div className="modal-content-custom" onClick={e => e.stopPropagation()}>
                         <h5>💰 월회비 변경</h5>
                         <div className="mb-3">
                             <label>연도/월</label>
                             <div className="d-flex gap-2">
-                                <input type="number" className="form-control" value={feeYear} onChange={e=>setFeeYear(parseInt(e.target.value))} />
-                                <select className="form-select" value={feeMonth} onChange={e=>setFeeMonth(parseInt(e.target.value))}>
-                                    {[1,2,3,4,5,6,7,8,9,10,11,12].map(m=><option key={m} value={m}>{m}월</option>)}
+                                <input type="number" className="form-control" value={feeYear} onChange={e => setFeeYear(parseInt(e.target.value))} />
+                                <select className="form-select" value={feeMonth} onChange={e => setFeeMonth(parseInt(e.target.value))}>
+                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => <option key={m} value={m}>{m}월</option>)}
                                 </select>
                             </div>
                         </div>
                         <div className="mb-3">
                             <label>월회비</label>
-                            <input type="number" className="form-control" value={feeAmount} onChange={e=>setFeeAmount(parseInt(e.target.value))} />
+                            <input type="number" className="form-control" value={feeAmount} onChange={e => setFeeAmount(parseInt(e.target.value))} />
                         </div>
                         <div className="d-flex gap-2 justify-content-end">
-                            <button className="btn btn-secondary" onClick={()=>setShowFeeModal(false)}>취소</button>
+                            <button className="btn btn-secondary" onClick={() => setShowFeeModal(false)}>취소</button>
                             <button className="btn btn-primary" onClick={saveFee}>저장</button>
                         </div>
                     </div>
@@ -528,10 +528,10 @@ export default function FeeStatusPage() {
 
             {showGuideModal && (
                 <div className="modal-overlay" onClick={() => setShowGuideModal(false)}>
-                    <div className="modal-content-custom" onClick={e=>e.stopPropagation()}>
+                    <div className="modal-content-custom" onClick={e => e.stopPropagation()}>
                         <h5>📋 보는법</h5>
-                        <div><span style={{color:'green',fontWeight:'bold'}}>O</span> 납부완료 | <span style={{color:'red',fontWeight:'bold'}}>X</span> 미납</div>
-                        <div className="mt-3"><button className="btn btn-dark w-100" onClick={()=>setShowGuideModal(false)}>닫기</button></div>
+                        <div><span style={{ color: 'green', fontWeight: 'bold' }}>O</span> 납부완료 | <span style={{ color: 'red', fontWeight: 'bold' }}>X</span> 미납</div>
+                        <div className="mt-3"><button className="btn btn-dark w-100" onClick={() => setShowGuideModal(false)}>닫기</button></div>
                     </div>
                 </div>
             )}
