@@ -269,7 +269,7 @@ export default function MembersSamplePage() {
                     display: flex;
                     align-items: center;
                     animation: marquee 15s linear infinite;
-                    font-size: 18px;
+                    font-size: 15px;
                     color: #ffffff;
                     padding-left: 100%;
                 }
@@ -281,7 +281,7 @@ export default function MembersSamplePage() {
                 }
                 .custom-span {
                     display: inline-block;
-                    font-size: 18px;
+                    font-size: 15px;
                     line-height: 30px;
                     margin: 1px 20px 5px 17px;
                     padding: 0;
@@ -330,6 +330,9 @@ export default function MembersSamplePage() {
                     word-break: break-all;
                     line-height: 1.1;
                     font-size: 0.9rem;
+                }
+                .custom-table tbody tr:first-child td {
+                    padding-top: calc(0.44rem + 15px);
                 }
 
                 .name-link {
