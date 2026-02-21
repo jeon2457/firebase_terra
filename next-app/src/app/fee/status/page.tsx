@@ -324,7 +324,7 @@ export default function FeeStatusPage() {
                     <div className="title-btn">{year}년도 회비납부 현황</div>
                 </div>
                 <div className="d-flex gap-2">
-                    <button className="help-btn" onClick={() => setShowGuideModal(true)}>❓</button>
+                    <button className="help-btn" onClick={() => setShowGuideModal(true)}>❓보는법</button>
                     <div className="fee-btn" onClick={() => isAdmin && setShowFeeModal(true)}>
                         월회비: {currentMonthFee.toLocaleString()}원
                     </div>
