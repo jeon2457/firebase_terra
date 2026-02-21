@@ -131,7 +131,7 @@ export default function FeeStatusPage() {
         const newPaid = paid === 1 ? 0 : 1;
 
         try {
-            const res = await axios.post('/api/fee/update', {
+            const res = await axios.post('/api/fee/update/route', {
                 memberId, year, month, paid: newPaid
             });
             
