@@ -161,10 +161,13 @@ export default function MemberInputPage() {
           font-size: 16px;
           border-radius: 14px;
           background: #eef3f9;
-          box-shadow: inset 4px 4px 10px rgba(0,0,0,0.10), inset -4px -4px 10px rgba(255,255,255,0.80);
+          /* 볼록한(튀어나온) 기본 상태 */
+          box-shadow: 6px 6px 12px rgba(0,0,0,0.15), -6px -6px 12px rgba(255,255,255,0.9);
+          transition: all 0.2s ease;
         }
         .form-control:focus, .form-select:focus {
           outline: none;
+          /* 클릭시 오목하게(들어간) 상태 */
           box-shadow: inset 6px 6px 12px rgba(0,0,0,0.12), inset -6px -6px 12px rgba(255,255,255,0.85);
         }
         .auto-generated {
@@ -173,10 +176,15 @@ export default function MemberInputPage() {
         }
 
         .help-text {
-          color: var(--muted);
-          font-size: 0.85rem;
+          display: inline-block;
+          color: #ffffff;
+          font-size: 0.8rem;
           margin-top: 8px;
           margin-left: 2px;
+          padding: 6px 12px;
+          border-radius: 20px;
+          background: #3b82f6;
+          font-weight: 500;
         }
 
         .divider {
@@ -254,6 +262,7 @@ export default function MemberInputPage() {
                             placeholder="접속 아이디 입력"
                             value={formData.id}
                             onChange={handleChange}
+                            autoComplete="off"
                         />
                     </div>
 
@@ -267,6 +276,7 @@ export default function MemberInputPage() {
                             placeholder="초기 비밀번호 설정"
                             value={formData.password}
                             onChange={handleChange}
+                            autoComplete="off"
                         />
                     </div>
 
