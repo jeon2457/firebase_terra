@@ -424,8 +424,25 @@ export default function MembersViewPage() {
                     .cube { width: 22px; height: 22px; }
                     .cube img { width: 22px; height: 22px; top: 0; left: 0; }
                     
-                    .custom-table thead th { color: #f0c420; font-size: 13px; } 
-                    .custom-table td { padding: 0.32rem 0; }
+                    .custom-table thead th { 
+                        color: #f0c420; 
+                        font-size: 13px; 
+                        padding: calc(0.44rem + 3px) 0;
+                    } 
+                    .custom-table td { 
+                        padding: calc(0.32rem + 3px) 0; 
+                    }
+                    
+                    /* 아이콘 크기 2px 증가 */
+                    .sms-icon {
+                        max-width: 19px !important;
+                        max-height: 19px !important;
+                    }
+                    
+                    .max-small {
+                        width: 1.35rem !important;
+                        height: 1.35rem !important;
+                    }
 
                     .custom-span { font-size: 14px; margin: 0 10px; line-height: 30px; }
                     
