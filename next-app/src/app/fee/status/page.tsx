@@ -56,7 +56,10 @@ export default function FeeStatusPage() {
             }
             // 팝업 외부 클릭 시 닫기
             if (showPopup) {
-                setShowPopup(false);
+                const popup = document.querySelector('.month-popup');
+                if (popup && !popup.contains(event.target as Node)) {
+                    setShowPopup(false);
+                }
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
