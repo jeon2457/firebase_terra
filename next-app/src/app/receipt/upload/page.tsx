@@ -125,7 +125,7 @@ export default function ReceiptUploadPage() {
             <div className="upload-card">
                 <div className="page-header">
                     <h1 className="fw-bold m-0"><ImageIcon size={32} className="me-2" /> 영수증 업로드</h1>
-                    <p className="small opacity-75 mt-2">Cloudinary 및 DB 전송 시스템</p>
+                    <p className="small opacity-75 mt-2" style={{ color: 'orange' }}>Cloudinary 및 DB 전송 시스템</p>
                 </div>
 
                 <div className="section-box">
@@ -165,7 +165,7 @@ export default function ReceiptUploadPage() {
 
                     <div className="d-flex gap-3">
                         <button className="btn btn-success flex-grow-1 p-3 fw-bold rounded-pill" onClick={handleSaveToDB}>
-                            <CheckCircle size={18} className="me-1" /> DB에 저장하기
+                            <CheckCircle size={18} className="me-1" /> MongoDB에 저장하기
                         </button>
                     </div>
                 </div>
