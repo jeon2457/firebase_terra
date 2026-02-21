@@ -87,23 +87,23 @@ export default function ReceiptUploadPage() {
                     margin: 0 auto;
                     background: white;
                     border-radius: 20px;
-                    padding: 40px;
+                    padding: 20px;
                     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
                 }
                 .page-header {
                     text-align: center;
-                    margin-bottom: 40px;
+                    margin-bottom: 20px;
                     background: #2c3e50;
                     color: white;
-                    padding: 30px;
+                    padding: 20px;
                     border-radius: 15px;
                 }
                 .section-box {
                     background: #f8f9fa;
                     border: 2px solid #e9ecef;
                     border-radius: 15px;
-                    padding: 25px;
-                    margin-bottom: 30px;
+                    padding: 20px;
+                    margin-bottom: 20px;
                 }
                 .preview-box {
                     border: 2px dashed #3498db;
@@ -119,6 +119,32 @@ export default function ReceiptUploadPage() {
                     font-size: 14px;
                     border-radius: 8px;
                     margin-bottom: 20px;
+                }
+                @media (min-width: 768px) {
+                    .upload-card {
+                        padding: 30px;
+                    }
+                    .page-header {
+                        margin-bottom: 30px;
+                        padding: 25px;
+                    }
+                    .section-box {
+                        padding: 25px;
+                        margin-bottom: 25px;
+                    }
+                }
+                @media (min-width: 1024px) {
+                    .upload-card {
+                        padding: 40px;
+                    }
+                    .page-header {
+                        margin-bottom: 40px;
+                        padding: 30px;
+                    }
+                    .section-box {
+                        padding: 25px;
+                        margin-bottom: 30px;
+                    }
                 }
             `}</style>
 
