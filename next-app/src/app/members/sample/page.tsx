@@ -2,19 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 export default function MembersSamplePage() {
-    const { data: session, status } = useSession();
     const router = useRouter();
-
-    // Session Check
-    useEffect(() => {
-        if (status === "unauthenticated") {
-            router.push("/login");
-        }
-    }, [status, router]);
 
     // Sample Data
     const members = [
