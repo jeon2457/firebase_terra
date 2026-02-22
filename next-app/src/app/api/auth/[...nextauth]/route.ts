@@ -31,10 +31,6 @@ export const authOptions = {
                 const isValid = await bcrypt.compare(credentials.password, user.password);
 
                 if (!isValid) {
-                    // Fallback for plain text if migration is in progress (optional)
-                    if (credentials.password === user.password) {
-                        return { id: user.id, name: user.name, user_level: user.user_level, remark: user.remark };
-                    }
                     throw new Error("아이디 또는 비밀번호가 일치하지 않습니다.");
                 }
 

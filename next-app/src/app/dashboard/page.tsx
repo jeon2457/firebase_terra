@@ -15,9 +15,7 @@ export default function DashboardPage() {
     const [isLoadingTheme, setIsLoadingTheme] = useState(true);
 
     useEffect(() => {
-        if (status === "unauthenticated") {
-            router.push("/login");
-        }
+        // status === "unauthenticated" 처리는 middleware.ts에서 수행합니다.
         document.title = "대시보드";
     }, [status, router]);
 

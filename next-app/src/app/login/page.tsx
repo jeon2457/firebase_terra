@@ -12,10 +12,10 @@ export default function LoginPage() {
     const [id, setId] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    
+
     // [추가] 비밀번호 표시/숨김 상태 관리
     const [showPassword, setShowPassword] = useState(false);
-    
+
     const router = useRouter();
     const { data: session } = useSession({
         required: false,
@@ -24,15 +24,7 @@ export default function LoginPage() {
         }
     });
 
-    useEffect(() => {
-        if (session) {
-            if ((session.user as any).user_level >= 10) {
-                router.push("/dashboard");
-            } else {
-                router.push("/guest");
-            }
-        }
-    }, [session, router]);
+    /* middleware.ts에서 리다이렉션을 처리하므로 클라이언트 사이드 useEffect는 제거합니다. */
 
     useEffect(() => {
         // 로고 애니메이션
@@ -275,15 +267,15 @@ export default function LoginPage() {
                     <div className="login-card">
                         <div className="card-header">
                             <div className="login-icon">
-                                <img 
-                                    src="/images/clova.png" 
-                                    alt="로고" 
+                                <img
+                                    src="/images/clova.png"
+                                    alt="로고"
                                     id="logoImg"
                                 />
                             </div>
                             <h2 className="card-title">로그인</h2>
                         </div>
-                        
+
                         <div className="card-body">
                             <form onSubmit={handleSubmit}>
                                 <div className="mb-4">
