@@ -4,5 +4,17 @@
       "path": "/api/cron/reminder",
       "schedule": "25 9 25 * *"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/tel_view_mp4_sample.html",
+      "destination": "/members/sample-mp4",
+      "permanent": true
+    },
+    {
+      "source": "/tel_view_sample.html",
+      "destination": "/members/sample",
+      "permanent": true
+    }
   ]
 }
