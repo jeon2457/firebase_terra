@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vercel Next.js 템플릿에서 Github_MongoDB와 연동처리되는 코드</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        nav {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 3px solid #1976d2;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #1976d2;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid #1976d2;
+        }
+
+        nav a:hover {
+            background: #1976d2;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        section {
+            margin-bottom: 60px;
+            scroll-margin-top: 80px;
+        }
+
+        h2 {
+            color: #1976d2;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #1976d2;
+        }
+
+        h3 {
+            color: #333;
+            font-size: 1.5em;
+            margin: 30px 0 15px 0;
+            padding-left: 15px;
+            border-left: 5px solid #764ba2;
+        }
+
+        .flow-diagram {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            border: 2px solid #e0e0e0;
+        }
+
+        .flow-step {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border-left: 5px solid #1976d2;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .flow-step:hover {
+            transform: translateX(10px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .flow-step h4 {
+            color: #1976d2;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .code-block .keyword {
+            color: #66d9ef;
+        }
+
+        .code-block .string {
+            color: #a6e22e;
+        }
+
+        .code-block .comment {
+            color: #75715e;
+            font-style: italic;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .warning-box h4::before {
+            content: "⚠️";
+            font-size: 1.5em;
+        }
+
+        .tip-box {
+            background: #d1ecf1;
+            border: 2px solid #17a2b8;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tip-box h4 {
+            color: #0c5460;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tip-box h4::before {
+            content: "💡";
+            font-size: 1.5em;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .success-box h4 {
+            color: #155724;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .success-box h4::before {
+            content: "✅";
+            font-size: 1.5em;
+        }
+
+        .file-tree {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            margin: 20px 0;
+        }
+
+        .file-tree ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        .file-tree li {
+            margin: 5px 0;
+            padding: 5px;
+        }
+
+        .file-tree .folder::before {
+            content: "📁 ";
+        }
+
+        .file-tree .file::before {
+            content: "📄 ";
+        }
+
+        .arrow {
+            text-align: center;
+            font-size: 2em;
+            color: #1976d2;
+            margin: 10px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        th {
+            background: #1976d2;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #764ba2;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin: 5px 5px 5px 0;
+            font-weight: 600;
+        }
+
+        footer {
+            background: #2d2d2d;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        footer p {
+            opacity: 0.8;
+        }
+        
+        .redText {
+          color: red;
+        }
+
+        .blueText {
+          color: blue;
+        }
+
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            nav ul {
+                flex-direction: column;
+            }
+
+            nav a {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Vercel + Next.js + MongoDB 프로젝트 구조</h1>
+            <p>GitHub 저장소에서 Vercel 배포까지의 전체 흐름도</p>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="#overview">개요</a></li>
+                <li><a href="#structure">프로젝트 구조</a></li>
+                <li><a href="#flow">데이터 흐름</a></li>
+                <li><a href="#deployment">배포 프로세스</a></li>
+                <li><a href="#github">GitHub 관리</a></li>
+                <li><a href="#tips">주의사항</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <!-- 개요 섹션 -->
+            <section id="overview">
+                <h2>📋 프로젝트 개요</h2>
+                
+                <div class="success-box">
+                    <h4>프로젝트 정보</h4>
+                    <p><strong>프로젝트명:</strong> vercel_mongodb</p>
+                    <p><strong>GitHub 저장소:</strong> https://github.com/jeon2457/vercel_mongodb</p>
+                    <p><strong>Vercel URL:</strong> https://firebase-terra.vercel.app</p>
+                    <p><strong>로컬 경로:</strong> C:\GitHub_vercel_mongodb\vercel_mongodb\</p>
+
+                    <span class="redText">[안내]</span> <span class="blueText">이미지와 영상은 Cloudinary에 저장되고 URL만 MongoDB에 저장되도록 코드가 잘 설계되어 있습니다!
+
+                    현재 코드에서 확인된 Cloudinary 사용:<br>
+                    1. 영수증 이미지 업로드 ( receipts )
+                    파일 위치: /receipt/upload, /receipt/edit, /api/receipts<br>
+                    동작 방식:<br>
+                    사용자가 파일 선택 → Cloudinary에 직접 업로드<br>
+                    Cloudinary에서 반환된 URL만 MongoDB에 저장<br>
+                    실제 이미지 파일은 Cloudinary 스토리에 저장<br>
+                    2. Image 모델 확인<br>
+
+                    // src/models/Image.ts
+                    {
+                      url: { type: String, required: true },  // Cloudinary URL만 저장
+                      date: { type: String, required: true }
+                    }<br>
+                    3. Cloudinary 설정<br>
+                    Cloud Name: dghx4ciwc<br>
+                    Upload Preset: direct_upload<br>
+                    무료 티어: 25GB 제공 (MongoDB 무료 티어 512MB보다 훨씬 큼!)
+                    MongoDB에 저장되는 데이터:<br>
+                    📝 회원 이름, 전화번호, 이메일<br>
+                    📝 가계부 (수입/지출 내역)<br>
+                    📝 문자 메시지 내용<br>
+                    📝 이미지의 Cloudinary URL (텍스트 only)<br>
+                    정리:
+                    저장소 저장 내용   용량<br>
+                    MongoDB 텍스트 데이터 (회원, 가계부, 문자 등) 512MB (무료)
+                    Cloudinary  이미지, 영상 25GB (무료)<br>
+                    ✅ 코드가 효율적으로 설계되어 있습니다! <br>MongoDB 스토리지는 텍스트 위주라 512MB로 충분하고, 큰 파일(이미지/영상)은 Cloudinary에 저장되어MongoDB 용량을 아낍니다.<br>
+
+                    Cloudinary 무료 티어도 25GB 제공하므로, <br>대부분의 이미지/영상 저장에 문제가 없습니다!</span>
+                </div>
+
+                <h3>기술 스택</h3>
+                <div class="flow-diagram">
+                    <span class="tag">Next.js 14</span>
+                    <span class="tag">App Router</span>
+                    <span class="tag">TypeScript</span>
+                    <span class="tag">MongoDB</span>
+                    <span class="tag">NextAuth.js</span>
+                    <span class="tag">Vercel</span>
+                    <span class="tag">GitHub</span>
+                    <span class="tag">Bootstrap 5</span>
+                </div>
+            </section>
+
+            <!-- 프로젝트 구조 섹션 -->
+            <section id="structure">
+                <h2>📂 프로젝트 파일 구조</h2>
+
+                <div class="file-tree">
+                    <ul>
+                        <li class="folder">vercel_mongodb/
+                            <ul>
+                                <li class="folder">src/
+                                    <ul>
+                                        <li class="folder">app/
+                                            <ul>
+                                                <li class="folder">api/
+                                                    <ul>
+                                                        <li class="folder">auth/[...nextauth]/
+                                                            <ul>
+                                                                <li class="file">route.ts (NextAuth 설정)</li>
+                                                            </ul>
+                                                        </li>
+                                                        <li class="folder">receipts/
+                                                            <ul>
+                                                                <li class="file">route.ts (영수증 API)</li>
+                                                            </ul>
+                                                        </li>
+                                                        <li class="folder">fee/
+                                                            <ul>
+                                                                <li class="folder">status/
+                                                                    <ul>
+                                                                        <li class="file">route.ts (회비 조회 API)</li>
+                                                                    </ul>
+                                                                </li>
+                                                                <li class="folder">update/
+                                                                    <ul>
+                                                                        <li class="file">route.ts (회비 상태 변경 API)</li>
+                                                                    </ul>
+                                                                </li>
+                                                                <li class="folder">update-amount/
+                                                                    <ul>
+                                                                        <li class="file">route.ts (월회비 금액 변경 API)</li>
+                                                                    </ul>
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                                <li class="folder">dashboard/
+                                                    <ul>
+                                                        <li class="file">page.tsx (대시보드 페이지)</li>
+                                                    </ul>
+                                                </li>
+                                                <li class="folder">receipt/
+                                                    <ul>
+                                                        <li class="folder">upload/
+                                                            <ul>
+                                                                <li class="file">page.tsx (영수증 업로드 페이지)</li>
+                                                            </ul>
+                                                        </li>
+                                                        <li class="folder">edit/
+                                                            <ul>
+                                                                <li class="file">page.tsx (영수증 편집 페이지)</li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                                <li class="folder">fee/
+                                                    <ul>
+                                                        <li class="folder">status/
+                                                            <ul>
+                                                                <li class="file">page.tsx (회비납부 현황 페이지)</li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                                <li class="file">layout.tsx (전역 레이아웃)</li>
+                                                <li class="file">page.tsx (홈 페이지)</li>
+                                            </ul>
+                                        </li>
+                                        <li class="folder">models/
+                                            <ul>
+                                                <li class="file">Member.ts (회원 모델)</li>
+                                                <li class="file">Image.ts (영수증 이미지 모델)</li>
+                                                <li class="file">AccountPass.ts (회비 납부 기록 모델)</li>
+                                                <li class="file">MonthlyFeeHistory.ts (월회비 이력 모델)</li>
+                                            </ul>
+                                        </li>
+                                        <li class="folder">lib/
+                                            <ul>
+                                                <li class="file">mongodb.ts (MongoDB 연결 설정)</li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="file">.env.local (환경변수 - Git에서 제외)</li>
+                                <li class="file">package.json (의존성 관리)</li>
+                                <li class="file">next.config.js (Next.js 설정)</li>
+                                <li class="file">tsconfig.json (TypeScript 설정)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 데이터 흐름 섹션 -->
+            <section id="flow">
+                <h2>🔄 데이터 흐름도</h2>
+
+                <h3>1. 사용자 인증 흐름</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        <h4>Step 1: 로그인 요청</h4>
+                        <p>사용자가 로그인 페이지에서 이메일/비밀번호 입력</p>
+                        <div class="code-block">
+<span class="comment">// /app/login/page.tsx</span>
+<span class="keyword">const</span> handleLogin = <span class="keyword">async</span> () => {
+  <span class="keyword">const</span> result = <span class="keyword">await</span> signIn(<span class="string">'credentials'</span>, {
+    email,
+    password,
+    redirect: <span class="keyword">false</span>
+  });
+}
+                        </div>
+                    </div>
+
+                    <div class="arrow">⬇️</div>
+
+                    <div class="flow-step">
+                        <h4>Step 2: NextAuth 인증 처리</h4>
+                        <p>API 라우트에서 MongoDB 회원 정보 확인</p>
+                        <div class="code-block">
+<span class="comment">// /app/api/auth/[...nextauth]/route.ts</span>
+<span class="keyword">const</span> user = <span class="keyword">await</span> Member.findOne({ email });
+<span class="keyword">if</span> (user && bcrypt.compareSync(password, user.password)) {
+  <span class="keyword">return</span> user;
+}
+                        </div>
+                    </div>
+
+                    <div class="arrow">⬇️</div>
+
+                    <div class="flow-step">
+                        <h4>Step 3: 세션 생성 및 리다이렉트</h4>
+                        <p>인증 성공 시 세션 생성 → 대시보드로 이동</p>
+                    </div>
+                </div>
+
+                <h3>2. 회비납부 현황 조회 흐름</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        <h4>Step 1: 페이지 접속</h4>
+                        <p>사용자가 /fee/status 페이지 접속</p>
+                    </div>
+
+                    <div class="arrow">⬇️</div>
+
+                    <div class="flow-step">
+                        <h4>Step 2: 권한 확인</h4>
+                        <p>세션에서 user_level 확인 (Level 10 이상만 수정 가능)</p>
+                        <div class="code-block">
+<span class="keyword">const</span> isAdmin = (session?.user <span class="keyword">as any</span>)?.user_level >= 10;
+                        </div>
+                    </div>
+
+                    <div class="arrow">⬇️</div>
+
+                    <div class="flow-step">
+                        <h4>Step 3: API 호출</h4>
+                        <p>GET /api/fee/status?year=2026</p>
+                        <div class="code-block">
+<span class="keyword">const</span> res = <span class="keyword">await</span> axios.get(<span class="string">`/api/fee/status?year=${year}`</span>);
+                        </div>
+                    </div>
+
+                    <div class="arrow">⬇️</div>
+
+                    <div class="flow-step">
+                        <h4>Step 4: MongoDB 조회</h4>
+                        <p>3개 컬렉션에서 데이터 가져오기</p>
+                        <div class="code-block">
+<span class="comment">// 1. 회원 목록</span>
+<span class="keyword">const</span> members = <span class="keyword">await</span> Member.find({ name: { $ne: <span class="string">'공용계정'</span> } });
+
+<span class="comment">// 2. 납부 기록</span>
+<span class="keyword">const</span> passRecords = <span class="keyword">await</span> AccountPass.find({ pay_year: year });
+
+<span class="comment">// 3. 월회비 이력</span>
+<span class="keyword">const</span> feeHistory = <span class="keyword">await</span> MonthlyFeeHistory.findOne()
+  .sort({ apply_year: -1, apply_month: -1 });
+                        </div>
+                    </div>
+
+                    <div class="arrow">⬇️</div>
+
+                    <div class="flow-step">
+                        <h4>Step 5: 데이터 가공 및 렌더링</h4>
+                        <p>받은 데이터를 테이블 형태로 화면에 표시</p>
+                    </div>
+                </div>
+
+                <h3>3. 납부 상태 변경 흐름</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        <h4>Step 1: O/X 클릭</h4>
+                        <p>관리자가 월별 O/X 클릭 → 팝업 표시</p>
+                    </div>
+
+                    <div class="arrow">⬇️</div>
+
+                    <div class="flow-step">
+                        <h4>Step 2: 변경 확인</h4>
+                        <p>팝업에서 "변경" 버튼 클릭</p>
+                    </div>
+
+                    <div class="arrow">⬇️</div>
+
+                    <div class="flow-step">
+                        <h4>Step 3: API 호출</h4>
+                        <p>POST /api/fee/update</p>
+                        <div class="code-block">
+<span class="keyword">await</span> axios.post(<span class="string">'/api/fee/update'</span>, {
+  memberId,
+  year,
+  month,
+  paid: newPaid
+});
+                        </div>
+                    </div>
+
+                    <div class="arrow">⬇️</div>
+
+                    <div class="flow-step">
+                        <h4>Step 4: MongoDB 업데이트</h4>
+                        <p>AccountPass 컬렉션 업데이트 또는 생성</p>
+                        <div class="code-block">
+<span class="keyword">const</span> existing = <span class="keyword">await</span> AccountPass.findOne({ 
+  member_id, pay_year, pay_month 
+});
+
+<span class="keyword">if</span> (existing) {
+  existing.paid = paid;
+  <span class="keyword">await</span> existing.save();
+} <span class="keyword">else</span> {
+  <span class="keyword">await</span> AccountPass.create({ member_id, pay_year, pay_month, paid });
+}
+                        </div>
+                    </div>
+
+                    <div class="arrow">⬇️</div>
+
+                    <div class="flow-step">
+                        <h4>Step 5: UI 업데이트</h4>
+                        <p>성공 시 화면의 O/X 즉시 변경 (입금/미납 합계도 자동 계산)</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 배포 프로세스 섹션 -->
+            <section id="deployment">
+                <h2>🚀 배포 프로세스</h2>
+
+                <h3>자동 배포 흐름</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        <h4>1. 로컬 개발</h4>
+                        <p>VS Code에서 코드 작성 및 테스트</p>
+                        <div class="code-block">
+<span class="comment"># 로컬 개발 서버 실행</span>
+npm run dev
+
+<span class="comment"># http://localhost:3000 에서 테스트</span>
+                        </div>
+                    </div>
+
+                    <div class="arrow">⬇️</div>
+
+                    <div class="flow-step">
+                        <h4>2. Git 커밋</h4>
+                        <div class="code-block">
+git add .
+git commit -m <span class="string">"feat: 회비납부 현황 페이지 추가"</span>
+                        </div>
+                    </div>
+
+                    <div class="arrow">⬇️</div>
+
+                    <div class="flow-step">
+                        <h4>3. GitHub 푸시</h4>
+                        <div class="code-block">
+git push origin main
+                        </div>
+                    </div>
+
+                    <div class="arrow">⬇️</div>
+
+                    <div class="flow-step">
+                        <h4>4. Vercel 자동 감지</h4>
+                        <p>GitHub 저장소의 변경사항을 Vercel이 자동으로 감지</p>
+                    </div>
+
+                    <div class="arrow">⬇️</div>
+
+                    <div class="flow-step">
+                        <h4>5. 빌드 시작</h4>
+                        <p>Vercel에서 자동으로 빌드 시작</p>
+                        <div class="code-block">
+<span class="comment"># Vercel이 자동 실행</span>
+npm install
+npm run build
+                        </div>
+                    </div>
+
+                    <div class="arrow">⬇️</div>
+
+                    <div class="flow-step">
+                        <h4>6. 배포 완료</h4>
+                        <p>https://firebase-terra.vercel.app 에 자동 배포</p>
+                    </div>
+                </div>
+
+                <div class="tip-box">
+                    <h4>배포 확인 방법</h4>
+                    <ol>
+                        <li>Vercel 대시보드(https://vercel.com) 접속</li>
+                        <li>프로젝트 선택</li>
+                        <li>Deployments 탭에서 빌드 로그 확인</li>
+                        <li>성공 시 자동으로 프로덕션에 반영됨</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- GitHub 관리 섹션 -->
+            <section id="github">
+                <h2>🔧 GitHub 저장소 관리</h2>
+
+                <h3>저장소 이름 변경 방법</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        <h4>Step 1: GitHub 웹사이트에서 변경</h4>
+                        <ol>
+                            <li>저장소 페이지 이동 (예: https://github.com/jeon2457/old_name)</li>
+                            <li>Settings 클릭</li>
+                            <li>Repository name 찾기</li>
+                            <li>새 이름 입력 (예: vercel_mongodb)</li>
+                            <li>Rename 버튼 클릭</li>
+                        </ol>
+                    </div>
+
+                    <div class="arrow">⬇️</div>
+
+                    <div class="flow-step">
+                        <h4>Step 2: 로컬 Git Remote URL 업데이트</h4>
+                        <div class="code-block">
+<span class="comment"># 현재 URL 확인</span>
+git remote -v
+
+<span class="comment"># 새 URL로 변경</span>
+git remote set-url origin https://github.com/jeon2457/vercel_mongodb.git
+
+<span class="comment"># 확인</span>
+git remote -v
+                        </div>
+                    </div>
+
+                    <div class="arrow">⬇️</div>
+
+                    <div class="flow-step">
+                        <h4>Step 3: 로컬 폴더명 변경 (선택사항)</h4>
+                        <p><strong>Windows:</strong></p>
+                        <ol>
+                            <li>파일 탐색기에서 폴더 우클릭</li>
+                            <li>"이름 바꾸기" 선택</li>
+                            <li>새 이름 입력</li>
+                        </ol>
+                        <p><strong>Mac/Linux:</strong></p>
+                        <div class="code-block">
+mv old_folder_name new_folder_name
+                        </div>
+                    </div>
+
+                    <div class="arrow">⬇️</div>
+
+                    <div class="flow-step">
+                        <h4>Step 4: Vercel 자동 감지 확인</h4>
+                        <p>Vercel은 자동으로 새 저장소 이름을 감지합니다. 다음 배포 시 자동 업데이트됩니다.</p>
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <h4>주의사항</h4>
+                    <ul>
+                        <li>Vercel 배포 URL은 변경되지 않습니다 (예: firebase-terra.vercel.app)</li>
+                        <li>URL을 변경하려면 Vercel Settings > Domains에서 별도 설정 필요</li>
+                        <li>GitHub Desktop 사용 시 "Locate" 기능으로 폴더 경로 재설정</li>
+                    </ul>
+                </div>
+
+                <h3>Upstream 관리</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        <h4>Upstream이란?</h4>
+                        <p>원본 저장소를 가리키는 Remote 저장소입니다. Fork한 프로젝트에서 주로 사용합니다.</p>
+                    </div>
+
+                    <div class="flow-step">
+                        <h4>Upstream 추가</h4>
+                        <div class="code-block">
+git remote add upstream https://github.com/original_owner/repo_name.git
+                        </div>
+                    </div>
+
+                    <div class="flow-step">
+                        <h4>Upstream 확인</h4>
+                        <div class="code-block">
+git remote -v
+
+<span class="comment"># 결과 예시:</span>
+<span class="comment"># origin    https://github.com/jeon2457/vercel_mongodb.git (fetch)</span>
+<span class="comment"># origin    https://github.com/jeon2457/vercel_mongodb.git (push)</span>
+<span class="comment"># upstream  https://github.com/jikji35/vercel_mongodb.git (fetch)</span>
+<span class="comment"># upstream  https://github.com/jikji35/vercel_mongodb.git (push)</span>
+                        </div>
+                    </div>
+
+                    <div class="flow-step">
+                        <h4>Upstream 삭제 (필요 없는 경우)</h4>
+                        <div class="code-block">
+git remote remove upstream
+                        </div>
+                    </div>
+
+                    <div class="flow-step">
+                        <h4>Upstream URL 변경</h4>
+                        <div class="code-block">
+git remote set-url upstream https://github.com/new_owner/new_repo.git
+                        </div>
+                    </div>
+
+                    <div class="flow-step">
+                        <h4>Upstream에서 변경사항 가져오기</h4>
+                        <div class="code-block">
+<span class="comment"># Fetch만 (병합 안 함)</span>
+git fetch upstream
+
+<span class="comment"># Fetch + Merge</span>
+git pull upstream main
+
+<span class="comment"># 강제 덮어쓰기 (로컬 변경사항 무시)</span>
+git fetch upstream
+git reset --hard upstream/main
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 주의사항 섹션 -->
+            <section id="tips">
+                <h2>⚠️ 주의사항 및 팁</h2>
+
+                <h3>환경변수 관리</h3>
+                <div class="warning-box">
+                    <h4>절대 Git에 커밋하지 말 것!</h4>
+                    <p><strong>.env.local</strong> 파일은 반드시 .gitignore에 포함되어야 합니다.</p>
+                    <div class="code-block">
+<span class="comment"># .gitignore</span>
+.env.local
+.env*.local
+                    </div>
+                </div>
+
+                <div class="tip-box">
+                    <h4>Vercel 환경변수 설정</h4>
+                    <ol>
+                        <li>Vercel 대시보드 > 프로젝트 선택</li>
+                        <li>Settings > Environment Variables</li>
+                        <li>필요한 변수 추가:
+                            <ul>
+                                <li>MONGODB_URI</li>
+                                <li>NEXTAUTH_SECRET</li>
+                                <li>CLOUDINARY_CLOUD_NAME</li>
+                                <li>CLOUDINARY_API_KEY</li>
+                                <li>CLOUDINARY_API_SECRET</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+
+                <h3>코드 변경 시 주의사항</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>항목</th>
+                            <th>주의사항</th>
+                            <th>영향 범위</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>MongoDB 모델 변경</td>
+                            <td>스키마 변경 시 기존 데이터와의 호환성 확인 필요</td>
+                            <td>전체 컬렉션</td>
+                        </tr>
+                        <tr>
+                            <td>API 라우트 경로 변경</td>
+                            <td>프론트엔드의 모든 API 호출 경로도 함께 수정</td>
+                            <td>해당 API 사용하는 모든 페이지</td>
+                        </tr>
+                        <tr>
+                            <td>패키지 추가/업데이트</td>
+                            <td>package.json 변경 후 반드시 npm install 실행</td>
+                            <td>전체 프로젝트</td>
+                        </tr>
+                        <tr>
+                            <td>권한 레벨 변경</td>
+                            <td>user_level 체크 로직 수정 시 모든 권한 검사 부분 확인</td>
+                            <td>인증이 필요한 모든 페이지</td>
+                        </tr>
+                        <tr>
+                            <td>폴더/파일 이동</td>
+                            <td>import 경로 모두 수정 필요</td>
+                            <td>해당 파일을 import하는 모든 파일</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>빌드 에러 대처법</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        <h4>1. TypeScript 에러</h4>
+                        <p><strong>증상:</strong> Type error, Property does not exist</p>
+                        <p><strong>해결:</strong></p>
+                        <ul>
+                            <li>타입 정의 확인 및 수정</li>
+                            <li>(session?.user as any) 같은 타입 단언 사용</li>
+                            <li>필요시 interface 확장</li>
+                        </ul>
+                    </div>
+
+                    <div class="flow-step">
+                        <h4>2. import 에러</h4>
+                        <p><strong>증상:</strong> Module not found, Cannot find module</p>
+                        <p><strong>해결:</strong></p>
+                        <ul>
+                            <li>경로 확인 (절대경로 vs 상대경로)</li>
+                            <li>파일 확장자 확인 (.ts, .tsx)</li>
+                            <li>대소문자 확인 (Linux는 구분함)</li>
+                        </ul>
+                    </div>
+
+                    <div class="flow-step">
+                        <h4>3. JSX 문법 에러</h4>
+                        <p><strong>증상:</strong> Expected '&lt;/', got '&lt;eof&gt;'</p>
+                        <p><strong>해결:</strong></p>
+                        <ul>
+                            <li>모든 태그가 제대로 닫혔는지 확인</li>
+                            <li>self-closing 태그 확인 (&lt;img /&gt;, &lt;br /&gt;)</li>
+                            <li>중괄호 { } 짝 확인</li>
+                        </ul>
+                    </div>
+
+                    <div class="flow-step">
+                        <h4>4. MongoDB 연결 에러</h4>
+                        <p><strong>증상:</strong> Connection refused, Authentication failed</p>
+                        <p><strong>해결:</strong></p>
+                        <ul>
+                            <li>MONGODB_URI 환경변수 확인</li>
+                            <li>MongoDB Atlas 네트워크 접근 설정 (0.0.0.0/0 허용)</li>
+                            <li>데이터베이스 사용자 권한 확인</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>성능 최적화 팁</h3>
+                <div class="tip-box">
+                    <h4>MongoDB 쿼리 최적화</h4>
+                    <ul>
+                        <li><strong>인덱스 사용:</strong> 자주 검색하는 필드에 인덱스 생성</li>
+                        <li><strong>필요한 필드만 조회:</strong> .select() 사용</li>
+                        <li><strong>Populate 최소화:</strong> 필요한 경우에만 사용</li>
+                        <li><strong>페이지네이션:</strong> .limit()과 .skip() 활용</li>
+                    </ul>
+                    <div class="code-block">
+<span class="comment">// 좋은 예</span>
+<span class="keyword">const</span> members = <span class="keyword">await</span> Member.find({ user_level: { $gte: 5 } })
+  .select(<span class="string">'name email'</span>)
+  .limit(50);
+
+<span class="comment">// 나쁜 예</span>
+<span class="keyword">const</span> allMembers = <span class="keyword">await</span> Member.find();
+                    </div>
+                </div>
+
+                <div class="tip-box">
+                    <h4>Next.js 최적화</h4>
+                    <ul>
+                        <li><strong>Image 컴포넌트 사용:</strong> next/image로 자동 최적화</li>
+                        <li><strong>Dynamic Import:</strong> 큰 컴포넌트는 필요할 때만 로드</li>
+                        <li><strong>API 캐싱:</strong> revalidate 옵션 활용</li>
+                    </ul>
+                    <div class="code-block">
+<span class="comment">// Dynamic Import 예시</span>
+<span class="keyword">const</span> HeavyComponent = dynamic(() => <span class="keyword">import</span>(<span class="string">'./HeavyComponent'</span>), {
+  loading: () => &lt;div&gt;Loading...&lt;/div&gt;
+});
+                    </div>
+                </div>
+
+                <h3>Git 작업 시 베스트 프랙티스</h3>
+                <div class="success-box">
+                    <h4>커밋 메시지 규칙</h4>
+                    <div class="code-block">
+<span class="comment"># 기능 추가</span>
+git commit -m <span class="string">"feat: 회비납부 현황 페이지 추가"</span>
+
+<span class="comment"># 버그 수정</span>
+git commit -m <span class="string">"fix: 시간 표시 오류 수정"</span>
+
+<span class="comment"># 스타일 변경</span>
+git commit -m <span class="string">"style: 모바일 반응형 CSS 개선"</span>
+
+<span class="comment"># 리팩토링</span>
+git commit -m <span class="string">"refactor: API 라우트 구조 개선"</span>
+
+<span class="comment"># 문서</span>
+git commit -m <span class="string">"docs: README 업데이트"</span>
+                    </div>
+                </div>
+
+                <div class="tip-box">
+                    <h4>브랜치 전략</h4>
+                    <ul>
+                        <li><strong>main:</strong> 프로덕션 코드 (항상 배포 가능한 상태)</li>
+                        <li><strong>develop:</strong> 개발 브랜치 (기능 통합)</li>
+                        <li><strong>feature/*:</strong> 새 기능 개발</li>
+                        <li><strong>hotfix/*:</strong> 긴급 버그 수정</li>
+                    </ul>
+                    <div class="code-block">
+<span class="comment"># 새 기능 브랜치 생성</span>
+git checkout -b feature/fee-status
+
+<span class="comment"># 작업 완료 후</span>
+git checkout main
+git merge feature/fee-status
+
+<span class="comment"># 브랜치 삭제</span>
+git branch -d feature/fee-status
+                    </div>
+                </div>
+
+                <h3>디버깅 팁</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>상황</th>
+                            <th>확인 방법</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>API 응답 확인</td>
+                            <td>브라우저 개발자도구 > Network 탭</td>
+                        </tr>
+                        <tr>
+                            <td>콘솔 로그 확인</td>
+                            <td>브라우저 개발자도구 > Console 탭</td>
+                        </tr>
+                        <tr>
+                            <td>서버 로그 확인</td>
+                            <td>Vercel 대시보드 > Functions > Runtime Logs</td>
+                        </tr>
+                        <tr>
+                            <td>빌드 에러 확인</td>
+                            <td>Vercel 대시보드 > Deployments > 빌드 로그</td>
+                        </tr>
+                        <tr>
+                            <td>MongoDB 쿼리 테스트</td>
+                            <td>MongoDB Compass 또는 Atlas UI</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- 데이터베이스 스키마 -->
+            <section id="schema">
+                <h2>🗄️ MongoDB 컬렉션 스키마</h2>
+
+                <h3>members (회원)</h3>
+                <div class="code-block">
+{
+  _id: ObjectId,
+  name: String,              <span class="comment">// 회원명</span>
+  email: String,             <span class="comment">// 이메일</span>
+  password: String,          <span class="comment">// 암호화된 비밀번호</span>
+  user_level: Number,        <span class="comment">// 권한 레벨 (1~10)</span>
+  createdAt: Date,
+  updatedAt: Date
+}
+                </div>
+
+                <h3>images (영수증 이미지)</h3>
+                <div class="code-block">
+{
+  _id: ObjectId,
+  url: String,               <span class="comment">// Cloudinary 이미지 URL</span>
+  notice: String,            <span class="comment">// 비고</span>
+  date: String,              <span class="comment">// 업로드 날짜 (YYYY-MM-DD HH:mm:ss)</span>
+  public_id: String,         <span class="comment">// Cloudinary public ID</span>
+  createdAt: Date,
+  updatedAt: Date
+}
+                </div>
+
+                <h3>account_pass (회비 납부 기록)</h3>
+                <div class="code-block">
+{
+  _id: ObjectId,
+  member_id: ObjectId,       <span class="comment">// members._id 참조</span>
+  pay_year: Number,          <span class="comment">// 납부 연도 (2026)</span>
+  pay_month: Number,         <span class="comment">// 납부 월 (1~12)</span>
+  paid: Number,              <span class="comment">// 0: 미납, 1: 납부</span>
+  createdAt: Date,
+  updatedAt: Date
+}
+
+<span class="comment">// 복합 인덱스: member_id + pay_year + pay_month (unique)</span>
+                </div>
+
+                <h3>monthly_fee_history (월회비 이력)</h3>
+                <div class="code-block">
+{
+  _id: ObjectId,
+  apply_year: Number,        <span class="comment">// 적용 연도</span>
+  apply_month: Number,       <span class="comment">// 적용 월</span>
+  fee_amount: Number,        <span class="comment">// 월회비 금액 (원)</span>
+  createdAt: Date,
+  updatedAt: Date
+}
+
+<span class="comment">// 복합 인덱스: apply_year + apply_month (unique)</span>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p>📚 Vercel + Next.js + MongoDB 프로젝트 가이드</p>
+            <p>Last Updated: 2026년 2월 15일</p>
+        </footer>
+    </div>
+
+    <script>
+        // 부드러운 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 코드 블록에 복사 버튼 추가 (선택사항)
+        document.querySelectorAll('.code-block').forEach(block => {
+            block.style.position = 'relative';
+            const copyBtn = document.createElement('button');
+            copyBtn.textContent = '📋 복사';
+            copyBtn.style.position = 'absolute';
+            copyBtn.style.top = '10px';
+            copyBtn.style.right = '10px';
+            copyBtn.style.background = '#667eea';
+            copyBtn.style.color = 'white';
+            copyBtn.style.border = 'none';
+            copyBtn.style.padding = '5px 10px';
+            copyBtn.style.borderRadius = '5px';
+            copyBtn.style.cursor = 'pointer';
+            copyBtn.style.fontSize = '12px';
+            
+            copyBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(block.textContent);
+                copyBtn.textContent = '✅ 복사됨!';
+                setTimeout(() => {
+                    copyBtn.textContent = '📋 복사';
+                }, 2000);
+            });
+            
+            block.appendChild(copyBtn);
+        });
+    </script>
+</body>
+</html>

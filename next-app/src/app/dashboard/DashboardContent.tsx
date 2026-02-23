@@ -420,6 +420,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
         { title: "각종 모임 활동", icon: <Users />, color: "bg-activities", path: "/activities" },
         { title: "데이터베이스 백업", icon: <Database />, color: "bg-activities", path: "/backup" },
         { title: "시스템 매뉴얼", icon: <BookOpen />, color: "bg-manual", path: "/manual" },
+        { title: "학습하기", icon: <BookOpen />, color: "bg-activities", path: "/learn" },
     ];
 
     const guestSpecificPaths = [
@@ -430,6 +431,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
         "/guest/fee/status",
         "#financial",
         "#excel",
+        "/learn",
     ];
 
     const filteredMenuItems = (session?.user as any)?.user_level >= 10
