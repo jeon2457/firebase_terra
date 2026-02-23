@@ -269,18 +269,19 @@ export default function GuestPage() {
                 <div 
                     style={{
                         position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-                        background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+                        background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
+                        padding: '20px'
                     }}
                     onClick={() => setShowFinancial(false)}
                 >
                     <div 
                         style={{
-                            background: 'white', padding: '30px', borderRadius: '20px', maxWidth: '900px', width: '90%',
+                            background: 'white', padding: '25px', borderRadius: '20px', maxWidth: '900px', width: '100%',
                             maxHeight: '90vh', overflowY: 'auto', position: 'relative'
                         }}
                         onClick={e => e.stopPropagation()}
                     >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
                             <h4 style={{ margin: 0, fontWeight: 'bold' }}>🎯 재무 대시보드</h4>
                             <button 
                                 onClick={() => setShowFinancial(false)}
@@ -288,7 +289,7 @@ export default function GuestPage() {
                             >✕</button>
                         </div>
 
-                        <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '15px' }}>
+                        <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '15px', flexWrap: 'wrap' }}>
                             <span style={{ fontWeight: 'bold', color: '#666' }}>연도 선택</span>
                             <select
                                 style={{ width: 'auto' }}
@@ -302,29 +303,45 @@ export default function GuestPage() {
                             </select>
                         </div>
 
-                        <div style={{ display: 'flex', gap: '15px', marginBottom: '20px' }}>
-                            <div style={{ padding: '15px', borderRadius: '12px', textAlign: 'center', flex: 1, background: '#d4edda', color: '#155724' }}>
+                        {/* 반응형: 모바일에서는 세로 배치, 데스크톱에서는 가로 배치 */}
+                        <div style={{ display: 'flex', gap: '15px', marginBottom: '20px', flexDirection: 'row' }} className="financial-summary">
+                            <div style={{ padding: '15px', borderRadius: '12px', textAlign: 'center', flex: 1, background: '#d4edda', color: '#155724', minWidth: '120px' }}>
                                 <div style={{ fontSize: '14px' }}>연간 총 수입</div>
-                                <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{totalInc.toLocaleString()}원</div>
+                                <div style={{ fontSize: '20px', fontWeight: 'bold' }}>{totalInc.toLocaleString()}원</div>
                             </div>
-                            <div style={{ padding: '15px', borderRadius: '12px', textAlign: 'center', flex: 1, background: '#f8d7da', color: '#721c24' }}>
+                            <div style={{ padding: '15px', borderRadius: '12px', textAlign: 'center', flex: 1, background: '#f8d7da', color: '#721c24', minWidth: '120px' }}>
                                 <div style={{ fontSize: '14px' }}>연간 총 지출</div>
-                                <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{totalExp.toLocaleString()}원</div>
+                                <div style={{ fontSize: '20px', fontWeight: 'bold' }}>{totalExp.toLocaleString()}원</div>
                             </div>
-                            <div style={{ padding: '15px', borderRadius: '12px', textAlign: 'center', flex: 1, background: '#cce5ff', color: '#004085' }}>
+                            <div style={{ padding: '15px', borderRadius: '12px', textAlign: 'center', flex: 1, background: '#cce5ff', color: '#004085', minWidth: '120px' }}>
                                 <div style={{ fontSize: '14px' }}>순 이익</div>
-                                <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{(totalInc - totalExp).toLocaleString()}원</div>
+                                <div style={{ fontSize: '20px', fontWeight: 'bold' }}>{(totalInc - totalExp).toLocaleString()}원</div>
                             </div>
                         </div>
 
-                        <div style={{ display: 'flex', gap: '20px' }}>
-                            <div style={{ flex: 2, padding: '15px', border: '1px solid #ddd', borderRadius: '8px', background: 'white', height: '300px' }}>
+                        {/* 반응형: 모바일에서는 세로 배치, 데스크톱에서는 가로 배치 */}
+                        <div style={{ display: 'flex', gap: '20px', flexDirection: 'row' }} className="financial-charts">
+                            <div style={{ flex: 2, padding: '15px', border: '1px solid #ddd', borderRadius: '8px', background: 'white', height: '300px', minWidth: '0' }}>
                                 <Bar data={barData} options={{ responsive: true, maintainAspectRatio: false }} />
                             </div>
-                            <div style={{ flex: 1, padding: '15px', border: '1px solid #ddd', borderRadius: '8px', background: 'white', height: '300px' }}>
+                            <div style={{ flex: 1, padding: '15px', border: '1px solid #ddd', borderRadius: '8px', background: 'white', height: '300px', minWidth: '200px' }}>
                                 <Doughnut data={doughnutData} options={{ responsive: true, maintainAspectRatio: false }} />
                             </div>
                         </div>
+
+                        <style jsx>{`
+                            @media (max-width: 768px) {
+                                .financial-summary {
+                                    flex-direction: column !important;
+                                }
+                                .financial-charts {
+                                    flex-direction: column !important;
+                                }
+                                .financial-charts div {
+                                    height: 250px !important;
+                                }
+                            }
+                        `}</style>
                     </div>
                 </div>
             )}
