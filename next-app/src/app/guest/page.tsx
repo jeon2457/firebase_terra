@@ -107,21 +107,21 @@ export default function GuestPage() {
                         </div>
                     </Link>
 
-                    {/* 5. 재무 대시보드 (준비중) */}
-                    <div className={styles.selectCard} onClick={() => alert("준비중입니다.")}>
+                    {/* 5. 재무 대시보드 */}
+                    <Link href="/guest/fee/status" className={styles.selectCard}>
                         <div className={`${styles.bookSpine} ${styles.bgFinancial}`}>
                             <i className={`bi bi-pie-chart-fill ${styles.bookIcon}`}></i>
                             <div className={styles.bookTitle}>재무 대시보드</div>
                         </div>
-                    </div>
+                    </Link>
 
-                    {/* 6. 엑셀 리포트 (준비중) */}
-                    <div className={styles.selectCard} onClick={() => alert("준비중입니다.")}>
+                    {/* 6. 엑셀 리포트 */}
+                    <Link href="/guest/fee/status" className={styles.selectCard}>
                         <div className={`${styles.bookSpine} ${styles.bgExcel}`}>
                             <i className={`bi bi-file-earmark-excel-fill ${styles.bookIcon}`}></i>
                             <div className={styles.bookTitle}>엑셀 리포트</div>
                         </div>
-                    </div>
+                    </Link>
                 </div>
 
                 <div className={styles.btnArea}>
