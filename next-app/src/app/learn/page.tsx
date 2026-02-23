@@ -35,10 +35,17 @@ export default function LearnPage() {
         },
         {
             title: "Vercel Next.js + MongoDB 연동",
-            description: "Vercel에 배포하고 GitHub와 MongoDB를 연동하는 전체流程을 다룹니다.",
+            description: "Vercel에 배포하고 GitHub와 MongoDB를 연동하는 전체流程을 다릅니다.",
             icon: <Database size={40} />,
             color: "bg-primary",
             path: "/learn/vercel-mongodb"
+        },
+        {
+            title: "Ollama & Cline 설치 가이드",
+            description: "로컬 AI 개발 환경 구축: Ollama와 Cline 연동 방법",
+            icon: <BookOpen size={40} />,
+            color: "bg-info",
+            path: "/learn/ollama-cline"
         }
     ];
 
@@ -100,6 +107,9 @@ export default function LearnPage() {
                 }
                 .learn-icon.bg-primary {
                     background: linear-gradient(135deg, #3498db, #2980b9);
+                }
+                .learn-icon.bg-info {
+                    background: linear-gradient(135deg, #17a2b2, #138496);
                 }
                 .learn-content {
                     flex: 1;

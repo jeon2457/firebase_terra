@@ -6,24 +6,103 @@
     <title>Ollama + VS Code Cline 연동 가이드</title>
     <style>
         :root { --primary: #2563eb; --bg: #f8fafc; --text: #1e293b; }
-        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.8; margin: 0; padding: 20px; }
+        body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.8; margin: 0; padding: 20px; }
         .wrapper { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        h1 { text-align: center; color: var(--primary); font-size: 2.2rem; border-bottom: 4px solid var(--primary); padding-bottom: 15px; }
+        h1 { text-align: center; color: var(--primary); font-size: clamp(1.5rem, 4vw, 2.2rem); border-bottom: 4px solid var(--primary); padding-bottom: 15px; }
         h2 { background: #eff6ff; padding: 10px 20px; border-radius: 10px; color: var(--primary); margin-top: 40px; }
         .step-box { border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin: 20px 0; background: #fff; position: relative; }
         .step-num { position: absolute; top: -15px; left: 20px; background: var(--primary); color: white; padding: 2px 15px; border-radius: 20px; font-weight: bold; }
-        code { background: #1e1e1e; color: #76c7ff; padding: 3px 8px; border-radius: 5px; font-family: 'Consolas', monospace; }
+        code { background: #1e1e1e; color: #76c7ff; padding: 3px 8px; border-radius: 5px; font-family: 'Consolas', monospace; font-size: 0.9em; }
         .tip { background: #f0fdf4; border-left: 5px solid #22c55e; padding: 15px; margin: 15px 0; font-size: 0.95rem; }
         .error-case { background: #fef2f2; border-left: 5px solid #ef4444; padding: 15px; margin: 15px 0; }
         ul { padding-left: 20px; }
         li { margin-bottom: 10px; }
         .highlight { color: #e11d48; font-weight: bold; }
+
+        /* introduction section */
+        .intro-section { text-align: center; margin-bottom: 30px; }
+        .intro-section p { color: #475569; font-size: 1.05rem; }
+
+        /* table styles */
+        .comparison-table { width: 100%; border-collapse: collapse; margin: 25px 0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .comparison-table th { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 12px; text-align: center; font-weight: 600; font-size: clamp(0.9rem, 2vw, 1rem); }
+        .comparison-table td { padding: 14px 12px; text-align: center; border-bottom: 1px solid #e2e8f0; font-size: clamp(0.85rem, 1.5vw, 0.95rem); }
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .comparison-table tr:nth-child(even) { background: #f8fafc; }
+        .comparison-table tr:hover { background: #eff6ff; }
+        .comparison-table .tool-name { font-weight: 700; font-size: clamp(1rem, 2vw, 1.15rem); }
+        .comparison-table .ollama-name { color: #7c3aed; }
+        .comparison-table .cline-name { color: #0891b2; }
+        .comparison-table td:first-child { text-align: left; font-weight: 600; background: #f1f5f9; }
+
+        /* why together section */
+        .why-section { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 15px; padding: 25px; margin: 25px 0; text-align: center; }
+        .why-section h3 { color: #92400e; margin-bottom: 15px; font-size: clamp(1.1rem, 2.5vw, 1.3rem); }
+        .why-section p { color: #78350f; font-size: clamp(0.9rem, 1.5vw, 1rem); line-height: 1.9; }
+        .why-section .brain { color: #7c3aed; font-weight: 700; }
+        .why-section .hands-eyes { color: #0891b2; font-weight: 700; }
+
+        /* responsive */
+        @media (max-width: 600px) {
+            .wrapper { padding: 20px 15px; }
+            .step-box { padding: 15px; }
+            .comparison-table th, .comparison-table td { padding: 10px 6px; }
+            .comparison-table { font-size: 0.8rem; }
+        }
     </style>
 </head>
 <body>
 
 <div class="wrapper">
     <h1>🚀 Ollama & Cline 설치 완벽 가이드</h1>
+
+    <!-- introduction section -->
+    <div class="intro-section">
+        <p>Ollama와 Cline은 Visual Studio Code(이하 VS Code)에서 AI를 활용해 개발 생산성을 높이기 위한 도구들입니다.</p>
+    </div>
+
+    <!-- comparison table -->
+    <table class="comparison-table">
+        <thead>
+            <tr>
+                <th>도구</th>
+                <th>용도</th>
+                <th>특징</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="tool-name"><span class="ollama-name">Ollama</span></td>
+                <td>로컬 환경에서 대규모 언어 모델(LLM)을 실행하는 플랫폼</td>
+                <td>
+                    • GPT, LLaMA, Code Llama 같은 다양한 모델을 다운로드 후 내 PC에서 직접 실행 가능<br>
+                    • 클라우드 의존 없이 로컬에서 AI를 돌리므로 데이터 프라이버시 보장<br>
+                    • API 형태로 VS Code 같은 개발 툴과 연동 가능
+                </td>
+            </tr>
+            <tr>
+                <td class="tool-name"><span class="cline-name">Cline</span></td>
+                <td>VS Code용 AI 코딩 어시스턴트 확장 프로그램</td>
+                <td>
+                    • Ollama 같은 로컬 LLM과 연결해 코드 자동완성, 코드 생성, 디버깅 지원<br>
+                    • 채팅 인터페이스를 통해 AI에게 코드 관련 질문 가능<br>
+                    • GitHub Copilot과 유사하지만, 로컬 모델 기반으로 동작
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- why together section -->
+    <div class="why-section">
+        <h3>왜 같이 쓰는가?</h3>
+        <p>
+            Ollama는 <span class="brain">"AI 엔진"</span> 역할을 하고,<br>
+            Cline은 VS Code에서 Ollama를 불러와 개발자 친화적인 인터페이스를 제공하는 확장 프로그램입니다.<br><br>
+            즉, Ollama가 <strong>두뇌(모델 실행기)</strong>라면, Cline은 <strong>손과 눈(IDE 확장)</strong> 역할을 하는 셈이죠.<br>
+            개발자는 클라우드 비용 없이, 로컬에서 강력한 AI 코딩 지원을 받을 수 있습니다.
+        </p>
+    </div>
+
     <p style="text-align: center; color: #64748b;">이 문서는 실제 설치 과정을 바탕으로 작성된 학습용 가이드입니다.</p>
 
     <h2>STEP 1. Ollama 설치 및 서버 실행</h2>
