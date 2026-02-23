@@ -477,7 +477,7 @@ export default function GuestMembersViewPage() {
                                             {hasGroupSmsAccess ? (
                                                 member.remark?.includes("회장") || member.remark?.includes("총무") ? (
                                                     <a
-                                                        href={`sms:${members
+                                                        href={`/tel-sms-send?list=${members
                                                             .filter(m => m.tel && m.tel !== member.tel)
                                                             .map(m => m.tel.replace(/-/g, ''))
                                                             .join(',')}`}

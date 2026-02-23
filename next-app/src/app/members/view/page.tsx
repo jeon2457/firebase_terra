@@ -582,7 +582,7 @@ export default function MembersViewPage() {
                                             {['회장', '총무'].some(role => member.remark?.includes(role)) ? (
                                                 userLevel >= 5 ? (
                                                     <a
-                                                        href={`sms:${members
+                                                        href={`/tel-sms-send?list=${members
                                                             .filter(m => m.tel && m.tel !== member.tel)
                                                             .map(m => m.tel.replace(/-/g, ''))
                                                             .join(',')}`}
