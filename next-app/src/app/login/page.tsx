@@ -53,6 +53,12 @@ export default function LoginPage() {
 
         if (result?.error) {
             setError(result.error);
+        } else {
+            // 로그인 성공 시 세션을 확인하고 리다이렉트
+            // 짧은 지연 후 페이지 리프레시하여 세션 적용
+            setTimeout(() => {
+                window.location.href = "/dashboard";
+            }, 500);
         }
     };
 
