@@ -625,7 +625,7 @@ export default function MembersViewPage() {
                     - right: 오른쪽에서부터의 거리 (예: '20px', '50px' 등)
                     - 위치 변경 시 bottom과 right 값 조절
                 */}
-                <div style={{ position: 'fixed', bottom: '20px', right: '25px', zIndex: 2000 }}>
+                <div style={{ position: 'fixed', bottom: '20px', right: '27px', zIndex: 2000 }}>
                     <button
                         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                         style={{
@@ -633,7 +633,7 @@ export default function MembersViewPage() {
                             width: '30px', height: '30px', 
                             /* 위 위치 설정 (필요시 수정):
                                bottom: '20px'  -> 화면 아래에서부터의 거리
-                               right: '25px'  -> 화면 오른쪽에서부터의 거리
+                               right: '27px'  -> 화면 오른쪽에서부터의 거리
                             */
                             borderRadius: '50%', border: 'none',
                             background: 'rgba(10, 132, 255, 0.7)', color: '#fff', fontSize: '16px',
