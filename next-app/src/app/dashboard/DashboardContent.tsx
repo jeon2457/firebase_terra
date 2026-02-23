@@ -1124,7 +1124,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
                 </div>
 
                 {(session?.user as any)?.user_level >= 10 && (theme !== "glass" && theme !== "tech") && (
-                    <div className="text-center mt-4 d-flex flex-column gap-3 align-items-center">
+                    <div className="text-center mt-5 d-flex flex-column gap-3 align-items-center">
                         <button className="btn btn-outline-secondary rounded-pill fw-bold" onClick={() => router.push("/theme")}
                         >
                             <Palette className="me-2" size={18} /> 디자인 변경 / 테마 설정
@@ -1141,7 +1141,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
                 )}
 
                 {(session?.user as any)?.user_level < 10 && theme === "icon" && (
-                    <div className="text-center mt-4">
+                    <div className="text-center mt-5">
                         <button
                             className="btn btn-outline-danger rounded-pill fw-bold px-4"
                             onClick={() => signOut({ callbackUrl: "/login" })}
