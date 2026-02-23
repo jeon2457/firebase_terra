@@ -1050,7 +1050,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
                                 <div
                                     key={idx}
                                     className={`select-card ${selectedPage === item.path ? 'active' : ''}`}
-                                    onClick={() => setSelectedPage(item.path)}
+                                    onClick={() => openMenuPath(item.path)}
                                 >
                                     <div className={`book-spine ${item.color}`}>
                                         <div className="mb-1">{item.icon}</div>
