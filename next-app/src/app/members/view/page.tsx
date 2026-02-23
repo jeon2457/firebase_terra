@@ -617,13 +617,26 @@ export default function MembersViewPage() {
                     </div>
                 </div>
 
-                {/* Floating Action Button */}
-                <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 2000 }}>
+                {/* Floating Action Button (위로 이동 버튼) */}
+                {/* 
+                    버튼 설정:
+                    - width/height: 버튼 크기 (현재 30px × 30px)
+                    - bottom: 화면에서부터의 거리 (예: '20px', '50px' 등)
+                    - right: 오른쪽에서부터의 거리 (예: '20px', '50px' 등)
+                    - 위치 변경 시 bottom과 right 값 조절
+                */}
+                <div style={{ position: 'fixed', bottom: '20px', right: '25px', zIndex: 2000 }}>
                     <button
                         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                         style={{
-                            width: '40px', height: '40px', borderRadius: '50%', border: 'none',
-                            background: 'rgba(10, 132, 255, 0.7)', color: '#fff', fontSize: '20px',
+                            /* 버튼 크기: 너비 30px, 높이 30px */
+                            width: '30px', height: '30px', 
+                            /* 위 위치 설정 (필요시 수정):
+                               bottom: '20px'  -> 화면 아래에서부터의 거리
+                               right: '25px'  -> 화면 오른쪽에서부터의 거리
+                            */
+                            borderRadius: '50%', border: 'none',
+                            background: 'rgba(10, 132, 255, 0.7)', color: '#fff', fontSize: '16px',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
                             backdropFilter: 'blur(4px)', boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
                         }}
