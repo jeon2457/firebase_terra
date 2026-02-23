@@ -19,11 +19,15 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-    // 2. 보호된 경로(/dashboard, /members, /account, /receipt, /theme 등) 접근 제어
+    // 2. 공개 허용 경로 (/guest/members/view, /account/view, /receipt/view)
+    const publicPaths = ["/guest/members/view", "/account/view", "/receipt/view"];
+    const isPublicPage = publicPaths.includes(pathname);
+
+    // 3. 보호된 경로(/dashboard, /members, /account, /receipt, /theme 등) 접근 제어
     const protectedPaths = ["/dashboard", "/members", "/account", "/receipt", "/theme", "/api/members", "/api/theme", "/api/financial"];
     const isProtected = protectedPaths.some((path) => pathname.startsWith(path));
 
-    if (isProtected && !token) {
+    if (isProtected && !isPublicPage && !token) {
         // 인증되지 않은 경우 로그인 페이지로 리다이렉트 (이후 돌아올 경로 파라미터 포함 가능)
         const loginUrl = new URL("/login", request.url);
         // loginUrl.searchParams.set("callbackUrl", pathname);

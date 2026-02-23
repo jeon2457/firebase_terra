@@ -22,13 +22,10 @@ export default function GuestMembersViewPage() {
     const [isPageReady, setIsPageReady] = useState(false);
 
     useEffect(() => {
-        if (status === "unauthenticated") {
-            router.push("/login");
-        } else if (status === "authenticated") {
-            fetchMembers();
-        }
+        // GET /api/members는 공개되어 있으므로 인증 여부와 상관없이 데이터를 가져옵니다.
+        fetchMembers();
         document.title = "전화연락망 열람";
-    }, [status, router]);
+    }, []);
 
     // Clock Timer
     useEffect(() => {
