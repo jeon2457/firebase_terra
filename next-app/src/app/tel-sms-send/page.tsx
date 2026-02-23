@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import axios from "axios";
 
-export default function TelSmsSendPage() {
+function TelSmsSendContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     
@@ -291,5 +291,17 @@ export default function TelSmsSendPage() {
                 </div>
             </div>
         </>
+    );
+}
+
+export default function TelSmsSendPage() {
+    return (
+        <Suspense fallback={
+            <div style={{ background: '#000', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#fff' }}>
+                Loading...
+            </div>
+        }>
+            <TelSmsSendContent />
+        </Suspense>
     );
 }
