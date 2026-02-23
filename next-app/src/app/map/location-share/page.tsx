@@ -152,14 +152,14 @@ export default function LocationSharePage() {
         sendLocation();
         sendIntervalRef.current = setInterval(sendLocation, 10000);
 
-        // 1시간 뒤 자동 중단 타이머 설정
+        // 90분 뒤 자동 중단 타이머 설정
         if (autoStopTimerRef.current) clearTimeout(autoStopTimerRef.current);
         autoStopTimerRef.current = setTimeout(() => {
-            console.log("Auto-stopping location share after 1 hour");
+            console.log("Auto-stopping location share after 90 minutes");
             setIsSharing(false);
             stopSharing();
-            alert("보안을 위해 위치 공유가 시작 1시간 후 자동으로 중지되었습니다.");
-        }, 60 * 60 * 1000);
+            alert("보안을 위해 위치 공유가 시작 90분 후 자동으로 중지되었습니다.");
+        }, 90 * 60 * 1000);
 
         const myRef = ref(database, 'locations/' + userId);
         onDisconnect(myRef).remove();
