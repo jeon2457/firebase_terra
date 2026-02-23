@@ -431,7 +431,6 @@ export default function DashboardContent({ theme = "book" }: Props) {
         "/guest/fee/status",
         "#financial",
         "#excel",
-        "/learn",
     ];
 
     const filteredMenuItems = (session?.user as any)?.user_level >= 10
