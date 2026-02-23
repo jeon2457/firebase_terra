@@ -8,6 +8,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 export default function OllamaClinePage() {
     const { data: session, status } = useSession();
     const router = useRouter();
+    const promptSymbol = "\u003E\u003E\u003E"; // >>> prompt symbol
 
     if (status === "loading") {
         return <div className="text-center mt-5">Loading...</div>;
@@ -20,147 +21,142 @@ export default function OllamaClinePage() {
 
     return (
         <div style={{ minHeight: "100vh", background: "#f8fafc", padding: "30px 0" }}>
-            <style>{`
+            <style dangerouslySetInnerHTML={{__html: `
                 .oc-container {
                     max-width: 900px;
                     margin: 0 auto;
                     background: white;
                     padding: 40px;
-                    borderRadius: 20px;
-                    boxShadow: "0 10px 25px rgba(0,0,0,0.05)"
+                    border-radius: 20px;
+                    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
                 }
                 .oc-title {
-                    textAlign: "center";
+                    text-align: center;
                     color: #2563eb;
-                    fontSize: "clamp(1.5rem, 4vw, 2.2rem)";
-                    borderBottom: "4px solid #2563eb",
-                    paddingBottom: 15px,
-                    marginBottom: 20px
+                    font-size: clamp(1.5rem, 4vw, 2.2rem);
+                    border-bottom: 4px solid #2563eb;
+                    padding-bottom: 15px;
+                    margin-bottom: 20px;
                 }
                 .oc-intro {
-                    textAlign: "center";
-                    marginBottom: 30px,
-                    color: #475569
+                    text-align: center;
+                    margin-bottom: 30px;
+                    color: #475569;
                 }
                 .oc-table {
                     width: 100%;
-                    borderCollapse: "collapse";
+                    border-collapse: collapse;
                     margin: 25px 0;
-                    borderRadius: 12px;
-                    overflow: "hidden",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.08)"
+                    border-radius: 12px;
+                    overflow: hidden;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
                 }
                 .oc-table th {
-                    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                     color: white;
                     padding: 15px 12px;
-                    textAlign: "center",
-                    fontWeight: 600,
-                    fontSize: "clamp(0.9rem, 2vw, 1rem)"
+                    text-align: center;
+                    font-weight: 600;
+                    font-size: clamp(0.9rem, 2vw, 1rem);
                 }
                 .oc-table td {
                     padding: 14px 12px;
-                    textAlign: "center",
-                    borderBottom: "1px solid #e2e8f0",
-                    fontSize: "clamp(0.85rem, 1.5vw, 0.95rem)"
+                    text-align: center;
+                    border-bottom: 1px solid #e2e8f0;
+                    font-size: clamp(0.85rem, 1.5vw, 0.95rem);
                 }
-                .oc-table tr:last-child td { borderBottom: "none" }
-                .oc-table tr:nth-child(even) { background: "#f8fafc" }
-                .oc-table tr:hover { background: "#eff6ff" }
+                .oc-table tr:last-child td { border-bottom: none; }
+                .oc-table tr:nth-child(even) { background: #f8fafc; }
+                .oc-table tr:hover { background: #eff6ff; }
                 .oc-table td:first-child {
-                    textAlign: "left";
-                    fontWeight: 600;
-                    background: "#f1f5f9"
+                    text-align: left;
+                    font-weight: 600;
+                    background: #f1f5f9;
                 }
-                .oc-ollama { color: #7c3aed; fontWeight: 700 }
-                .oc-cline { color: #0891b2; fontWeight: 700 }
+                .oc-ollama { color: #7c3aed; font-weight: 700; }
+                .oc-cline { color: #0891b2; font-weight: 700; }
                 .oc-why {
-                    background: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)";
-                    borderRadius: 15px;
+                    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+                    border-radius: 15px;
                     padding: 25px;
                     margin: 25px 0;
-                    textAlign: "center"
+                    text-align: center;
                 }
-                .oc-why h3 { color: #92400e; marginBottom: 15px }
-                .oc-why p { color: #78350f; lineHeight: 1.9 }
-                .oc-brain { color: #7c3aed; fontWeight: 700 }
-                .oc-hands { color: #0891b2; fontWeight: 700 }
+                .oc-why h3 { color: #92400e; margin-bottom: 15px; }
+                .oc-why p { color: #78350f; line-height: 1.9; }
+                .oc-brain { color: #7c3aed; font-weight: 700; }
+                .oc-hands { color: #0891b2; font-weight: 700; }
                 .oc-step {
-                    border: "1px solid #e2e8f0";
-                    borderRadius: 12px;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 12px;
                     padding: 20px;
                     margin: 20px 0;
-                    background: "#fff",
-                    position: "relative"
+                    background: #fff;
+                    position: relative;
                 }
                 .oc-step-num {
-                    position: "absolute";
-                    top: "-15px";
-                    left: "20px";
-                    background: "#2563eb";
+                    position: absolute;
+                    top: -15px;
+                    left: 20px;
+                    background: #2563eb;
                     color: white;
-                    padding: "2px 15px";
-                    borderRadius: 20px,
-                    fontWeight: "bold"
+                    padding: 2px 15px;
+                    border-radius: 20px;
+                    font-weight: bold;
                 }
                 .oc-step h3 {
-                    background: "#eff6ff";
-                    padding: "10px 20px";
-                    borderRadius: 10px;
-                    color: "#2563eb",
-                    marginTop: 10
+                    background: #eff6ff;
+                    padding: 10px 20px;
+                    border-radius: 10px;
+                    color: #2563eb;
+                    margin-top: 10px;
                 }
-                .oc-step ul { paddingLeft: 20px }
-                .oc-step li { marginBottom: 10px }
+                .oc-step ul { padding-left: 20px; }
+                .oc-step li { margin-bottom: 10px; }
                 .oc-code {
-                    background: "#1e1e1e";
-                    color: "#76c7ff";
-                    padding: "3px 8px";
-                    borderRadius: 5px,
-                    fontFamily: "'Consolas', monospace",
-                    fontSize: "0.9em"
+                    background: #1e1e1e;
+                    color: #76c7ff;
+                    padding: 3px 8px;
+                    border-radius: 5px;
+                    font-family: 'Consolas', monospace;
+                    font-size: 0.9em;
                 }
                 .oc-tip {
-                    background: "#f0fdf4";
-                    borderLeft: "5px solid #22c55e";
+                    background: #f0fdf4;
+                    border-left: 5px solid #22c55e;
                     padding: 15px;
-                    margin: 15px 0
+                    margin: 15px 0;
                 }
                 .oc-error {
-                    background: "#fef2f2";
-                    borderLeft: "5px solid #ef4444";
+                    background: #fef2f2;
+                    border-left: 5px solid #ef4444;
                     padding: 15px;
-                    margin: 15px 0
+                    margin: 15px 0;
                 }
-                .oc-highlight { color: #e11d48; fontWeight: "bold" }
+                .oc-highlight { color: #e11d48; font-weight: bold; }
                 .back-btn {
                     display: inline-flex;
-                    alignItems: "center",
-                    gap: "8px",
-                    padding: "10px 20px",
-                    background: "white",
-                    border: "2px solid #2563eb",
-                    borderRadius: "30px",
-                    color: "#2563eb",
-                    fontWeight: "600",
-                    marginBottom: "30px",
-                    cursor: "pointer",
-                    transition: "all 0.3s"
+                    align-items: center;
+                    gap: 8px;
+                    padding: 10px 20px;
+                    background: white;
+                    border: 2px solid #2563eb;
+                    border-radius: 30px;
+                    color: #2563eb;
+                    font-weight: 600;
+                    margin-bottom: 30px;
+                    cursor: pointer;
+                    transition: all 0.3s;
                 }
                 .back-btn:hover {
-                    background: "#2563eb",
-                    color: "white"
+                    background: #2563eb;
+                    color: white;
                 }
                 @media (max-width: 600px) {
-                    .oc-container {
-                        padding: 20px 15px;
-                        margin: 0 10px
-                    }
-                    .oc-table th, .oc-table td {
-                        padding: 10px 6px
-                    }
+                    .oc-container { padding: 20px 15px; margin: 0 10px; }
+                    .oc-table th, .oc-table td { padding: 10px 6px; }
                 }
-            `}</style>
+            `}} />
 
             <div className="oc-container">
                 <button className="back-btn" onClick={() => router.push("/learn")}>
@@ -236,7 +232,7 @@ export default function OllamaClinePage() {
                             <br /><span className="oc-code">ollama run qwen2.5-coder:7b</span>
                         </li>
                         <li className="oc-error"><strong>⚠️ 주의했던 에러:</strong> 웹에서 명령어를 복사해 붙여넣으면 보이지 않는 공백문자가 섞여 <span className="oc-code">command not found</span>가 발생할 수 있습니다. <strong>반드시 직접 타이핑</strong>하는 습관을 들입시다.</li>
-                        <li><strong>완료 확인:</strong> 다운로드가 100% 완료되고 <span className="oc-code">>>></span>가 뜨면 성공입니다. <span className="oc-code">/exit</span>로 빠져나옵니다.</li>
+                        <li><strong>완료 확인:</strong> 다운로드가 100% 완료되고 <span className="oc-code">{promptSymbol}</span>가 뜨면 성공입니다. <span className="oc-code">/exit</span>로 빠져나옵니다.</li>
                     </ul>
                 </div>
 
