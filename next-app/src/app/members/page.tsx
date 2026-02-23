@@ -150,6 +150,8 @@ export default function MembersSelectPage() {
                     <button type="button" className="btn btn-primary px-4 py-2 fw-bold" onClick={handleGoNext}>
                         선택한 페이지로 이동
                     </button>
+                </div>
+                <div className="btn-area" style={{ marginTop: "15px" }}>
                     <button type="button" className="btn btn-outline-danger px-4 py-2" onClick={() => signOut()}>
                         <LogOut size={18} className="me-1" /> 로그아웃
                     </button>
