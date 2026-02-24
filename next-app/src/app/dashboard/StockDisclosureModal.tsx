@@ -102,33 +102,40 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
         // ============================================================
 
         // 데모 데이터 (API 연결 전 테스트용)
+        // 실제 DART API 연동 시에는 아래 코드를 주석 해제하고 사용하세요
         setTimeout(() => {
-            const demoResults = [
-                {
-                    crpNm: codes[0] ? getStockName(codes[0]) : "삼성전자",
-                    crpCd: codes[0] || "005930",
-                    rceptNo: "20260224000001",
-                    flnmNtc: "사업보고서 (연결)",
-                    rceptDt: new Date().toISOString().split("T")[0].replace(/-/g, ""),
-                    rm: "2024년 4분기"
-                },
-                {
-                    crpNm: codes[1] ? getStockName(codes[1]) : "SK하이닉스",
-                    crpCd: codes[1] || "000660",
-                    rceptNo: "20260224000002",
-                    flnmNtc: "수시공고",
-                    rceptDt: new Date().toISOString().split("T")[0].replace(/-/g, ""),
-                    rm: "주식취소 및 실권발행"
-                },
-                {
-                    crpNm: codes[2] ? getStockName(codes[2]) : "NAVER",
-                    crpCd: codes[2] || "035420",
-                    rceptNo: "20260224000003",
-                    flnmNtc: "주요사항보고서",
-                    rceptDt: new Date().toISOString().split("T")[0].replace(/-/g, ""),
-                    rm: "임원임면"
+            // 사용자가 입력한 각 종시에 대한 데모 공시 데이터 생성
+            const demoResults: any[] = [];
+            
+            codes.forEach((code, idx) => {
+                if (code.length === 6) {
+                    const stockName = getStockName(code);
+                    const disclosureTypes = [
+                        { type: "사업보고서 (연결)", desc: "연간 결산 보고" },
+                        { type: "수시공고", desc: "주식취소 및 실권발행" },
+                        { type: "주요사항보고서", desc: "임원임면" },
+                        { type: "분기보고서", desc: "분기별 영업 실적" },
+                        { type: "공시공고", desc: "기타 공시 사항" }
+                    ];
+                    
+                    // 각 종목마다 1~2개의 공시 예시 생성
+                    const numDisclosures = Math.floor(Math.random() * 2) + 1;
+                    for (let i = 0; i < numDisclosures; i++) {
+                        const disclosure = disclosureTypes[Math.floor(Math.random() * disclosureTypes.length)];
+                        const date = new Date();
+                        date.setDate(date.getDate() - Math.floor(Math.random() * 7));
+                        
+                        demoResults.push({
+                            crpNm: stockName,
+                            crpCd: code,
+                            rceptNo: `${date.getFullYear()}${String(date.getMonth()+1).padStart(2,'0')}${String(date.getDate()).padStart(2,'0')}0000${idx}${i}`,
+                            flnmNtc: disclosure.type,
+                            rceptDt: date.toISOString().split("T")[0].replace(/-/g, ""),
+                            rm: disclosure.desc
+                        });
+                    }
                 }
-            ].filter(item => codes.includes(item.crpCd) || (!item.crpCd && codes.some(c => c)));
+            });
 
             setDisclosureResults(demoResults);
             setLastUpdated(new Date());
@@ -138,14 +145,79 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
 
     const getStockName = (code: string): string => {
         const stockNames: { [key: string]: string } = {
+            // 코스피 대형주
             "005930": "삼성전자",
             "000660": "SK하이닉스",
             "035420": "NAVER",
             "005380": "현대차",
             "068270": "셀트리온",
-            "051910": "LG화학"
+            "051910": "LG화학",
+            "373220": "LG에너지솔루션",
+            "012330": "현대모비스",
+            "000270": "기아",
+            "207940": "삼성바이오로직스",
+            "005490": "POSCO홀딩스",
+            "105560": "KB금융지주",
+            "055550": "신한지주",
+            "003550": "LG",
+            "066570": "LG전자",
+            "003670": "포스코인터내셔널",
+            "032830": "삼성생명",
+            "048260": "삼성화재해상보험",
+            "024110": "기업은행",
+            "009540": "한국조선해양",
+            "010140": "삼성중공업",
+            "010130": "현대중공업",
+            "096770": "SK이노베이션",
+            "096690": "SK디스커버리",
+            "006400": "삼성SDI",
+            "004020": "현대제철",
+            // 성장주/중소형주
+            "352820": "HD현대중공업",
+            "394360": "알테오젠",
+            "950180": "카카오페이",
+            "293490": "카카오",
+            "035900": "JYP Ent.",
+            "018260": "삼성에스디에스",
+            "241560": "두산테스나",
+            "095570": "AJ네트웍스",
+            "006280": "녹십자",
+            "271980": "대상",
+            // biotech
+            "207750": "원바이오젠",
+            "068760": "셀트리온제약",
+            "225570": "유나이티드제약",
+            // REIT
+            "357250": "ESR켄달스퀘어리츠",
+            "344790": "CRE",
+            // 금융
+            "138930": "BNK금융지주",
+            "030200": "KT",
+            "030190": "LGU+",
+            "057050": "카카오Bank",
+            // 기타 많이 거래되는 종목
+            "042660": "대우조선해양",
+            "011210": "현대미포조선",
+            "008770": "호텔신라",
+            "001040": "CJ",
+            "001120": "LG상사",
+            "023590": "DB손해보험",
+            "026960": "동양",
+            // KOSDAQ
+            "340570": "티앤엘",
+            "041960": "ellas_one",
+            "048470": "JYP Ent.",
+            "122450": "KT",
+            "066900": "드래곤플라이",
         };
-        return stockNames[code] || `${code}번 종목`;
+        
+        // 정확한 매핑이 있으면 반환, 없으면 입력코드 기반 생성
+        if (stockNames[code]) {
+            return stockNames[code];
+        }
+        
+        // 알 수 없는 코드의 경우 그대로 표시
+        return `${code}`;
     };
 
     const copyToClipboard = (text: string) => {
