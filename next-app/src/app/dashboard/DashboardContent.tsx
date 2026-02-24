@@ -20,7 +20,8 @@ import {
     BookOpen,
     LogOut,
     Palette,
-    X
+    X,
+    TrendingUp
 } from "lucide-react";
 import {
     Chart as ChartJS,
@@ -35,6 +36,7 @@ import {
 import { Bar, Doughnut } from 'react-chartjs-2';
 import axios from 'axios';
 import * as XLSX from 'xlsx-js-style';
+import StockDisclosureModal from './StockDisclosureModal';
 
 ChartJS.register(
     CategoryScale,
@@ -63,6 +65,9 @@ export default function DashboardContent({ theme = "book" }: Props) {
 
     const [showExcel, setShowExcel] = useState(false);
     const [excelConfig, setExcelConfig] = useState({ year: new Date().getFullYear(), type: 'all' });
+
+    // 주식공시 열람 모달 상태
+    const [showStockDisclosure, setShowStockDisclosure] = useState(false);
 
     // Safe user display name computation
     const userDisplayName = (() => {
@@ -311,6 +316,8 @@ export default function DashboardContent({ theme = "book" }: Props) {
             if (success) setShowFinancial(true);
         } else if (selected.path === "#excel") {
             setShowExcel(true);
+        } else if (selected.path === "#stock-disclosure") {
+            setShowStockDisclosure(true);
         } else {
             router.push(selected.path);
         }
@@ -402,8 +409,12 @@ export default function DashboardContent({ theme = "book" }: Props) {
         XLSX.writeFile(wb, `TerraOne_Report_${excelConfig.year}.xlsx`);
     };
 
-    const menuItems = [
+    // 관리자 전용 메뉴에 "주식공시 열람" 추가
+    const adminMenuItems = [
+        { title: "주식공시 열람", icon: <TrendingUp />, color: "bg-stock", path: "#stock-disclosure" },
+    ];
 
+    const menuItems = [
         { title: "회원관리", icon: <Phone />, color: "bg-tel", path: "/members" },
         { title: "전화연락망 열람", icon: <Phone />, color: "bg-tel", path: "/guest/members/view" },
         { title: "사용내역 입력", icon: <Pencil />, color: "bg-input", path: "/account/input" },
@@ -433,8 +444,11 @@ export default function DashboardContent({ theme = "book" }: Props) {
         "#excel",
     ];
 
+    // 관리자 전용 메뉴를 포함한 전체 메뉴 (관리자만 하단에股票공시 열람 추가)
+    const allAdminMenuItems = [...menuItems, ...adminMenuItems];
+    
     const filteredMenuItems = (session?.user as any)?.user_level >= 10
-        ? menuItems
+        ? allAdminMenuItems
         : menuItems.filter(item => guestSpecificPaths.includes(item.path));
 
     const wrapStyle: React.CSSProperties =
@@ -757,6 +771,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
         .bg-location { background: #00897B; border-left: 5px solid #00695c; }
         .bg-activities { background: #e67e22; border-left: 5px solid #d35400; }
         .bg-manual { background: #7f8c8d; border-left: 5px solid #626567; }
+        .bg-stock { background: linear-gradient(180deg, #00C853, #00E676); border-left: 5px solid #00C853; }
 
         .select-card:hover {
           transform: translateY(-25px) rotate(1deg);
@@ -835,6 +850,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
         .icon-bg-location { background: linear-gradient(180deg, #26A69A, #00897B); }
         .icon-bg-activities { background: linear-gradient(180deg, #fb923c, #ea580c); }
         .icon-bg-manual { background: linear-gradient(180deg, #94a3b8, #475569); }
+        .icon-bg-stock { background: linear-gradient(180deg, #00C853, #00E676); }
 
         /* list theme */
         .list-box {
@@ -1285,6 +1301,11 @@ export default function DashboardContent({ theme = "book" }: Props) {
                             </button>
                         </div>
                     </div>
+                )}
+
+                {/* 주식공시 열람 모달 */}
+                {showStockDisclosure && (
+                    <StockDisclosureModal onClose={() => setShowStockDisclosure(false)} />
                 )}
             </div>
         </div>
