@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Bell, TrendingUp, Search, ExternalLink, RefreshCw, Copy, Check } from "lucide-react";
+import { X, Bell, TrendingUp, Search, ExternalLink, RefreshCw, Copy, Check, Mail, MessageCircle } from "lucide-react";
 
 interface StockDisclosureModalProps {
     onClose: () => void;
@@ -20,9 +20,9 @@ interface StockDisclosureModalProps {
  * 2. 로그인 → Open API 메뉴 → 이용신청
  * 3. API 키 발급 후 아래 API_KEY 변수에 입력
  * 
- * [카카오톡 알림 연동]
- * - 알림을 받으려면 별도의 웹훅 또는 서버 설정 필요
- * - 구현 예시: 서버에서 DART API를 주기적으로 호출하여 공시 확인 후推送알림
+ * [카카오톡/이메일 알림 연동]
+ * - 아래 설정에서 알림 받을 방법을 선택하세요
+ * - 실제로 알림을 받으려면 별도의 서버 구축 필요
  */
 export default function StockDisclosureModal({ onClose }: StockDisclosureModalProps) {
     // 사용자 입력 상태
@@ -33,6 +33,14 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [copied, setCopied] = useState(false);
+
+    // 알림 설정 상태
+    const [notificationSettings, setNotificationSettings] = useState({
+        enableEmail: true,
+        email: "jeon2457@gmail.com",
+        enableKakao: true,
+        kakaoUrl: "https://open.kakao.com/o/gWWWIK5h"
+    });
 
     // DART API 인증키 - 아래 값을 실제 API 키로 변경하세요
     // [중요] 이 키는 안전하게 관리해야 합니다 (환경변수 사용 권장)
@@ -68,6 +76,34 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
             clearInterval(monitoringInterval);
             setMonitoringInterval(null);
         }
+    };
+
+    const sendNotification = (newDisclosures: any[]) => {
+        if (newDisclosures.length === 0) return;
+
+        // 알림 메시지 생성
+        const notificationMessage = newDisclosures.map(d => 
+            `📢 [${d.crpNm}] ${d.flnmNtc}\n${d.rm}\n${d.rceptDt}`
+        ).join("\n\n");
+
+        // 이메일 알림 (설정이 활성화된 경우)
+        if (notificationSettings.enableEmail && notificationSettings.email) {
+            console.log("이메일 알림 발송:", notificationSettings.email);
+            console.log("내용:", notificationMessage);
+            // 실제 구현 시:邮件 API 호출
+            // sendEmail(notificationSettings.email, "주식 공시 알림", notificationMessage);
+        }
+
+        // 카카오톡 알림 (설정이 활성화된 경우)
+        if (notificationSettings.enableKakao) {
+            console.log("카카오톡 알림 발송:", notificationSettings.kakaoUrl);
+            console.log("내용:", notificationMessage);
+            // 실제 구현 시:카카오톡 API 호출 또는 웹훅 전송
+            // sendKakaoMessage(notificationSettings.kakaoUrl, notificationMessage);
+        }
+
+        // 새 공시가 있으면 알림
+        alert(`📢 새로운 공시가 ${newDisclosures.length}건 발생했습니다!\n\n${notificationMessage.substring(0, 200)}...`);
     };
 
     const fetchDisclosures = async (codes: string[]) => {
@@ -139,6 +175,12 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
 
             setDisclosureResults(demoResults);
             setLastUpdated(new Date());
+            
+            // 데모 모드에서도 알림 테스트 (실제 공시가 있는 것처럼)
+            if (demoResults.length > 0) {
+                //sendNotification(demoResults); // 테스트용 알림 (주석 해제하면每次알림)
+            }
+            
             setIsLoading(false);
         }, 1000);
     };
@@ -261,16 +303,72 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
                     </button>
                 </div>
 
-                {/* 설명 카드 */}
-                <div className="alert alert-info mb-4" style={{ borderRadius: 12 }}>
+                {/* 알림 설정 카드 */}
+                <div className="alert alert-success mb-4" style={{ borderRadius: 12 }}>
                     <div className="d-flex align-items-start gap-2">
                         <Bell size={18} className="mt-1 flex-shrink-0" />
                         <div>
-                            <strong>주식 공시 모니터링</strong>
-                            <p className="mb-0 small">
-                                입력한 종목의 정기공시 및 수시공시 소식을 확인하세요.<br />
-                                <span className="text-danger">※ DART API 키가 필요합니다. 아래 가이드 참조</span>
+                            <strong>🔔 알림 설정</strong>
+                            <p className="mb-2 small">
+                                새로운 공시가 등록되면 알림을 받을 방법을 선택하세요.
                             </p>
+                            
+                            {/* 이메일 알림 */}
+                            <div className="form-check form-check-inline">
+                                <input 
+                                    className="form-check-input" 
+                                    type="checkbox" 
+                                    id="emailNotify"
+                                    checked={notificationSettings.enableEmail}
+                                    onChange={(e) => setNotificationSettings({
+                                        ...notificationSettings, 
+                                        enableEmail: e.target.checked
+                                    })}
+                                />
+                                <label className="form-check-label" htmlFor="emailNotify">
+                                    <Mail size={14} className="me-1" />
+                                    이메일 알림
+                                </label>
+                            </div>
+                            
+                            {/* 카카오톡 알림 */}
+                            <div className="form-check form-check-inline">
+                                <input 
+                                    className="form-check-input" 
+                                    type="checkbox" 
+                                    id="kakaoNotify"
+                                    checked={notificationSettings.enableKakao}
+                                    onChange={(e) => setNotificationSettings({
+                                        ...notificationSettings, 
+                                        enableKakao: e.target.checked
+                                    })}
+                                />
+                                <label className="form-check-label" htmlFor="kakaoNotify">
+                                    <MessageCircle size={14} className="me-1" />
+                                    카카오톡 알림
+                                </label>
+                            </div>
+
+                            {/* 알림 상태 표시 */}
+                            <div className="mt-2 p-2 bg-white bg-opacity-25 rounded small">
+                                <div className="d-flex align-items-center gap-2">
+                                    {notificationSettings.enableEmail && (
+                                        <span className="badge bg-success">
+                                            📧 {notificationSettings.email}
+                                        </span>
+                                    )}
+                                    {notificationSettings.enableKakao && (
+                                        <a 
+                                            href={notificationSettings.kakaoUrl} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="badge bg-warning text-dark text-decoration-none"
+                                        >
+                                            💬 오픈채팅방
+                                        </a>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -309,7 +407,7 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
                     </div>
                     <div className="mt-2">
                         <small className="text-muted">
-                            💡 종가코드 예시: 삼성전자(005930), SK하이닉스(000660), NAVER(035420)
+                            💡 종가코드 예시: 삼성전자(005930), SK하이닉스(000660), NAVER(035420), 티앤엘(340570)
                         </small>
                     </div>
                 </div>
