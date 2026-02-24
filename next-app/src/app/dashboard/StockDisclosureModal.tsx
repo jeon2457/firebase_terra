@@ -559,3 +559,51 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
         </div>
     );
 }
+
+
+
+
+// ## 🔧 버셀에서의 Vercel 환경변수 설정 방법
+
+// ### 단계 1: 프로젝트 설정으로 이동
+
+// 1. Vercel 대시보드에서 __프로젝트 클릭__
+// 2. __Settings__ 탭 클릭 (톱니바퀴 아이콘)
+
+// ### 단계 2: 환경변수 추가
+
+// 1. 왼쪽 메뉴에서 __Environment Variables__ 클릭
+
+// 2. 아래처럼 입력:
+
+//    - __Name:__ `NEXT_PUBLIC_DART_API_KEY`
+//    - __Value:__ `발급받은_API_키_여기에_입력`
+//    - __Environment:__ `Production`, `Development`, `Preview` 모두 선택
+
+// 3. __Add__ 버튼 클릭
+
+// ### 단계 3:Redeploy (재배치)
+
+// 1. __Deployments__ 탭으로 이동
+// 2. 가장 최신 배포의 __... 버튼__ 클릭
+// 3. __Redeploy__ 클릭
+
+// ---
+
+// ## 📝 코드 수정 (이미 되어있음)
+
+// 코드에서는 이미 환경변수를 사용하도록 되어있습니다:
+
+// ```javascript
+// // StockDisclosureModal.tsx 약 80번째 줄
+// const DART_API_KEY = process.env.NEXT_PUBLIC_DART_API_KEY;
+// ```
+
+// Redeploy하시면 바로 작동합니다!
+
+// ---
+
+// ## 💡 참고
+
+// 환경변수 이름은 반드시 `NEXT_PUBLIC_`으로 시작해야 합니다 (클라이언트에서 사용하기 때문)
+
