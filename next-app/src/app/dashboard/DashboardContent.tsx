@@ -990,16 +990,51 @@ export default function DashboardContent({ theme = "book" }: Props) {
           align-items: center;
           justify-content: center;
           z-index: 1000;
+          padding: 15px;
         }
         .custom-modal {
           background: white;
           padding: 30px;
           border-radius: 20px;
           max-width: 900px;
-          width: 90%;
+          width: 100%;
           max-height: 90vh;
           overflow-y: auto;
           position: relative;
+          margin: auto;
+        }
+        @media (max-width: 768px) {
+          .custom-modal {
+            padding: 20px;
+            border-radius: 15px;
+            max-height: 85vh;
+          }
+          .custom-modal .row {
+            flex-direction: column;
+          }
+          .custom-modal .col-lg-8,
+          .custom-modal .col-lg-4 {
+            width: 100%;
+            margin-bottom: 15px;
+          }
+          .custom-modal .d-flex.gap-3 {
+            flex-direction: column;
+          }
+        }
+        @media (max-width: 480px) {
+          .custom-modal {
+            padding: 15px;
+            border-radius: 12px;
+          }
+          .custom-modal h4 {
+            font-size: 1.1rem;
+          }
+          .custom-modal .summary-card {
+            padding: 10px;
+          }
+          .custom-modal .summary-card .h4 {
+            font-size: 1rem;
+          }
         }
         .summary-card {
           padding: 15px;
