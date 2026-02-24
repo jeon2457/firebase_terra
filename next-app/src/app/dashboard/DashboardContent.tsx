@@ -303,7 +303,9 @@ export default function DashboardContent({ theme = "book" }: Props) {
     };
 
     const openMenuPath = async (path: string) => {
-        const selected = menuItems.find(m => m.path === path);
+        // menuItems와 adminMenuItems 모두 검색
+        const allItems = [...menuItems, ...adminMenuItems];
+        const selected = allItems.find(m => m.path === path);
         if (!selected) return;
 
         if (path === "/fee/status" && (session?.user as any)?.user_level < 10) {
@@ -324,7 +326,8 @@ export default function DashboardContent({ theme = "book" }: Props) {
     };
 
     const handleGoNext = async () => {
-        const selected = menuItems.find(m => m.path === selectedPage);
+        const allItems = [...menuItems, ...adminMenuItems];
+        const selected = allItems.find(m => m.path === selectedPage);
         if (!selected) {
             alert("펼쳐볼 책을 선택해주세요.");
             return;
@@ -661,6 +664,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
         .glass-menu-icon.glass-icon-bg-location { color: #26A69A !important; }
         .glass-menu-icon.glass-icon-bg-activities { color: #FF9500 !important; }
         .glass-menu-icon.glass-icon-bg-manual { color: #8E8E93 !important; }
+        .glass-menu-icon.glass-icon-bg-stock { color: #00C853 !important; }
 
         /* Glass theme design button */
         .glass-theme-btn {
