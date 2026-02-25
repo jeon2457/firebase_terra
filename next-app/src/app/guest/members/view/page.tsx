@@ -511,14 +511,14 @@ export default function GuestMembersViewPage() {
                         </table>
                     </div>
 
-                    <div className="foot" style={{ marginTop: '10px', textAlign: 'center', padding: '20px 0', fontSize: '0.8rem', color: '#aaa', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                    <div className="foot" style={{ marginTop: '1px', textAlign: 'center', padding: '20px 0', fontSize: '0.8rem', color: '#aaa', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
                         <img src="/images/anicircle03_green.gif" alt="" />
                         <span>https://jeon2457.github.io/terra-1/</span>
                         <img src="/images/anicircle03_green.gif" alt="" />
                     </div>
                 </div>
                 {/* 위로가기 버튼 */}
-                <div style={{ position: 'fixed', bottom: '2px', right: '28px', zIndex: 2000 }}>
+                <div style={{ position: 'fixed', bottom: '22px', right: '28px', zIndex: 2000 }}>
                     <button
                         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                         style={{
