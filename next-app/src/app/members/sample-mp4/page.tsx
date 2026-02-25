@@ -335,7 +335,7 @@ export default function MembersSampleMp4Page() {
                             </div>
                             <div className="download-section">
                                 <div style={{ marginTop: '15px', color: '#888', fontSize: '0.85rem' }}>
-                                    위 [ ] 를 클릭하면 동영상을 전체화면으로 볼수있습니다.
+                                    위 <img src="/images/Gemini_Image.png" alt="전체화면" style={{ width: '1em', height: '1em', verticalAlign: 'middle' }} /> 를 클릭하면 동영상을 전체화면으로 볼수있습니다.(동영상부분을 터치)
                                 </div><br>
                                 <a href="/movie/tel_view_sample.mp4" download className="btn-download">
                                     <i className="bi bi-download"></i> 동영상 다운로드 받기
