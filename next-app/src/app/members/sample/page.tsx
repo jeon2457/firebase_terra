@@ -90,6 +90,7 @@ export default function MembersSamplePage() {
 
     useEffect(() => {
         setMounted(true);
+        document.title = "회원연락망 샘플";
         const t = setTimeout(() => {
             setIsPageReady(true);
         }, 1500);
