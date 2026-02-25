@@ -85,10 +85,14 @@ export default function MembersSamplePage() {
         };
     }, [isSmsActive]);
 
+    // Set page as ready after a delay to prevent flash of content
+    const [mounted, setMounted] = useState(false);
+
     useEffect(() => {
+        setMounted(true);
         const t = setTimeout(() => {
             setIsPageReady(true);
-        }, 1000);
+        }, 1500);
         return () => clearTimeout(t);
     }, []);
 
@@ -383,11 +387,11 @@ export default function MembersSamplePage() {
                 }
             `}</style>
 
-            <div id="loading-screen" style={{ opacity: isPageReady ? 0 : 1, pointerEvents: isPageReady ? 'none' : 'auto' }}>
+            <div id="loading-screen" style={{ opacity: (isPageReady || !mounted) ? 0 : 1, pointerEvents: (isPageReady || !mounted) ? 'none' : 'auto' }}>
                 <img src="/images/gughwak.jpg" alt="Loading" />
             </div>
 
-            <div id="main-content">
+            <div id="main-content" style={{ display: (isPageReady && mounted) ? "block" : "none" }}>
                 <div className="container">
                     <div className="header">
                         <div className="header-left">

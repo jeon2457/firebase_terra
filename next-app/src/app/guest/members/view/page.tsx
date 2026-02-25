@@ -21,7 +21,11 @@ export default function GuestMembersViewPage() {
     const [cubeDeg, setCubeDeg] = useState(0);
     const [isPageReady, setIsPageReady] = useState(false);
 
+    // Set page as ready after a delay to prevent flash of content
+    const [mounted, setMounted] = useState(false);
+
     useEffect(() => {
+        setMounted(true);
         // GET /api/members는 공개되어 있으므로 인증 여부와 상관없이 데이터를 가져옵니다.
         fetchMembers();
         document.title = "회원 연락망";
@@ -407,11 +411,11 @@ export default function GuestMembersViewPage() {
                 .sms-icon { display: block; margin: 0 auto; max-width: 17px; max-height: 17px; }
             `}</style>
 
-            <div id="loading-screen" style={{ opacity: isPageReady ? 0 : 1, pointerEvents: isPageReady ? 'none' : 'auto' }}>
+            <div id="loading-screen" style={{ opacity: (isPageReady || !mounted) ? 0 : 1, pointerEvents: (isPageReady || !mounted) ? 'none' : 'auto' }}>
                 <video src="/images/clova.mp4" autoPlay loop muted playsInline style={{ width: '200px', height: '200px' }} />
             </div>
 
-            <div id="main-content">
+            <div id="main-content" style={{ display: (isPageReady && mounted) ? "block" : "none" }}>
                 <div className="container">
                     <div className="header">
                         <div className="header-left">
