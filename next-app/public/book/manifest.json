@@ -1,0 +1,41 @@
+{
+ "name": "\u260E 직지35",
+ "icons": [
+  {
+   "src": "/image/android-icon-36x36.png",
+   "sizes": "36x36",
+   "type": "image\/png",
+   "density": "0.75"
+  },
+  {
+   "src": "/image/android-icon-48x48.png",
+   "sizes": "48x48",
+   "type": "image\/png",
+   "density": "1.0"
+  },
+  {
+   "src": "/image/android-icon-72x72.png",
+   "sizes": "72x72",
+   "type": "image\/png",
+   "density": "1.5"
+  },
+
+    {
+      "src": "/image/apple-icon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+
+    {
+      "src": "/image/apple-icon-57x57.png",
+      "sizes": "57x57",
+      "type": "image/png"
+    },
+ 
+
+  {
+      "src": "/favicon.ico",
+      "type": "image/x-icon"
+    } 
+ ]
+}

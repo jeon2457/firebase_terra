@@ -1,0 +1,65 @@
+
+body {
+    margin: 0;
+    line-height: 1.6em;
+    font-size: 16px;
+ }
+
+.container {
+	width: 67.5rem;  /* 1800px */
+	position: relative;
+	margin: 0 auto; /* 컨테이너 좌우 중앙정렬  */
+
+
+}
+/* Section : Hero */
+.hero {
+    border: 0.312rem solid red;
+    height: 90vh;
+    width: 100%;
+    position: relative;
+    overflow: hidden; /* 동영상 화면이 넘치는걸 숨겨준다  */
+    display: flex; /* 텍스트를 중앙정렬한다.  */
+    justify-content: center;  /* 텍스트를 좌우 중앙정렬한다.  */
+    align-items: center;  /* 수직중앙 정렬  */
+    /*    background-color: rgba(0,0,0,0.2);*/
+    background: linear-gradient(to left,black,transparent); /* 우측으로 갈수록 어두워진다.  */
+}
+.hero video {
+    position: absolute;
+
+    min-width: 100%;
+    min-height: 100%;
+    z-index: -1;  /*heading 텍스트문자가 동영상위로 나타나게 한다.  */
+}
+
+
+
+
+
+
+
+
+
+.hero .heading {
+    text-align: center;
+    width: 100%;
+    color: #fff;
+}
+
+.hero .heading h1{
+    font-weight: 500;
+    line-height: 1.6em;
+    font-size: 2em;
+}
+
+.hero .heading span{
+    display: block;
+    color: crimson;
+}
+
+
+
+
+
+
