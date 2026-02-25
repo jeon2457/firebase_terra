@@ -511,7 +511,7 @@ export default function GuestMembersViewPage() {
                         </table>
                     </div>
 
-                    <div className="foot" style={{ marginTop: '1px', textAlign: 'center', padding: '20px 0', fontSize: '0.8rem', color: '#aaa', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                    <div className="foot" style={{ marginTop: '1px', textAlign: 'center', padding: '5px 0', fontSize: '0.8rem', color: '#aaa', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
                         <img src="/images/anicircle03_green.gif" alt="" />
                         <span>https://jeon2457.github.io/terra-1/</span>
                         <img src="/images/anicircle03_green.gif" alt="" />
