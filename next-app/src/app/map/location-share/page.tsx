@@ -47,6 +47,9 @@ export default function LocationSharePage() {
     const autoStopTimerRef = useRef<any>(null);
 
     useEffect(() => {
+        // 모바일 "홈 화면에 추가"를 위한 제목 설정
+        document.title = "실시간위치공유";
+
         let uid = localStorage.getItem('terra_uid');
         if (!uid) {
             uid = 'user_' + Math.random().toString(36).substring(2, 11);
