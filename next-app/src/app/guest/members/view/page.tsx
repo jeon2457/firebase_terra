@@ -524,8 +524,9 @@ export default function GuestMembersViewPage() {
                         <img src="/images/anicircle03_green.gif" alt="" />
                     </div>
                 </div>
+
                 {/* 위로가기 버튼 */}
-                <div style={{ position: 'fixed', bottom: '22px', right: '28px', zIndex: 2000 }}>
+                <div style={{ position: 'fixed', bottom: '17px', right: '28px', zIndex: 2000 }}>
                     <button
                         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                         style={{
