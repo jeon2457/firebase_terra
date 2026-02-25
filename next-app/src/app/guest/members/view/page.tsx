@@ -24,7 +24,7 @@ export default function GuestMembersViewPage() {
     useEffect(() => {
         // GET /api/members는 공개되어 있으므로 인증 여부와 상관없이 데이터를 가져옵니다.
         fetchMembers();
-        document.title = "전화연락망 열람";
+        document.title = "회원 연락망";
     }, []);
 
     // Clock Timer
