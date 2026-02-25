@@ -516,7 +516,7 @@ export default function GuestMembersViewPage() {
 
                         {/* 링크를 사용하려면 주석을 제거하면된다. 대신에 아래의 <span>코드를 주석처리!  */}
                         <span><a href="/book/index.html"
-                      target="_blank">https://jeon2457.github.io/terra-1/</a></span>
+                      target="_blank" style={{ color: '#ffffff' }}>https://jeon2457.github.io/terra-1/</a></span>
                         {/* <span>https://jeon2457.github.io/terra-1/</span> */}
 
                         <img src="/images/anicircle03_green.gif" alt="" />
