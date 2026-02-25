@@ -514,9 +514,11 @@ export default function GuestMembersViewPage() {
                     <div className="foot" style={{ marginTop: '1px', textAlign: 'center', padding: '5px 0', fontSize: '0.8rem', color: '#aaa', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
                         <img src="/images/anicircle03_green.gif" alt="" />
 
-                        {/* 링크를 사용하려면 주석을 제거하면된다. 대신에 아래의 <span>코드를 주석처리!  */}
+                        {/* 링크를 사용하지 않으려면 주석처리를 하면된다. 대신에 아래의 <span>코드를 주석처리를 해제해서 서로 번갈아가며 사용!  */}
                         <span><a href="/book/index.html"
                       target="_blank" style={{ color: '#ffffff' }}>https://jeon2457.github.io/terra-1/</a></span>
+
+                        {/* 링크를 사용하지 않으려면 아래의 코드를 사용.주석을 제거하면된다. 대신에 위의 <span>코드를 주석처리!  */}
                         {/* <span>https://jeon2457.github.io/terra-1/</span> */}
 
                         <img src="/images/anicircle03_green.gif" alt="" />
