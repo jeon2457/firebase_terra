@@ -676,7 +676,8 @@ export default function ManualPage() {
                     <div className="note">
                         <strong>💡 핵심 포인트:</strong> 민감한 접속정보(MONGODDB_URI, NEXTAUTH_SECRET 등)는 
                         절대로 코드에 직접 입력하지 마세요. 반드시 Vercel 환경변수로 관리하고, 
-                        코드에서는 <code>process.env.변수명</code>으로 접근합니다.
+                        코드에서는 <code>process.env.변수명</code>으로 접근합니다. 그러므로 내컴퓨터 원본코드가 있는
+                        Vercel_Mongodb폴더내에 있는 .git 폴더는 절대로 깃허브로 업로드하면 안된다.
                     </div>
 
                     <h6 className="mt-4">🔷 DB 연결 코드 예시 (src/lib/mongodb.ts)</h6>
