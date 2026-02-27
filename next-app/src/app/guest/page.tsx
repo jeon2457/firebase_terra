@@ -174,6 +174,91 @@ export default function GuestPage() {
             rows.push(["", "", "", "합계", total]);
 
             const ws = XLSX.utils.aoa_to_sheet(rows);
+
+            // 제목을 A1에서 E1까지 셀 병합
+            ws['!merges'] = [
+                { s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }
+            ];
+
+            // 제목 행 스타일 (A1)
+            const titleCell = XLSX.utils.encode_cell({ r: 0, c: 0 });
+            ws[titleCell] = {
+                v: `${excelConfig.year}년 ${title} 내역`,
+                s: {
+                    font: { sz: 16, bold: true, color: { rgb: "000000" } },
+                    alignment: { horizontal: "center", vertical: "center" },
+                    fill: { fgColor: { rgb: "E8F5E9" } }
+                }
+            };
+
+            // 헤더 행 스타일 (2행: NO, 날짜, 항목, 비고, 금액)
+            for (let c = 0; c <= 4; c++) {
+                const cellAddr = XLSX.utils.encode_cell({ r: 1, c });
+                ws[cellAddr] = {
+                    v: ws[cellAddr]?.v || "",
+                    s: {
+                        font: { bold: true, color: { rgb: "FFFFFF" } },
+                        alignment: { horizontal: "center", vertical: "center" },
+                        fill: { fgColor: { rgb: "4CAF50" } },
+                        border: {
+                            top: { style: "thin", color: { rgb: "000000" } },
+                            bottom: { style: "thin", color: { rgb: "000000" } },
+                            left: { style: "thin", color: { rgb: "000000" } },
+                            right: { style: "thin", color: { rgb: "000000" } }
+                        }
+                    }
+                };
+            }
+
+            // 데이터 행 스타일 (3행부터 마지막 행까지)
+            const startRow = 2;
+            const endRow = filtered.length + 2;
+            for (let r = startRow; r <= endRow; r++) {
+                for (let c = 0; c <= 4; c++) {
+                    const cellAddr = XLSX.utils.encode_cell({ r, c });
+                    const cell = ws[cellAddr];
+                    if (!cell) continue;
+
+                    let cellStyle: any = {
+                        alignment: { horizontal: c === 0 ? "center" : (c === 4 ? "right" : "left"), vertical: "center" },
+                        border: {
+                            top: { style: "thin", color: { rgb: "CCCCCC" } },
+                            bottom: { style: "thin", color: { rgb: "CCCCCC" } },
+                            left: { style: "thin", color: { rgb: "CCCCCC" } },
+                            right: { style: "thin", color: { rgb: "CCCCCC" } }
+                        }
+                    };
+
+                    // 금액 열 (E열, c=4)
+                    if (c === 4) {
+                        // 데이터 행의 금액
+                        if (r < endRow) {
+                            cellStyle.numberFormat = "#,##0"; // 콤마 포맷
+                        }
+                        // 합계 행 (마지막 행)
+                        else {
+                            cellStyle.font = { bold: true, color: { rgb: "FF0000" } }; // 빨간색
+                            cellStyle.numberFormat = "#,##0"; // 콤마 포맷
+                            cellStyle.fill = { fgColor: { rgb: "FFF3CD" } };
+                        }
+                    }
+
+                    ws[cellAddr] = {
+                        v: cell.v,
+                        s: cellStyle
+                    };
+                }
+            }
+
+            // 열 너비 설정
+            ws['!cols'] = [
+                { wch: 8 },   // NO
+                { wch: 12 },  // 날짜
+                { wch: 20 },  // 항목
+                { wch: 30 },  // 비고
+                { wch: 15 }   // 금액
+            ];
+
             return ws;
         };
 
