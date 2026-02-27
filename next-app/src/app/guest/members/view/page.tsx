@@ -378,12 +378,12 @@ export default function GuestMembersViewPage() {
                     .cube { width: 22px; height: 22px; }
                     .cube img { width: 22px; height: 22px; top: 0; left: 0; }
                     .custom-table thead th { color: #f0c420; font-size: 13px; } 
-                    .custom-table td { padding: calc(0.32rem + 4px) 0; }
+                    .custom-table td { padding: calc(0.32rem + 5px) 0; }
                     .custom-span { font-size: 14px; margin: 0 10px; line-height: 30px; }
                     .col-no { width: 8%; font-size: 12px !important; }
-                    .col-name { width: 18%; font-size: 14px !important; } 
-                    .col-tel { width: 47%; font-size: 14px !important; } 
-                    .col-addr { width: 15%; font-size: 11px !important; }
+                    .col-name { width: 18%; font-size: 16px !important; } 
+                    .col-tel { width: 47%; font-size: 16px !important; } 
+                    .col-addr { width: 15%; font-size: 12px !important; }
                     .address_1 { font-size: 11px !important; }
                     .col-sms { width: 12%; font-size: 13px !important; } 
                     .col-remark { display: none; }
