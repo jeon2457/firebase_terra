@@ -352,7 +352,7 @@ export default function MembersViewPage() {
                     border: 1px solid #eedca6 !important;
                     text-align: center;
                     vertical-align: middle;
-                    padding: 0.44rem 0;
+                    padding: calc(0.44rem + 3px) 0;
                     font-size: 0.9em;
                 }
                 .custom-table tbody tr {
@@ -370,7 +370,7 @@ export default function MembersViewPage() {
                     border: 1px solid #eedca6 !important;
                     text-align: center;
                     vertical-align: middle;
-                    padding: 0.44rem 0;
+                    padding: calc(0.44rem + 3px) 0;
                     word-break: break-all;
                     line-height: 1.1;
                 }
