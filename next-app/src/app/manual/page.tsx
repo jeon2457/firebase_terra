@@ -435,9 +435,11 @@ export default function ManualPage() {
                         <strong>MongoDB Atlas</strong>를 기반으로 가동됩니다.
                     </div>
                     <p>
-                        이 웹사이트는 기존 Firebase 방식에서 Next.js + Vercel + MongoDB로 마이그레이션되었습니다.
+                        이 웹사이트는 기존 PHP 방식에서 Next.js + Vercel + MongoDB로 마이그레이션되었습니다.
                         데이터베이스는 MongoDB Atlas에서 관리되고, Vercel을 통해 자동 배포됩니다.
-                        코드는 GitHub 저장소와 연동되어 지속적인 통합/배포(CI/CD)가 이루어집니다.
+                        코드는 GitHub 저장소와 연동되어 지속적인 통합/배포(CI/CD)가 이루어집니다. <span color="red">
+                        즉,내컴퓨터에 원본데이타가 있고 데이타가 생성되거나 수정되면 곧바로 깃허브에 커밋,푸시로 업로드하면 
+                        깃허브에서 변경된 데이타가 Vercel로 자동으로 푸시되면 Vercel에서 자동으로 배포됩니다.</span>
                     </p>
                     <ul>
                         <li>
