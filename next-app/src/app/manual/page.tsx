@@ -417,6 +417,22 @@ export default function ManualPage() {
                     text-align: center;
                     margin-bottom: 50px;
                 }
+
+                .full-width-image {
+                    width: 100vw;
+                    position: relative;
+                    left: 50%;
+                    right: 50%;
+                    margin-left: -50vw;
+                    margin-right: -50vw;
+                    margin-bottom: 30px;
+                }
+
+                .full-width-image img {
+                    width: 100%;
+                    height: auto;
+                    display: block;
+                }
             `}</style>
 
             <div className="container">
@@ -1114,6 +1130,11 @@ export default function ManualPage() {
                     <a href="/dashboard" className="btn-back">
                         ⏪ 돌아가기
                     </a>
+                </div>
+
+                {/* 풀화면 이미지 */}
+                <div className="full-width-image">
+                    <img src="/images/diagram-vercel.png" alt="Vercel 배포 다이어그램" />
                 </div>
             </div>
 
