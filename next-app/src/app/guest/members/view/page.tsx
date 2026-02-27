@@ -341,7 +341,7 @@ export default function GuestMembersViewPage() {
                 }
                 .custom-table tbody tr:hover { background: rgba(255,255,255,0.06); }
                 .custom-table tbody tr:first-child td {
-                    padding-top: calc(0.44rem + 12px);
+                    padding-top: calc(0.44rem + 16px);
                 }
                 .custom-table td {
                     border: 1px solid #eedca6 !important;
@@ -359,8 +359,8 @@ export default function GuestMembersViewPage() {
                     text-align: center;
                 }
                 .name-link:hover { color: #ffffff !important; text-decoration: none !important; }
-                .name_1 { text-align: center; padding: 0.32rem 0; }
-                .tel_1 { text-align: center; padding: 0.32rem 0; }
+                .name_1 { text-align: center; padding: calc(0.32rem + 4px) 0; }
+                .tel_1 { text-align: center; padding: calc(0.32rem + 4px) 0; }
                 .sms-icon { cursor: pointer; transition: transform 0.2s; }
                 .sms-icon:hover { transform: scale(1.15); }
                 .max-small { width: 1.15rem; height: 1.15rem; }
@@ -378,7 +378,7 @@ export default function GuestMembersViewPage() {
                     .cube { width: 22px; height: 22px; }
                     .cube img { width: 22px; height: 22px; top: 0; left: 0; }
                     .custom-table thead th { color: #f0c420; font-size: 13px; } 
-                    .custom-table td { padding: 0.32rem 0; }
+                    .custom-table td { padding: calc(0.32rem + 4px) 0; }
                     .custom-span { font-size: 14px; margin: 0 10px; line-height: 30px; }
                     .col-no { width: 8%; font-size: 12px !important; }
                     .col-name { width: 18%; font-size: 14px !important; } 
