@@ -327,6 +327,13 @@ export default function DashboardContent({ theme = "book" }: Props) {
             const success = await loadFinancialData();
             if (success) setShowFinancial(true);
         } else if (selected.path === "#excel") {
+            if (!financialData) {
+                const success = await loadFinancialData();
+                if (!success) {
+                    alert("재무 데이터를 불러올 수 없습니다.");
+                    return;
+                }
+            }
             setShowExcel(true);
         } else if (selected.path === "#stock-disclosure") {
             setShowStockDisclosure(true);
@@ -394,7 +401,10 @@ export default function DashboardContent({ theme = "book" }: Props) {
     };
 
     const downloadExcel = () => {
-        if (!financialData) return;
+        if (!financialData) {
+            alert("재무 데이터가 없습니다. 모달을 닫고 다시 시도해주세요.");
+            return;
+        }
         const wb = XLSX.utils.book_new();
 
         const createSheet = (data: any[], title: string) => {
@@ -459,7 +469,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
 
     // 관리자 전용 메뉴를 포함한 전체 메뉴 (관리자만 하단에股票공시 열람 추가)
     const allAdminMenuItems = [...menuItems, ...adminMenuItems];
-    
+
     const filteredMenuItems = (session?.user as any)?.user_level >= 10
         ? allAdminMenuItems
         : menuItems.filter(item => guestSpecificPaths.includes(item.path));
@@ -484,7 +494,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
                 };
 
     return (
-        <div style={wrapStyle}>
+        <div style={wrapStyle} className={theme === "glass" ? "theme-glass" : theme === "tech" ? "theme-tech" : ""}>
             {(theme === "glass" || theme === "tech") && (
                 <canvas
                     ref={spaceCanvasRef}
@@ -1015,12 +1025,13 @@ export default function DashboardContent({ theme = "book" }: Props) {
           left: 0;
           width: 100%;
           height: 100%;
-          background: rgba(0,0,0,0.5);
+          background: rgba(0,0,0,0.65);
           display: flex;
           align-items: center;
           justify-content: center;
           z-index: 1000;
           padding: 15px;
+          backdrop-filter: blur(4px);
         }
         .custom-modal {
           background: white;
@@ -1032,6 +1043,40 @@ export default function DashboardContent({ theme = "book" }: Props) {
           overflow-y: auto;
           position: relative;
           margin: auto;
+        }
+        .theme-glass .custom-modal,
+        .theme-tech .custom-modal {
+          background: rgba(15, 20, 35, 0.92);
+          border: 1px solid rgba(255,255,255,0.15);
+          color: #e2e8f0;
+          box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+        }
+        .theme-glass .custom-modal h4,
+        .theme-tech .custom-modal h4 {
+          color: #fff;
+        }
+        .theme-glass .custom-modal .form-label,
+        .theme-tech .custom-modal .form-label {
+          color: #cbd5e1;
+        }
+        .theme-glass .custom-modal .form-select,
+        .theme-tech .custom-modal .form-select {
+          background-color: rgba(255,255,255,0.08);
+          border: 1px solid rgba(255,255,255,0.2);
+          color: #e2e8f0;
+        }
+        .theme-glass .custom-modal .form-select option,
+        .theme-tech .custom-modal .form-select option {
+          background-color: #1e293b;
+          color: #e2e8f0;
+        }
+        .theme-glass .custom-modal .btn-link,
+        .theme-tech .custom-modal .btn-link {
+          color: rgba(255,255,255,0.7) !important;
+        }
+        .theme-tech .custom-modal {
+          border-color: rgba(56, 189, 248, 0.3);
+          box-shadow: 0 0 50px rgba(56, 189, 248, 0.15), 0 30px 80px rgba(0,0,0,0.7);
         }
         @media (max-width: 768px) {
           .custom-modal {
@@ -1188,47 +1233,62 @@ export default function DashboardContent({ theme = "book" }: Props) {
                     )}
                 </div>
 
-                {(session?.user as any)?.user_level >= 10 && (theme !== "glass" && theme !== "tech") && (
+                {/* 테마설정 버튼 - 관리자 전용, 모든 테마 */}
+                {(session?.user as any)?.user_level >= 10 && (
                     <div className="text-center mt-5 d-flex flex-column gap-3 align-items-center">
-                        <button className="btn btn-outline-secondary rounded-pill fw-bold" onClick={() => router.push("/theme")}
-                        >
-                            <Palette className="me-2" size={18} /> 디자인 변경 / 테마 설정
-                        </button>
-                        <div className="d-flex flex-column flex-md-row gap-3">
-                            <button className="btn btn-primary btn-same shadow-lg d-flex align-items-center justify-content-center" onClick={handleGoNext}>
-                                <BookOpen className="me-2" size={20} /> 책 펼쳐보기
+                        {theme === "glass" ? (
+                            <button className="glass-theme-btn" onClick={() => router.push("/theme")}>
+                                <Palette className="me-2" size={18} /> 디자인 변경 / 테마설정
                             </button>
-                            <button className="btn btn-outline-danger btn-same shadow-sm d-flex align-items-center justify-content-center" onClick={() => signOut({ callbackUrl: "/login" })}>
-                                <LogOut className="me-2" size={20} /> 서재 나가기
+                        ) : theme === "tech" ? (
+                            <button className="tech-theme-btn" onClick={() => router.push("/theme")}>
+                                <Palette className="me-2" size={18} /> 디자인 변경 / 테마설정
                             </button>
-                        </div>
+                        ) : (
+                            <>
+                                <button className="btn btn-outline-secondary rounded-pill fw-bold" onClick={() => router.push("/theme")}>
+                                    <Palette className="me-2" size={18} /> 디자인 변경 / 테마 설정
+                                </button>
+                                <div className="d-flex flex-column flex-md-row gap-3">
+                                    <button className="btn btn-primary btn-same shadow-lg d-flex align-items-center justify-content-center" onClick={handleGoNext}>
+                                        <BookOpen className="me-2" size={20} /> 책 펼쳐보기
+                                    </button>
+                                    <button className="btn btn-outline-danger btn-same shadow-sm d-flex align-items-center justify-content-center" onClick={() => signOut({ callbackUrl: "/login" })}>
+                                        <LogOut className="me-2" size={20} /> 서재 나가기
+                                    </button>
+                                </div>
+                            </>
+                        )}
                     </div>
                 )}
 
-                {(session?.user as any)?.user_level < 10 && theme === "icon" && (
+                {/* 로그아웃 버튼 - 게스트(user_level < 10), icon/glass/tech 테마 */}
+                {(session?.user as any)?.user_level < 10 && (theme === "icon" || theme === "glass" || theme === "tech") && (
                     <div className="text-center mt-5">
-                        <button
-                            className="btn btn-outline-danger rounded-pill fw-bold px-4"
-                            onClick={() => signOut({ callbackUrl: "/login" })}
-                        >
-                            <LogOut className="me-2" size={18} /> 로그아웃
-                        </button>
-                    </div>
-                )}
-
-                {(session?.user as any)?.user_level >= 10 && theme === "glass" && (
-                    <div className="text-center mt-4 d-flex flex-column gap-3 align-items-center">
-                        <button className="glass-theme-btn" onClick={() => router.push("/theme")}>
-                            <Palette className="me-2" size={18} /> 디자인 변경 / 테마설정
-                        </button>
-                    </div>
-                )}
-
-                {(session?.user as any)?.user_level >= 10 && theme === "tech" && (
-                    <div className="text-center mt-4 d-flex flex-column gap-3 align-items-center">
-                        <button className="tech-theme-btn" onClick={() => router.push("/theme")}>
-                            <Palette className="me-2" size={18} /> 디자인 변경 / 테마설정
-                        </button>
+                        {theme === "glass" ? (
+                            <button
+                                className="glass-theme-btn"
+                                style={{ background: "rgba(255,60,60,0.15)", borderColor: "rgba(255,80,80,0.4)" }}
+                                onClick={() => signOut({ callbackUrl: "/login" })}
+                            >
+                                <LogOut className="me-2" size={18} /> 로그아웃
+                            </button>
+                        ) : theme === "tech" ? (
+                            <button
+                                className="tech-theme-btn"
+                                style={{ background: "rgba(255,60,60,0.12)", borderColor: "rgba(255,80,80,0.4)", color: "#f87171" }}
+                                onClick={() => signOut({ callbackUrl: "/login" })}
+                            >
+                                <LogOut className="me-2" size={18} /> 로그아웃
+                            </button>
+                        ) : (
+                            <button
+                                className="btn btn-outline-danger rounded-pill fw-bold px-4"
+                                onClick={() => signOut({ callbackUrl: "/login" })}
+                            >
+                                <LogOut className="me-2" size={18} /> 로그아웃
+                            </button>
+                        )}
                     </div>
                 )}
 
