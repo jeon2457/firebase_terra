@@ -59,10 +59,11 @@ export default function ManualPage() {
         const topBtn = document.getElementById('scrollToTop');
         
         const handleScroll = () => {
+            if (!topBtn) return;
             if (window.scrollY > 300) {
-                topBtn!.style.display = 'flex';
+                topBtn.style.display = 'flex';
             } else {
-                topBtn!.style.display = 'none';
+                topBtn.style.display = 'none';
             }
         };
 
@@ -437,7 +438,7 @@ export default function ManualPage() {
                     <p>
                         이 웹사이트는 기존 PHP 방식에서 Next.js + Vercel + MongoDB로 마이그레이션되었습니다.
                         데이터베이스는 MongoDB Atlas에서 관리되고, Vercel을 통해 자동 배포됩니다.
-                        코드는 GitHub 저장소와 연동되어 지속적인 통합/배포(CI/CD)가 이루어집니다. <span color="red">
+                        코드는 GitHub 저장소와 연동되어 지속적인 통합/배포(CI/CD)가 이루어집니다. <span style={{ color: 'red' }}>
                         즉,내컴퓨터에 원본데이타가 있고 데이타가 생성되거나 수정되면 곧바로 깃허브에 커밋,푸시로 업로드하면 
                         깃허브에서 변경된 데이타가 Vercel로 자동으로 푸시되면 Vercel에서 자동으로 배포됩니다.</span>
                     </p>
@@ -469,8 +470,247 @@ export default function ManualPage() {
                 {/* 2번 */}
                 <div className="section-card">
                     <div className="section-title">
-                        <i className="bi bi-git"></i> 2. 서버 업데이트 및 배포 (CI/CD)
+                        <i className="bi bi-git"></i> 2. Next.js 특징 및 코드 구조 이해
                     </div>
+                    
+                    <h6>🔷 Next.js란?</h6>
+                    <p>
+                        <strong>Next.js</strong>는 React 기반의 프레임워크로, 서버 사이드 렌더링(SSR)과 
+                        정적 사이트 생성(SSG)을 지원합니다. 이점으로 SEO 최적화, 빠른 페이지 로딩, 
+                        개발 생산성 향상을 얻을 수 있습니다.
+                    </p>
+                    <ul>
+                        <li><strong>App Router:</strong> 최신 라우팅 방식 (폴더 기반)</li>
+                        <li><strong>Server Components:</strong> 기본적으로 서버에서 렌더링</li>
+                        <li><strong>API Routes:</strong> 별도 백엔드 서버 없이 API 생성 가능</li>
+                        <li><strong>Automatic Code Splitting:</strong> 필요한 코드만 로드</li>
+                    </ul>
+
+                    <h6>🔷 순수 HTML과 Next.js의 차이점</h6>
+                    <div className="table-responsive">
+                        <table className="table table-bordered table-custom">
+                            <thead>
+                                <tr>
+                                    <th>구분</th>
+                                    <th>순수 HTML/PHP</th>
+                                    <th>Next.js</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>렌더링</td>
+                                    <td>클라이언트 사이드 (브라우저)</td>
+                                    <td>서버 사이드 + 클라이언트 하이브리드</td>
+                                </tr>
+                                <tr>
+                                    <td>데이터 처리</td>
+                                    <td>페이지 새로고침 필요</td>
+                                    <td>AJAX로 비동기 처리 (SPA)</td>
+                                </tr>
+                                <tr>
+                                    <td>SEO</td>
+                                    <td>완벽함 (완전한 HTML 제공)</td>
+                                    <td>우수함 (서버 렌더링 가능)</td>
+                                </tr>
+                                <tr>
+                                    <td>개발 구조</td>
+                                    <td>파일별 독립적</td>
+                                    <td>컴포넌트 기반 (재사용성)</td>
+                                </tr>
+                                <tr>
+                                    <td>빌드 필요</td>
+                                    <td>불필요 (그대로 제공)</td>
+                                    <td>필요 (번들링/최적화)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h6>🔷 파일 확장자 (.ts vs .tsx)</h6>
+                    <ul>
+                        <li>
+                            <strong>.ts (TypeScript):</strong>{' '}
+                            JavaScript에 타입 기능만 추가. JSX(HTML 태그) 사용 불가.
+                        </li>
+                        <li>
+                            <strong>.tsx (TypeScript + JSX):</strong>{ ' '}
+                            TypeScript와 JSX 모두 사용 가능. React 컴포넌트 작성에 필수.
+                        </li>
+                    </ul>
+                    <div className="code-box">
+                        <span className="comment">// .ts 예시 - 타입 정의만 있는 파일</span>
+                        <br />
+                        <span className="keyword">export</span> <span className="keyword">interface</span> Member {'{'}
+                        <br />
+                        &nbsp;&nbsp;_id: <span className="string">string</span>;
+                        <br />
+                        &nbsp;&nbsp;name: <span className="string">string</span>;
+                        <br />
+                        &nbsp;&nbsp;tel: <span className="string">string</span>;
+                        <br />
+                        {'}'}
+                        <br /><br />
+                        <span className="comment">// .tsx 예시 - React 컴포넌트 (JSX 포함)</span>
+                        <br />
+                        <span className="keyword">export default</span> <span className="keyword">function</span> Page() {'{'}
+                        <br />
+                        &nbsp;&nbsp;<span className="keyword">return</span> (<div>안녕하세요</div>);
+                        <br />
+                        {'}'}
+                    </div>
+
+                    <h6>🔷 프로젝트 파일 구조 및 배치</h6>
+                    <div className="table-responsive">
+                        <table className="table table-bordered table-custom">
+                            <thead>
+                                <tr>
+                                    <th>디렉토리/파일</th>
+                                    <th>역할</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>src/app/</code></td>
+                                    <td>Next.js 페이지 및 API 라우트 (App Router)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>src/components/</code></td>
+                                    <td>재사용 가능한 React 컴포넌트</td>
+                                </tr>
+                                <tr>
+                                    <td><code>src/lib/</code></td>
+                                    <td>유틸리티 함수, DB 연결 등</td>
+                                </tr>
+                                <tr>
+                                    <td><code>src/models/</code></td>
+                                    <td>Mongoose 데이터 모델 (스키마 정의)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>public/</code></td>
+                                    <td>정적 파일 (이미지, 폰트 등)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>package.json</code></td>
+                                    <td>프로젝트 의존성 및 스크립트</td>
+                                </tr>
+                                <tr>
+                                    <td><code>next.config.ts</code></td>
+                                    <td>Next.js 설정 파일</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h6>🔷 주요 import 코드 및 역할</h6>
+                    <div className="code-box">
+                        <span className="comment">// ========== 페이지/컴포넌트 관련 import ==========</span>
+                        <br />
+                        <span className="keyword">import</span> {'{ useState, useEffect }'} <span className="keyword">from</span> <span className="string">"react"</span>; 
+                        <span className="comment"> // React Hooks (상태관리, 부수효과)</span>
+                        <br />
+                        <span className="keyword">import</span> {'{ useSession }'} <span className="keyword">from</span> <span className="string">"next-auth/react"</span>; 
+                        <span className="comment"> // 인증 세션 관리</span>
+                        <br />
+                        <span className="keyword">import</span> {'{ useRouter }'} <span className="keyword">from</span> <span className="string">"next/navigation"</span>; 
+                        <span className="comment"> // 페이지 이동</span>
+                        <br /><br />
+                        <span className="comment">// ========== UI 프레임워크 ==========</span>
+                        <br />
+                        <span className="keyword">import</span> <span className="string">"bootstrap/dist/css/bootstrap.min.css"</span>; 
+                        <span className="comment"> // Bootstrap 스타일</span>
+                        <br /><br />
+                        <span className="comment">// ========== 데이터베이스 관련 ==========</span>
+                        <br />
+                        <span className="keyword">import</span> dbConnect <span className="keyword">from</span> <span className="string">"@/lib/mongodb"</span>; 
+                        <span className="comment"> // Mongoose MongoDB 연결</span>
+                        <br />
+                        <span className="keyword">import</span> Member <span className="keyword">from</span> <span className="string">"@/models/Member"</span>; 
+                        <span className="comment"> // 회원 데이터 모델</span>
+                        <br /><br />
+                        <span className="comment">// ========== API 호출 ==========</span>
+                        <br />
+                        <span className="keyword">import</span> axios <span className="keyword">from</span> <span className="string">"axios"</span>; 
+                        <span className="comment"> // HTTP 클라이언트</span>
+                    </div>
+
+                    <h6>🔷 접속정보 저장 위치</h6>
+                    <div className="table-responsive">
+                        <table className="table table-bordered table-custom">
+                            <thead>
+                                <tr>
+                                    <th>종류</th>
+                                    <th>저장 위치</th>
+                                    <th>파일 경로</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>MongoDB URI</td>
+                                    <td>Vercel Dashboard</td>
+                                    <td><code>Settings → Environment Variables</code></td>
+                                </tr>
+                                <tr>
+                                    <td>NextAuth Secret</td>
+                                    <td>Vercel Dashboard</td>
+                                    <td><code>Settings → Environment Variables</code></td>
+                                </tr>
+                                <tr>
+                                    <td>GitHub 연동</td>
+                                    <td>Vercel Dashboard</td>
+                                    <td><code>Settings → Git</code></td>
+                                </tr>
+                                <tr>
+                                    <td>DB 연결 코드</td>
+                                    <td>로컬/서버 코드</td>
+                                    <td><code>src/lib/mongodb.ts</code></td>
+                                </tr>
+                                <tr>
+                                    <td>MongoDB 클라이언트</td>
+                                    <td>로컬/서버 코드</td>
+                                    <td><code>src/lib/db.ts</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className="note">
+                        <strong>💡 핵심 포인트:</strong> 민감한 접속정보(MONGODDB_URI, NEXTAUTH_SECRET 등)는 
+                        절대로 코드에 직접 입력하지 마세요. 반드시 Vercel 환경변수로 관리하고, 
+                        코드에서는 <code>process.env.변수명</code>으로 접근합니다.
+                    </div>
+
+                    <h6 className="mt-4">🔷 DB 연결 코드 예시 (src/lib/mongodb.ts)</h6>
+                    <div className="code-box">
+                        <span className="keyword">import</span> mongoose <span className="keyword">from</span> <span className="string">'mongoose'</span>;
+                        <br /><br />
+                        <span className="keyword">const</span> MONGODB_URI = <span className="keyword">process.env</span>.MONGODB_URI!;
+                        <br /><br />
+                        <span className="keyword">async function</span> dbConnect() {'{'}
+                        <br />
+                        &nbsp;&nbsp;<span className="comment">// 캐시된 연결이 있으면 재사용</span>
+                        <br />
+                        &nbsp;&nbsp;<span className="keyword">if</span> (cached.conn) {'{'}
+                        <br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span className="keyword">return</span> cached.conn;
+                        <br />
+                        &nbsp;&nbsp;{'}'}
+                        <br /><br />
+                        &nbsp;&nbsp;<span className="comment">// 새 연결 생성</span>
+                        <br />
+                        &nbsp;&nbsp;cached.promise = mongoose.connect(MONGODB_URI, {'{'}
+                        <br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;dbName: <span className="string">'terraone_mongo'</span>
+                        <br />
+                        &nbsp;&nbsp;{'}'});
+                        <br />
+                        &nbsp;&nbsp;cached.conn = <span className="keyword">await</span> cached.promise;
+                        <br />
+                        &nbsp;&nbsp;<span className="keyword">return</span> cached.conn;
+                        <br />
+                        {'}'}
+                    </div>
+
+                    <h6 className="mt-4">🔷 서버 업데이트 및 배포 (CI/CD)</h6>
                     <p>
                         코드를 수정한 후 서버에 업데이트할 때는 <strong>Git 명령어</strong>를 통해 GitHub에
                         푸시하면 Vercel에서 자동으로 배포됩니다.
