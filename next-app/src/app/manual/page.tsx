@@ -1126,11 +1126,7 @@ export default function ManualPage() {
                     </div>
                 </div>
 
-                <div className="center-wrapper">
-                    <a href="/dashboard" className="btn-back">
-                        ⏪ 돌아가기
-                    </a>
-                </div>
+                
 
                 {/* 풀화면 이미지 */}
                 <div className="full-width-image">
@@ -1140,6 +1136,12 @@ export default function ManualPage() {
 
             <div id="scrollToTop" title="맨 위로">
                 ▲
+            </div>
+
+            <div className="center-wrapper">
+                <a href="/dashboard" className="btn-back">
+                    ⏪ 돌아가기
+                </a>
             </div>
         </>
     );
