@@ -347,7 +347,7 @@ export default function GuestMembersViewPage() {
                     border: 1px solid #eedca6 !important;
                     text-align: center;
                     vertical-align: middle;
-                    padding: calc(0.44rem + 3px) 0;
+                    padding: calc(0.44rem + 4px) 0;
                     word-break: break-all;
                     line-height: 1.1;
                 }
