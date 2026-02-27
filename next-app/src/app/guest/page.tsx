@@ -103,7 +103,15 @@ export default function GuestPage() {
     };
 
     // 엑셀 리포트 클릭 핸들러
-    const handleExcelClick = () => {
+    const handleExcelClick = async () => {
+        // 재무 데이터가 없으면 먼저 로드
+        if (!financialData) {
+            const success = await loadFinancialData();
+            if (!success) {
+                alert("재무 데이터를 불러올 수 없습니다.");
+                return;
+            }
+        }
         setShowExcel(true);
     };
 
@@ -220,7 +228,7 @@ export default function GuestPage() {
                     if (!cell) continue;
 
                     let cellStyle: any = {
-                        alignment: { horizontal: c === 0 ? "center" : (c === 4 ? "right" : "left"), vertical: "center" },
+                        alignment: { horizontal: c === 4 ? "right" : "center", vertical: "center" },
                         border: {
                             top: { style: "thin", color: { rgb: "CCCCCC" } },
                             bottom: { style: "thin", color: { rgb: "CCCCCC" } },
