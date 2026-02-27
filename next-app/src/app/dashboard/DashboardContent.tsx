@@ -313,6 +313,16 @@ export default function DashboardContent({ theme = "book" }: Props) {
             return;
         }
 
+        // 전화연락망 열람: 관리자(user_level >= 10)는 /members/view, 일반회원은 /guest/members/view
+        if (path === "/guest/members/view") {
+            if ((session?.user as any)?.user_level >= 10) {
+                router.push("/members/view");
+            } else {
+                router.push("/guest/members/view");
+            }
+            return;
+        }
+
         if (selected.path === "#financial") {
             const success = await loadFinancialData();
             if (success) setShowFinancial(true);
