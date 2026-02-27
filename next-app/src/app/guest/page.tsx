@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import styles from "./guest.module.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import axios from "axios";
+import * as XLSX from 'xlsx-js-style';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -161,11 +162,8 @@ export default function GuestPage() {
     };
 
     // 엑셀 다운로드
-    const downloadExcel = async () => {
+    const downloadExcel = () => {
         if (!financialData) return;
-        
-        // 동적으로 xlsx-js-style을 import
-        const XLSX = await import('xlsx-js-style');
         
         const wb = XLSX.utils.book_new();
 
