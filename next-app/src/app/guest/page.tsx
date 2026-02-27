@@ -104,15 +104,22 @@ export default function GuestPage() {
     };
 
     // 엑셀 리포트 클릭 핸들러
-    const handleExcelClick = async () => {
+    const handleExcelClick = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("handleExcelClick called");
+        
         // 재무 데이터가 없으면 먼저 로드
         if (!financialData) {
+            console.log("Loading financial data...");
             const success = await loadFinancialData();
+            console.log("Load result:", success);
             if (!success) {
                 alert("재무 데이터를 불러올 수 없습니다.");
                 return;
             }
         }
+        console.log("Setting showExcel to true");
         setShowExcel(true);
     };
 
@@ -163,118 +170,128 @@ export default function GuestPage() {
 
     // 엑셀 다운로드
     const downloadExcel = () => {
-        if (!financialData) return;
+        console.log("downloadExcel called", financialData);
+        if (!financialData) {
+            alert("재무 데이터가 없습니다. 데이터를 먼저 불러와주세요.");
+            return;
+        }
         
-        const wb = XLSX.utils.book_new();
+        try {
+            const wb = XLSX.utils.book_new();
 
-        const createSheet = (data: any[], title: string) => {
-            const filtered = data.filter(item => new Date(item.date).getFullYear() === excelConfig.year)
-                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+            const createSheet = (data: any[], title: string) => {
+                const filtered = data.filter(item => new Date(item.date).getFullYear() === excelConfig.year)
+                    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-            const rows: (string | number)[][] = [[`${excelConfig.year}년 ${title} 내역`], ["NO", "날짜", "항목", "비고", "금액"]];
-            let total = 0;
-            filtered.forEach((item, idx) => {
-                rows.push([idx + 1, item.date.split(' ')[0], item.category, item.description || '', item.amount]);
-                total += item.amount;
-            });
-            rows.push(["", "", "", "합계", total]);
+                const rows: (string | number)[][] = [[`${excelConfig.year}년 ${title} 내역`], ["NO", "날짜", "항목", "비고", "금액"]];
+                let total = 0;
+                filtered.forEach((item, idx) => {
+                    rows.push([idx + 1, item.date.split(' ')[0], item.category, item.description || '', item.amount]);
+                    total += item.amount;
+                });
+                rows.push(["", "", "", "합계", total]);
 
-            const ws = XLSX.utils.aoa_to_sheet(rows);
+                const ws = XLSX.utils.aoa_to_sheet(rows);
 
-            // 제목을 A1에서 E1까지 셀 병합
-            ws['!merges'] = [
-                { s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }
-            ];
+                // 제목을 A1에서 E1까지 셀 병합
+                ws['!merges'] = [
+                    { s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }
+                ];
 
-            // 제목 행 스타일 (A1)
-            const titleCell = XLSX.utils.encode_cell({ r: 0, c: 0 });
-            ws[titleCell] = {
-                v: `${excelConfig.year}년 ${title} 내역`,
-                s: {
-                    font: { sz: 16, bold: true, color: { rgb: "000000" } },
-                    alignment: { horizontal: "center", vertical: "center" },
-                    fill: { fgColor: { rgb: "E8F5E9" } }
-                }
-            };
-
-            // 헤더 행 스타일 (2행: NO, 날짜, 항목, 비고, 금액)
-            for (let c = 0; c <= 4; c++) {
-                const cellAddr = XLSX.utils.encode_cell({ r: 1, c });
-                ws[cellAddr] = {
-                    v: ws[cellAddr]?.v || "",
+                // 제목 행 스타일 (A1)
+                const titleCell = XLSX.utils.encode_cell({ r: 0, c: 0 });
+                ws[titleCell] = {
+                    v: `${excelConfig.year}년 ${title} 내역`,
                     s: {
-                        font: { bold: true, color: { rgb: "FFFFFF" } },
+                        font: { sz: 16, bold: true, color: { rgb: "000000" } },
                         alignment: { horizontal: "center", vertical: "center" },
-                        fill: { fgColor: { rgb: "4CAF50" } },
-                        border: {
-                            top: { style: "thin", color: { rgb: "000000" } },
-                            bottom: { style: "thin", color: { rgb: "000000" } },
-                            left: { style: "thin", color: { rgb: "000000" } },
-                            right: { style: "thin", color: { rgb: "000000" } }
-                        }
+                        fill: { fgColor: { rgb: "E8F5E9" } }
                     }
                 };
-            }
 
-            // 데이터 행 스타일 (3행부터 마지막 행까지)
-            const startRow = 2;
-            const endRow = filtered.length + 2;
-            for (let r = startRow; r <= endRow; r++) {
+                // 헤더 행 스타일 (2행: NO, 날짜, 항목, 비고, 금액)
                 for (let c = 0; c <= 4; c++) {
-                    const cellAddr = XLSX.utils.encode_cell({ r, c });
-                    const cell = ws[cellAddr];
-                    if (!cell) continue;
-
-                    let cellStyle: any = {
-                        alignment: { horizontal: c === 4 ? "right" : "center", vertical: "center" },
-                        border: {
-                            top: { style: "thin", color: { rgb: "CCCCCC" } },
-                            bottom: { style: "thin", color: { rgb: "CCCCCC" } },
-                            left: { style: "thin", color: { rgb: "CCCCCC" } },
-                            right: { style: "thin", color: { rgb: "CCCCCC" } }
-                        }
-                    };
-
-                    // 금액 열 (E열, c=4)
-                    if (c === 4) {
-                        // 데이터 행의 금액
-                        if (r < endRow) {
-                            cellStyle.numberFormat = "#,##0"; // 콤마 포맷
-                        }
-                        // 합계 행 (마지막 행)
-                        else {
-                            cellStyle.font = { bold: true, color: { rgb: "FF0000" } }; // 빨간색
-                            cellStyle.numberFormat = "#,##0"; // 콤마 포맷
-                            cellStyle.fill = { fgColor: { rgb: "FFF3CD" } };
-                        }
-                    }
-
+                    const cellAddr = XLSX.utils.encode_cell({ r: 1, c });
                     ws[cellAddr] = {
-                        v: cell.v,
-                        s: cellStyle
+                        v: ws[cellAddr]?.v || "",
+                        s: {
+                            font: { bold: true, color: { rgb: "FFFFFF" } },
+                            alignment: { horizontal: "center", vertical: "center" },
+                            fill: { fgColor: { rgb: "4CAF50" } },
+                            border: {
+                                top: { style: "thin", color: { rgb: "000000" } },
+                                bottom: { style: "thin", color: { rgb: "000000" } },
+                                left: { style: "thin", color: { rgb: "000000" } },
+                                right: { style: "thin", color: { rgb: "000000" } }
+                            }
+                        }
                     };
                 }
+
+                // 데이터 행 스타일 (3행부터 마지막 행까지)
+                const startRow = 2;
+                const endRow = filtered.length + 2;
+                for (let r = startRow; r <= endRow; r++) {
+                    for (let c = 0; c <= 4; c++) {
+                        const cellAddr = XLSX.utils.encode_cell({ r, c });
+                        const cell = ws[cellAddr];
+                        if (!cell) continue;
+
+                        let cellStyle: any = {
+                            alignment: { horizontal: c === 4 ? "right" : "center", vertical: "center" },
+                            border: {
+                                top: { style: "thin", color: { rgb: "CCCCCC" } },
+                                bottom: { style: "thin", color: { rgb: "CCCCCC" } },
+                                left: { style: "thin", color: { rgb: "CCCCCC" } },
+                                right: { style: "thin", color: { rgb: "CCCCCC" } }
+                            }
+                        };
+
+                        // 금액 열 (E열, c=4)
+                        if (c === 4) {
+                            // 데이터 행의 금액
+                            if (r < endRow) {
+                                cellStyle.numberFormat = "#,##0"; // 콤마 포맷
+                            }
+                            // 합계 행 (마지막 행)
+                            else {
+                                cellStyle.font = { bold: true, color: { rgb: "FF0000" } }; // 빨간색
+                                cellStyle.numberFormat = "#,##0"; // 콤마 포맷
+                                cellStyle.fill = { fgColor: { rgb: "FFF3CD" } };
+                            }
+                        }
+
+                        ws[cellAddr] = {
+                            v: cell.v,
+                            s: cellStyle
+                        };
+                    }
+                }
+
+                // 열 너비 설정
+                ws['!cols'] = [
+                    { wch: 8 },   // NO
+                    { wch: 12 },  // 날짜
+                    { wch: 20 },  // 항목
+                    { wch: 30 },  // 비고
+                    { wch: 15 }   // 금액
+                ];
+
+                return ws;
+            };
+
+            if (excelConfig.type === 'all' || excelConfig.type === 'income') {
+                XLSX.utils.book_append_sheet(wb, createSheet(financialData.income, '수입'), "수입내역");
             }
-
-            // 열 너비 설정
-            ws['!cols'] = [
-                { wch: 8 },   // NO
-                { wch: 12 },  // 날짜
-                { wch: 20 },  // 항목
-                { wch: 30 },  // 비고
-                { wch: 15 }   // 금액
-            ];
-
-            return ws;
-        };
-
-        if (excelConfig.type === 'all' || excelConfig.type === 'income') {
-            XLSX.utils.book_append_sheet(wb, createSheet(financialData.income, '수입'), "수입내역");
+            if (excelConfig.type === 'all' || excelConfig.type === 'expense') {
+                XLSX.utils.book_append_sheet(wb, createSheet(financialData.expense, '지출'), "지출내역");
+            }
+            XLSX.writeFile(wb, `TerraOne_Report_${excelConfig.year}.xlsx`);
+            console.log("Excel file created successfully");
+        } catch (error) {
+            console.error("Error creating Excel file:", error);
+            alert("엑셀 파일 생성 중 오류가 발생했습니다: " + error);
         }
-        if (excelConfig.type === 'all' || excelConfig.type === 'expense') {
-            XLSX.utils.book_append_sheet(wb, createSheet(financialData.expense, '지출'), "지출내역");
-        }
-        XLSX.writeFile(wb, `TerraOne_Report_${excelConfig.year}.xlsx`);
     };
 
     if (isLoadingTheme || status === "loading") {
@@ -479,7 +496,14 @@ export default function GuestPage() {
                             </select>
                         </div>
 
-                        <button className="btn btn-success w-100 p-3 fw-bold rounded-pill" onClick={downloadExcel}>
+                        <button 
+                            type="button"
+                            className="btn btn-success w-100 p-3 fw-bold rounded-pill" 
+                            onClick={() => {
+                                console.log("Button clicked!");
+                                downloadExcel();
+                            }}
+                        >
                             📥 엑셀 파일 다운로드 (.xlsx)
                         </button>
                     </div>
