@@ -108,7 +108,7 @@ export default function GuestPage() {
         e.preventDefault();
         e.stopPropagation();
         console.log("handleExcelClick called");
-        
+
         // 재무 데이터가 없으면 먼저 로드
         if (!financialData) {
             console.log("Loading financial data...");
@@ -175,7 +175,7 @@ export default function GuestPage() {
             alert("재무 데이터가 없습니다. 데이터를 먼저 불러와주세요.");
             return;
         }
-        
+
         try {
             const wb = XLSX.utils.book_new();
 
@@ -190,6 +190,24 @@ export default function GuestPage() {
                     total += item.amount;
                 });
                 rows.push(["", "", "", "합계", total]);
+
+                // 열별 최대 문자 길이 계산 (헤더 포함)
+                const colWidths = [4, 10, 4, 4, 4]; // 최솟값
+                const headers2 = ["NO", "날짜", "항목", "비고", "금액"];
+                headers2.forEach((h, c) => {
+                    colWidths[c] = Math.max(colWidths[c], h.length * 2);
+                });
+                filtered.forEach((item, idx) => {
+                    const rowVals = [String(idx + 1), item.date.split(' ')[0], item.category, item.description || '', item.amount.toLocaleString()];
+                    rowVals.forEach((v, c) => {
+                        // 한글은 2바이트로 계산
+                        const len = [...String(v)].reduce((acc, ch) => acc + (/[\u3131-\uD7A3]/.test(ch) ? 2 : 1), 0);
+                        colWidths[c] = Math.max(colWidths[c], len);
+                    });
+                });
+                // 합계 행 금액 너비
+                const totalLen = total.toLocaleString().length + 1;
+                colWidths[4] = Math.max(colWidths[4], totalLen);
 
                 const ws = XLSX.utils.aoa_to_sheet(rows);
 
@@ -251,14 +269,17 @@ export default function GuestPage() {
                         if (c === 4) {
                             // 데이터 행의 금액
                             if (r < endRow) {
-                                cellStyle.numberFormat = "#,##0"; // 콤마 포맷
+                                cellStyle.numFmt = "#,##0"; // 콤마 포맷
+                                ws[cellAddr] = { v: cell.v, t: 'n', s: cellStyle };
                             }
                             // 합계 행 (마지막 행)
                             else {
                                 cellStyle.font = { bold: true, color: { rgb: "FF0000" } }; // 빨간색
-                                cellStyle.numberFormat = "#,##0"; // 콤마 포맷
+                                cellStyle.numFmt = "#,##0"; // 콤마 포맷
                                 cellStyle.fill = { fgColor: { rgb: "FFF3CD" } };
+                                ws[cellAddr] = { v: cell.v, t: 'n', s: cellStyle };
                             }
+                            continue;
                         }
 
                         ws[cellAddr] = {
@@ -268,14 +289,8 @@ export default function GuestPage() {
                     }
                 }
 
-                // 열 너비 설정
-                ws['!cols'] = [
-                    { wch: 8 },   // NO
-                    { wch: 12 },  // 날짜
-                    { wch: 20 },  // 항목
-                    { wch: 30 },  // 비고
-                    { wch: 15 }   // 금액
-                ];
+                // 열 너비 설정 (데이터에 맞게 자동 조정)
+                ws['!cols'] = colWidths.map(w => ({ wch: Math.min(w + 2, 50) }));
 
                 return ws;
             };
@@ -374,7 +389,7 @@ export default function GuestPage() {
 
             {/* 재무 대시보드 모달 */}
             {showFinancial && (
-                <div 
+                <div
                     style={{
                         position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
                         background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
@@ -382,7 +397,7 @@ export default function GuestPage() {
                     }}
                     onClick={() => setShowFinancial(false)}
                 >
-                    <div 
+                    <div
                         style={{
                             background: 'white', padding: '25px', borderRadius: '20px', maxWidth: '900px', width: '100%',
                             maxHeight: '90vh', overflowY: 'auto', position: 'relative'
@@ -391,7 +406,7 @@ export default function GuestPage() {
                     >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
                             <h4 style={{ margin: 0, fontWeight: 'bold' }}>🎯 재무 대시보드</h4>
-                            <button 
+                            <button
                                 onClick={() => setShowFinancial(false)}
                                 style={{ border: 'none', background: 'none', fontSize: '24px', cursor: 'pointer' }}
                             >✕</button>
@@ -456,14 +471,14 @@ export default function GuestPage() {
 
             {/* 엑셀 리포트 모달 */}
             {showExcel && (
-                <div 
+                <div
                     style={{
                         position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
                         background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
                     }}
                     onClick={() => setShowExcel(false)}
                 >
-                    <div 
+                    <div
                         style={{
                             background: 'white', padding: '30px', borderRadius: '20px', maxWidth: '500px', width: '90%',
                             position: 'relative'
@@ -472,7 +487,7 @@ export default function GuestPage() {
                     >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                             <h4 style={{ margin: 0, fontWeight: 'bold', color: '#28a745' }}>📊 엑셀 리포트 설정</h4>
-                            <button 
+                            <button
                                 onClick={() => setShowExcel(false)}
                                 style={{ border: 'none', background: 'none', fontSize: '24px', cursor: 'pointer' }}
                             >✕</button>
@@ -496,9 +511,9 @@ export default function GuestPage() {
                             </select>
                         </div>
 
-                        <button 
+                        <button
                             type="button"
-                            className="btn btn-success w-100 p-3 fw-bold rounded-pill" 
+                            className="btn btn-success w-100 p-3 fw-bold rounded-pill"
                             onClick={() => {
                                 console.log("Button clicked!");
                                 downloadExcel();

@@ -419,6 +419,24 @@ export default function DashboardContent({ theme = "book" }: Props) {
             });
             rows.push(["", "", "", "합계", total]);
 
+            // 열별 최대 문자 길이 계산 (헤더 포함)
+            const colWidths = [4, 10, 4, 4, 4]; // 최솟값
+            const headers2 = ["NO", "날짜", "항목", "비고", "금액"];
+            headers2.forEach((h, c) => {
+                colWidths[c] = Math.max(colWidths[c], h.length * 2);
+            });
+            filtered.forEach((item, idx) => {
+                const rowVals = [String(idx + 1), item.date.split(' ')[0], item.category, item.description || '', item.amount.toLocaleString()];
+                rowVals.forEach((v, c) => {
+                    // 한글은 2바이트로 계산
+                    const len = [...String(v)].reduce((acc, ch) => acc + (/[\u3131-\uD7A3]/.test(ch) ? 2 : 1), 0);
+                    colWidths[c] = Math.max(colWidths[c], len);
+                });
+            });
+            // 합계 행 금액 너비
+            const totalLen = total.toLocaleString().length + 1;
+            colWidths[4] = Math.max(colWidths[4], totalLen);
+
             const ws = XLSX.utils.aoa_to_sheet(rows);
 
             // ── 제목 A1:E1 셀 병합 ──
@@ -484,11 +502,15 @@ export default function DashboardContent({ theme = "book" }: Props) {
 
                     if (isAmountCol) {
                         cellStyle.numFmt = "#,##0"; // 금액 콤마 포맷
+                        // 숫자 타입 명시 (numFmt가 실제 적용되려면 필요)
+                        ws[cellAddr] = { v: cell.v, t: 'n', s: cellStyle };
                         if (isTotal) {
                             // 합계 행: 빨간색 굵게
                             cellStyle.font = { bold: true, color: { rgb: "CC0000" } };
                             cellStyle.fill = { fgColor: { rgb: "FFF3CD" } };
+                            ws[cellAddr] = { v: cell.v, t: 'n', s: cellStyle };
                         }
+                        continue;
                     }
 
                     if (isTotal && !isAmountCol) {
@@ -500,14 +522,8 @@ export default function DashboardContent({ theme = "book" }: Props) {
                 }
             }
 
-            // ── 열 너비 설정 ──
-            ws['!cols'] = [
-                { wch: 8 },   // NO
-                { wch: 12 },  // 날짜
-                { wch: 20 },  // 항목
-                { wch: 30 },  // 비고
-                { wch: 15 }   // 금액
-            ];
+            // ── 열 너비 설정 (데이터에 맞게 자동 조정) ──
+            ws['!cols'] = colWidths.map(w => ({ wch: Math.min(w + 2, 50) }));
 
             return ws;
         };
