@@ -46,6 +46,15 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
     // [중요] 이 키는 안전하게 관리해야 합니다 (환경변수 사용 권장)
     // const DART_API_KEY = "0d94210772f23d373648909c617a0501f6fa1461";  // YOUR_DART_API_KEY_입력하기
 
+    const getDateString = (daysAgo: number): string => {
+        const date = new Date();
+        date.setDate(date.getDate() - daysAgo);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}${month}${day}`;
+    };
+
     const handleStockCodeChange = (index: number, value: string) => {
         const newCodes = [...stockCodes];
         newCodes[index] = value.replace(/[^0-9]/g, ""); // 숫자만 입력 가능
@@ -82,7 +91,7 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
         if (newDisclosures.length === 0) return;
 
         // 알림 메시지 생성
-        const notificationMessage = newDisclosures.map(d => 
+        const notificationMessage = newDisclosures.map(d =>
             `📢 [${d.crpNm}] ${d.flnmNtc}\n${d.rm}\n${d.rceptDt}`
         ).join("\n\n");
 
@@ -108,25 +117,25 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
 
     const fetchDisclosures = async (codes: string[]) => {
         setIsLoading(true);
-        
+
         // ============================================================
         // [DART API 연동 코드 예시]
         // 아래 코드는 실제 API 연동을 위한 예시입니다.
         // 실제 사용 시에는 환경변수에 저장한 API 키를 사용하세요.
         // 
         const DART_API_KEY = process.env.NEXT_PUBLIC_DART_API_KEY;
-        
+
         try {
             // 기업공시 unified 검색 API
             const response = await fetch(
                 `https://dart.fss.or.kr/api/search.json?auth=${DART_API_KEY}&crpCd=${codes.join(",")}&startDate=${getDateString(7)}&endDate=${getDateString(0)}&pageNo=1&pageSize=100`
             );
             const data = await response.json();
-            
+
             if (data.result && data.result.list) {
                 setDisclosureResults(data.result.list);
                 setLastUpdated(new Date());
-                
+
                 // 새 공시가 있으면 알림
                 if (data.result.list.length > 0) {
                     sendNotification(data.result.list);
@@ -142,7 +151,7 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
         setTimeout(() => {
             // 사용자가 입력한 각 종시에 대한 데모 공시 데이터 생성
             const demoResults: any[] = [];
-            
+
             codes.forEach((code, idx) => {
                 if (code.length === 6) {
                     const stockName = getStockName(code);
@@ -153,18 +162,18 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
                         { type: "분기보고서", desc: "분기별 영업 실적" },
                         { type: "공시공고", desc: "기타 공시 사항" }
                     ];
-                    
+
                     // 각 종목마다 1~2개의 공시 예시 생성
                     const numDisclosures = Math.floor(Math.random() * 2) + 1;
                     for (let i = 0; i < numDisclosures; i++) {
                         const disclosure = disclosureTypes[Math.floor(Math.random() * disclosureTypes.length)];
                         const date = new Date();
                         date.setDate(date.getDate() - Math.floor(Math.random() * 7));
-                        
+
                         demoResults.push({
                             crpNm: stockName,
                             crpCd: code,
-                            rceptNo: `${date.getFullYear()}${String(date.getMonth()+1).padStart(2,'0')}${String(date.getDate()).padStart(2,'0')}0000${idx}${i}`,
+                            rceptNo: `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}0000${idx}${i}`,
                             flnmNtc: disclosure.type,
                             rceptDt: date.toISOString().split("T")[0].replace(/-/g, ""),
                             rm: disclosure.desc
@@ -175,12 +184,12 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
 
             setDisclosureResults(demoResults);
             setLastUpdated(new Date());
-            
+
             // 데모 모드에서도 알림 테스트 (실제 공시가 있는 것처럼)
             if (demoResults.length > 0) {
                 //sendNotification(demoResults); // 테스트용 알림 (주석 해제하면每次알림)
             }
-            
+
             setIsLoading(false);
         }, 1000);
     };
@@ -255,12 +264,12 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
             "122450": "KT",
             "066900": "드래곤플라이",
         };
-        
+
         // 정확한 매핑이 있으면 반환, 없으면 입력코드 기반 생성
         if (stockNames[code]) {
             return stockNames[code];
         }
-        
+
         // 알 수 없는 코드의 경우 그대로 표시
         return `${code}`;
     };
@@ -315,16 +324,16 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
                             <p className="mb-2 small">
                                 새로운 공시가 등록되면 알림을 받을 방법을 선택하세요.
                             </p>
-                            
+
                             {/* 이메일 알림 */}
                             <div className="form-check form-check-inline">
-                                <input 
-                                    className="form-check-input" 
-                                    type="checkbox" 
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
                                     id="emailNotify"
                                     checked={notificationSettings.enableEmail}
                                     onChange={(e) => setNotificationSettings({
-                                        ...notificationSettings, 
+                                        ...notificationSettings,
                                         enableEmail: e.target.checked
                                     })}
                                 />
@@ -333,16 +342,16 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
                                     이메일 알림
                                 </label>
                             </div>
-                            
+
                             {/* 카카오톡 알림 */}
                             <div className="form-check form-check-inline">
-                                <input 
-                                    className="form-check-input" 
-                                    type="checkbox" 
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
                                     id="kakaoNotify"
                                     checked={notificationSettings.enableKakao}
                                     onChange={(e) => setNotificationSettings({
-                                        ...notificationSettings, 
+                                        ...notificationSettings,
                                         enableKakao: e.target.checked
                                     })}
                                 />
@@ -361,9 +370,9 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
                                         </span>
                                     )}
                                     {notificationSettings.enableKakao && (
-                                        <a 
-                                            href={notificationSettings.kakaoUrl} 
-                                            target="_blank" 
+                                        <a
+                                            href={notificationSettings.kakaoUrl}
+                                            target="_blank"
                                             rel="noopener noreferrer"
                                             className="badge bg-warning text-dark text-decoration-none"
                                         >
