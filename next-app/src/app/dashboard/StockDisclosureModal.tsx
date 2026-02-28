@@ -44,7 +44,7 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
 
     // DART API 인증키 - 아래 값을 실제 API 키로 변경하세요
     // [중요] 이 키는 안전하게 관리해야 합니다 (환경변수 사용 권장)
-    // const DART_API_KEY = "YOUR_DART_API_KEY_HERE"; 
+    // const DART_API_KEY = "0d94210772f23d373648909c617a0501f6fa1461";  // YOUR_DART_API_KEY_입력하기
 
     const handleStockCodeChange = (index: number, value: string) => {
         const newCodes = [...stockCodes];
@@ -114,27 +114,27 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
         // 아래 코드는 실제 API 연동을 위한 예시입니다.
         // 실제 사용 시에는 환경변수에 저장한 API 키를 사용하세요.
         // 
-        // const DART_API_KEY = process.env.NEXT_PUBLIC_DART_API_KEY;
-        // 
-        // try {
-        //     // 기업공시 unified 검색 API
-        //     const response = await fetch(
-        //         `https://dart.fss.or.kr/api/search.json?auth=${DART_API_KEY}&crpCd=${codes.join(",")}&startDate=${getDateString(7)}&endDate=${getDateString(0)}&pageNo=1&pageSize=100`
-        //     );
-        //     const data = await response.json();
-        //     
-        //     if (data.result && data.result.list) {
-        //         setDisclosureResults(data.result.list);
-        //         setLastUpdated(new Date());
-        //         
-        //         // 새 공시가 있으면 알림
-        //         if (data.result.list.length > 0) {
-        //             sendNotification(data.result.list);
-        //         }
-        //     }
-        // } catch (error) {
-        //     console.error("DART API 오류:", error);
-        // }
+        const DART_API_KEY = process.env.NEXT_PUBLIC_DART_API_KEY;
+        
+        try {
+            // 기업공시 unified 검색 API
+            const response = await fetch(
+                `https://dart.fss.or.kr/api/search.json?auth=${DART_API_KEY}&crpCd=${codes.join(",")}&startDate=${getDateString(7)}&endDate=${getDateString(0)}&pageNo=1&pageSize=100`
+            );
+            const data = await response.json();
+            
+            if (data.result && data.result.list) {
+                setDisclosureResults(data.result.list);
+                setLastUpdated(new Date());
+                
+                // 새 공시가 있으면 알림
+                if (data.result.list.length > 0) {
+                    sendNotification(data.result.list);
+                }
+            }
+        } catch (error) {
+            console.error("DART API 오류:", error);
+        }
         // ============================================================
 
         // 데모 데이터 (API 연결 전 테스트용)
@@ -199,6 +199,8 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
             "000270": "기아",
             "207940": "삼성바이오로직스",
             "005490": "POSCO홀딩스",
+            "011200": "HMM",
+            "326030": "SK바이오팜",
             "105560": "KB금융지주",
             "055550": "신한지주",
             "003550": "LG",
@@ -247,6 +249,7 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
             "026960": "동양",
             // KOSDAQ
             "340570": "티앤엘",
+            "145020": "휴젤",
             "041960": "ellas_one",
             "048470": "JYP Ent.",
             "122450": "KT",
