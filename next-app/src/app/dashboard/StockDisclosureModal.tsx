@@ -44,7 +44,7 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
 
     // DART API 인증키 - 아래 값을 실제 API 키로 변경하세요
     // [중요] 이 키는 안전하게 관리해야 합니다 (환경변수 사용 권장)
-    // const DART_API_KEY = "0d94210772f23d373648909c617a0501f6fa1461";  // YOUR_DART_API_KEY_입력하기
+    const DART_API_KEY = "0d94210772f23d373648909c617a0501f6fa1461";  // YOUR_DART_API_KEY_입력하기
 
     const getDateString = (daysAgo: number): string => {
         const date = new Date();
