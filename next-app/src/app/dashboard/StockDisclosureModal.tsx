@@ -34,6 +34,11 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
     const [isLoading, setIsLoading] = useState(false);
     const [copied, setCopied] = useState(false);
 
+    // 뉴스 상태 및 탭 상태
+    const [newsResults, setNewsResults] = useState<{ [code: string]: any[] }>({});
+    const [isNewsLoading, setIsNewsLoading] = useState(false);
+    const [activeTab, setActiveTab] = useState<'disclosure' | 'news'>('disclosure');
+
     // 알림 설정 상태
     const [notificationSettings, setNotificationSettings] = useState({
         enableEmail: true,
@@ -117,82 +122,52 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
 
     const fetchDisclosures = async (codes: string[]) => {
         setIsLoading(true);
+        setIsNewsLoading(true);
 
-        // ============================================================
-        // [DART API 연동 코드 예시]
-        // 아래 코드는 실제 API 연동을 위한 예시입니다.
-        // 실제 사용 시에는 환경변수에 저장한 API 키를 사용하세요.
-        // 
-        const DART_API_KEY = process.env.NEXT_PUBLIC_DART_API_KEY;
-
+        // 기업공시 및 뉴스 동시 검색
         try {
-            // 기업공시 unified 검색 API
+            // 1. 기업공시 unified 검색 API
             const response = await fetch(
                 `https://dart.fss.or.kr/api/search.json?auth=${DART_API_KEY}&crpCd=${codes.join(",")}&startDate=${getDateString(7)}&endDate=${getDateString(0)}&pageNo=1&pageSize=100`
             );
             const data = await response.json();
 
-            if (data.result && data.result.list) {
-                setDisclosureResults(data.result.list);
+            const list = data.list || (data.result && data.result.list) || [];
+            if (list.length > 0) {
+                setDisclosureResults(list);
                 setLastUpdated(new Date());
-
-                // 새 공시가 있으면 알림
-                if (data.result.list.length > 0) {
-                    sendNotification(data.result.list);
-                }
+                sendNotification(list);
+            } else {
+                setDisclosureResults([]);
+                setLastUpdated(new Date());
             }
         } catch (error) {
             console.error("DART API 오류:", error);
+            setDisclosureResults([]);
         }
-        // ============================================================
 
-        // 데모 데이터 (API 연결 전 테스트용)
-        // 실제 DART API 연동 시에는 아래 코드를 주석 해제하고 사용하세요
-        setTimeout(() => {
-            // 사용자가 입력한 각 종시에 대한 데모 공시 데이터 생성
-            const demoResults: any[] = [];
-
-            codes.forEach((code, idx) => {
+        try {
+            // 2. 뉴스 검색 API
+            const newsData: { [code: string]: any[] } = {};
+            for (const code of codes) {
                 if (code.length === 6) {
                     const stockName = getStockName(code);
-                    const disclosureTypes = [
-                        { type: "사업보고서 (연결)", desc: "연간 결산 보고" },
-                        { type: "수시공고", desc: "주식취소 및 실권발행" },
-                        { type: "주요사항보고서", desc: "임원임면" },
-                        { type: "분기보고서", desc: "분기별 영업 실적" },
-                        { type: "공시공고", desc: "기타 공시 사항" }
-                    ];
-
-                    // 각 종목마다 1~2개의 공시 예시 생성
-                    const numDisclosures = Math.floor(Math.random() * 2) + 1;
-                    for (let i = 0; i < numDisclosures; i++) {
-                        const disclosure = disclosureTypes[Math.floor(Math.random() * disclosureTypes.length)];
-                        const date = new Date();
-                        date.setDate(date.getDate() - Math.floor(Math.random() * 7));
-
-                        demoResults.push({
-                            crpNm: stockName,
-                            crpCd: code,
-                            rceptNo: `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}0000${idx}${i}`,
-                            flnmNtc: disclosure.type,
-                            rceptDt: date.toISOString().split("T")[0].replace(/-/g, ""),
-                            rm: disclosure.desc
-                        });
+                    const res = await fetch(`/api/news?q=${encodeURIComponent(stockName)}`);
+                    if (res.ok) {
+                        const json = await res.json();
+                        newsData[code] = json.items || [];
                     }
                 }
-            });
-
-            setDisclosureResults(demoResults);
-            setLastUpdated(new Date());
-
-            // 데모 모드에서도 알림 테스트 (실제 공시가 있는 것처럼)
-            if (demoResults.length > 0) {
-                //sendNotification(demoResults); // 테스트용 알림 (주석 해제하면每次알림)
             }
+            setNewsResults(newsData);
+        } catch (error) {
+            console.error("News API 오류:", error);
+        }
 
-            setIsLoading(false);
-        }, 1000);
+        setIsLoading(false);
+        setIsNewsLoading(false);
     };
+
 
     const getStockName = (code: string): string => {
         const stockNames: { [key: string]: string } = {
@@ -457,6 +432,31 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
                     )}
                 </div>
 
+                {/* 네비게이션 탭 */}
+                {isMonitoring && (
+                    <ul className="nav nav-tabs mb-3 gap-2 border-bottom-0 pb-1" style={{ fontSize: '15px' }}>
+                        <li className="nav-item">
+                            <button
+                                className={`nav-link border-0 ${activeTab === 'disclosure' ? 'active fw-bold text-success border-bottom border-success border-3 bg-transparent' : 'text-muted'}`}
+                                onClick={() => setActiveTab('disclosure')}
+                                style={{ borderRadius: 0, paddingBottom: '10px' }}
+                            >
+                                공시 목록
+                            </button>
+                        </li>
+                        <li className="nav-item">
+                            <button
+                                className={`nav-link border-0 ${activeTab === 'news' ? 'active fw-bold text-success border-bottom border-success border-3 bg-transparent' : 'text-muted'}`}
+                                onClick={() => setActiveTab('news')}
+                                style={{ borderRadius: 0, paddingBottom: '10px' }}
+                            >
+                                최신 뉴스
+                                {Object.keys(newsResults).length > 0 && <span className="ms-1 badge bg-success rounded-pill" style={{ fontSize: '10px' }}>New</span>}
+                            </button>
+                        </li>
+                    </ul>
+                )}
+
                 {/* 모니터링 상태 */}
                 {isMonitoring && (
                     <div className="d-flex align-items-center justify-content-between mb-3 p-3 bg-light rounded">
@@ -474,55 +474,104 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
                     </div>
                 )}
 
-                {/* 공시 결과 */}
-                {disclosureResults.length > 0 ? (
-                    <div className="mb-4">
-                        <h6 className="fw-bold mb-3 d-flex align-items-center gap-2">
-                            <Bell size={16} />
-                            공시 목록 ({disclosureResults.length}건)
-                        </h6>
-                        <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                            {disclosureResults.map((item, idx) => (
-                                <div
-                                    key={idx}
-                                    className="card mb-2 border-0 shadow-sm"
-                                    style={{ borderRadius: 10 }}
-                                >
-                                    <div className="card-body py-3">
-                                        <div className="d-flex justify-content-between align-items-start">
-                                            <div>
-                                                <div className="d-flex align-items-center gap-2 mb-1">
-                                                    <span className="fw-bold">{item.crpNm}</span>
-                                                    <span className={`badge ${getDisclosureTypeColor(item.flnmNtc)}`}>
-                                                        {item.flnmNtc}
-                                                    </span>
+                {/* 공시 및 뉴스 컨텐츠 영역 */}
+                {isMonitoring && activeTab === 'disclosure' && (
+                    disclosureResults.length > 0 ? (
+                        <div className="mb-4">
+                            <h6 className="fw-bold mb-3 d-flex align-items-center gap-2">
+                                <Bell size={16} />
+                                공시 목록 ({disclosureResults.length}건)
+                            </h6>
+                            <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                                {disclosureResults.map((item, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="card mb-2 border-0 shadow-sm"
+                                        style={{ borderRadius: 10 }}
+                                    >
+                                        <div className="card-body py-3">
+                                            <div className="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <div className="d-flex align-items-center gap-2 mb-1">
+                                                        <span className="fw-bold">{item.crpNm}</span>
+                                                        <span className={`badge ${getDisclosureTypeColor(item.flnmNtc)}`}>
+                                                            {item.flnmNtc}
+                                                        </span>
+                                                    </div>
+                                                    <div className="text-muted small">
+                                                        {item.rm} • {item.rceptDt?.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3')}
+                                                    </div>
                                                 </div>
-                                                <div className="text-muted small">
-                                                    {item.rm} • {item.rceptDt?.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3')}
-                                                </div>
+                                                <a
+                                                    href={`https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${item.rceptNo}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
+                                                    style={{ borderRadius: 8 }}
+                                                >
+                                                    <ExternalLink size={14} />
+                                                    확인
+                                                </a>
                                             </div>
-                                            <a
-                                                href={`https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${item.rceptNo}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
-                                                style={{ borderRadius: 8 }}
-                                            >
-                                                <ExternalLink size={14} />
-                                                확인
-                                            </a>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
+                    ) : (
+                        <div className="text-center py-5 text-muted">
+                            <Bell size={48} className="mb-3 opacity-25" />
+                            <p>조회된 공시가 없습니다</p>
+                        </div>
+                    )
+                )}
+
+                {isMonitoring && activeTab === 'news' && (
+                    <div className="mb-4">
+                        <h6 className="fw-bold mb-3 d-flex align-items-center gap-2">
+                            <TrendingUp size={16} />
+                            최신 관련 뉴스
+                        </h6>
+                        {isNewsLoading ? (
+                            <div className="text-center py-5">
+                                <div className="spinner-border text-success" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div>
+                                <p className="text-muted mt-2">뉴스를 불러오는 중입니다...</p>
+                            </div>
+                        ) : Object.keys(newsResults).length > 0 && Object.values(newsResults).some(arr => arr.length > 0) ? (
+                            <div style={{ maxHeight: '300px', overflowY: 'auto', paddingRight: '5px' }}>
+                                {Object.entries(newsResults).map(([code, items]) => {
+                                    if (items.length === 0) return null;
+                                    const stockName = getStockName(code);
+                                    return (
+                                        <div key={code} className="mb-4">
+                                            <h6 className="fw-bold text-success mb-2 border-bottom pb-1">{stockName}</h6>
+                                            <ul className="list-unstyled ps-1">
+                                                {items.map((newsItem, idx) => (
+                                                    <li key={idx} className="mb-3 bg-white p-3 rounded shadow-sm border">
+                                                        <a href={newsItem.link} target="_blank" rel="noopener noreferrer" className="text-decoration-none text-dark d-block">
+                                                            <div className="fw-bold mb-1 lh-sm" dangerouslySetInnerHTML={{ __html: newsItem.title }} />
+                                                            <div className="d-flex justify-content-between text-muted mt-2" style={{ fontSize: '12px' }}>
+                                                                <span>{newsItem.source || '디지털 경제'}</span>
+                                                                <span>{new Date(newsItem.pubDate).toLocaleDateString()}</span>
+                                                            </div>
+                                                        </a>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        ) : (
+                            <div className="text-center py-5 text-muted">
+                                <TrendingUp size={48} className="mb-3 opacity-25" />
+                                <p>관련된 뉴스를 찾을 수 없습니다</p>
+                            </div>
+                        )}
                     </div>
-                ) : isMonitoring ? (
-                    <div className="text-center py-5 text-muted">
-                        <Bell size={48} className="mb-3 opacity-25" />
-                        <p>새로운 공시가 없습니다</p>
-                    </div>
-                ) : null}
+                )}
 
                 {/* API 키 가이드 */}
                 <div className="mt-4 pt-3 border-top">
