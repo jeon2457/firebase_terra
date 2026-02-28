@@ -92,32 +92,72 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
         }
     };
 
-    const sendNotification = (newDisclosures: any[]) => {
-        if (newDisclosures.length === 0) return;
+    const sendNotification = async (newItems: any[], type: 'disclosure' | 'news') => {
+        if (newItems.length === 0) return;
+
+        const title = type === 'disclosure' ? '주식 공시 알림' : '주식 뉴스 알림';
+        const emoji = type === 'disclosure' ? '📢' : '📰';
 
         // 알림 메시지 생성
-        const notificationMessage = newDisclosures.map(d =>
-            `📢 [${d.crpNm}] ${d.flnmNtc}\n${d.rm}\n${d.rceptDt}`
-        ).join("\n\n");
+        let notificationMessage = "";
+        if (type === 'disclosure') {
+            notificationMessage = newItems.map(d =>
+                `📢 [${d.crpNm}] ${d.flnmNtc}\n구분: ${d.rm || '일반'}\n날짜: ${d.rceptDt?.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3')}\n링크: https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${d.rceptNo}`
+            ).join("\n\n");
+        } else {
+            // 뉴스 알림 (주요 뉴스 3개만)
+            notificationMessage = newItems.slice(0, 3).map(n =>
+                `📰 [뉴스] ${n.title.replace(/<[^>]*>?/gm, '')}\n출처: ${n.source}\n링크: ${n.link}`
+            ).join("\n\n");
+        }
+
+        const htmlMessage = `
+            <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                <h2 style="color: #28a745;">${emoji} ${title}</h2>
+                <div style="white-space: pre-wrap; line-height: 1.6;">
+                    ${notificationMessage.replace(/\n/g, '<br>')}
+                </div>
+                <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+                <p style="font-size: 12px; color: #888;">본 알림은 설정에 의해 자동으로 발송되었습니다.</p>
+            </div>
+        `;
 
         // 이메일 알림 (설정이 활성화된 경우)
         if (notificationSettings.enableEmail && notificationSettings.email) {
-            console.log("이메일 알림 발송:", notificationSettings.email);
-            console.log("내용:", notificationMessage);
-            // 실제 구현 시:邮件 API 호출
-            // sendEmail(notificationSettings.email, "주식 공시 알림", notificationMessage);
+            try {
+                await fetch('/api/notify/email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        to: notificationSettings.email,
+                        subject: `[${emoji}${title}] ${newItems[0].crpNm || '관심종목'} 관련 알림`,
+                        html: htmlMessage
+                    })
+                });
+            } catch (error) {
+                console.error("이메일 발송 실패:", error);
+            }
         }
 
         // 카카오톡 알림 (설정이 활성화된 경우)
         if (notificationSettings.enableKakao) {
-            console.log("카카오톡 알림 발송:", notificationSettings.kakaoUrl);
-            console.log("내용:", notificationMessage);
-            // 실제 구현 시:카카오톡 API 호출 또는 웹훅 전송
-            // sendKakaoMessage(notificationSettings.kakaoUrl, notificationMessage);
+            try {
+                await fetch('/api/notify/kakao', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: `[${emoji}${title}]\n\n${notificationMessage}`
+                    })
+                });
+            } catch (error) {
+                console.error("카카오톡 발송 실패:", error);
+            }
         }
 
-        // 새 공시가 있으면 알림
-        alert(`📢 새로운 공시가 ${newDisclosures.length}건 발생했습니다!\n\n${notificationMessage.substring(0, 200)}...`);
+        // 브라우저 알림 (공시일 때만 또는 중요 뉴스일 때)
+        if (type === 'disclosure') {
+            alert(`📢 새로운 공시가 ${newItems.length}건 발생했습니다!\n\n${newItems[0].crpNm}: ${newItems[0].flnmNtc}`);
+        }
     };
 
     const fetchDisclosures = async (codes: string[]) => {
@@ -133,33 +173,56 @@ export default function StockDisclosureModal({ onClose }: StockDisclosureModalPr
             const data = await response.json();
 
             const list = data.list || (data.result && data.result.list) || [];
+
+            // 새 공시 확인 (rceptNo 기준)
             if (list.length > 0) {
+                const existingIds = new Set(disclosureResults.map(d => d.rceptNo));
+                const newItems = list.filter((d: any) => !existingIds.has(d.rceptNo));
+
+                if (newItems.length > 0 && disclosureResults.length > 0) {
+                    sendNotification(newItems, 'disclosure');
+                }
+
                 setDisclosureResults(list);
-                setLastUpdated(new Date());
-                sendNotification(list);
             } else {
                 setDisclosureResults([]);
-                setLastUpdated(new Date());
             }
+            setLastUpdated(new Date());
         } catch (error) {
             console.error("DART API 오류:", error);
-            setDisclosureResults([]);
         }
 
         try {
             // 2. 뉴스 검색 API
-            const newsData: { [code: string]: any[] } = {};
+            const newNewsData: { [code: string]: any[] } = {};
+            let hasNewNews = false;
+            const newlyDetectedNews: any[] = [];
+
             for (const code of codes) {
                 if (code.length === 6) {
                     const stockName = getStockName(code);
                     const res = await fetch(`/api/news?q=${encodeURIComponent(stockName)}`);
                     if (res.ok) {
                         const json = await res.json();
-                        newsData[code] = json.items || [];
+                        const items = json.items || [];
+                        newNewsData[code] = items;
+
+                        // 새 뉴스 확인 (link 기준)
+                        const existingLinks = new Set((newsResults[code] || []).map(n => n.link));
+                        const newItems = items.filter((n: any) => !existingLinks.has(n.link));
+
+                        if (newItems.length > 0 && newsResults[code]) {
+                            hasNewNews = true;
+                            newlyDetectedNews.push(...newItems.map((n: any) => ({ ...n, crpNm: stockName })));
+                        }
                     }
                 }
             }
-            setNewsResults(newsData);
+
+            if (hasNewNews) {
+                sendNotification(newlyDetectedNews, 'news');
+            }
+            setNewsResults(newNewsData);
         } catch (error) {
             console.error("News API 오류:", error);
         }
