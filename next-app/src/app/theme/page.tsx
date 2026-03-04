@@ -50,29 +50,8 @@ export default function ThemePage() {
         load();
     }, [status, isAdmin, router]);
 
-    const applyThemeToAll = async () => {
-        if (!confirm("모든 회원의 메뉴 디자인이 변경됩니다.\n진행하시겠습니까?")) return;
-
-        setSaving(true);
-        try {
-            const res = await fetch("/api/theme", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ theme: selectedTheme })
-            });
-            const data = await res.json();
-            if (!res.ok || !data?.success) {
-                alert(data?.message || "테마 저장 중 오류가 발생했습니다.");
-                return;
-            }
-            setCurrentTheme(selectedTheme);
-            alert("테마가 전체 적용되었습니다.");
-            router.push("/dashboard");
-        } catch {
-            alert("테마 저장 중 오류가 발생했습니다.");
-        } finally {
-            setSaving(false);
-        }
+    const applyThemeToAll = () => {
+        router.push(`/theme/apply?theme=${selectedTheme}`);
     };
 
     if (status === "loading" || loading) {

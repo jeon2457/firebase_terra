@@ -13,7 +13,7 @@ function isAllowedTheme(value: any): value is ThemeValue {
 
 export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions);
-    
+
     try {
         await dbConnect();
 
@@ -56,6 +56,7 @@ export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
         const theme = body?.theme;
+        const mode = body?.mode || "all"; // "admin" | "all"
 
         if (!isAllowedTheme(theme)) {
             return NextResponse.json({ success: false, message: "Invalid theme" }, { status: 400 });
@@ -63,9 +64,15 @@ export async function POST(req: NextRequest) {
 
         await dbConnect();
 
-        await User.updateMany({}, { $set: { site_theme: theme } });
+        if (mode === "admin") {
+            // 관리자 권한을 가진 사용자들만 업데이트
+            await User.updateMany({ user_level: { $gte: 10 } }, { $set: { site_theme: theme } });
+        } else {
+            // 모든 사용자 업데이트 (기존 방식)
+            await User.updateMany({}, { $set: { site_theme: theme } });
+        }
 
-        const res = NextResponse.json({ success: true, theme });
+        const res = NextResponse.json({ success: true, theme, mode });
         res.cookies.set("user_site_theme", theme, {
             path: "/",
             maxAge: 60 * 60 * 24 * 30,
