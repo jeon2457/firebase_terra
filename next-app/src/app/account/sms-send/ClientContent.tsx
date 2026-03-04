@@ -69,7 +69,7 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
                 setMembers(membersData);
 
                 console.log('Members data after setting state:', membersData);
-                console.log('Sample member phone numbers:', membersData.slice(0, 3).map((m: any) => ({ name: m.name, tel: m.tel })));
+                console.log('Sample member phone numbers:', membersData.slice(0, 3).map((m: Member) => ({ name: m.name, tel: m.tel })));
 
                 // 2. 미납 정보 계산
                 const unpaidData: { [key: string]: UnpaidInfo } = {};
