@@ -27,7 +27,7 @@ interface ClientContentProps {
 export default function ClientContent({ memberIds, year }: ClientContentProps) {
     const { data: session, status } = useSession();
     const router = useRouter();
-    
+
     const [members, setMembers] = useState<Member[]>([]);
     const [unpaidInfo, setUnpaidInfo] = useState<{ [key: string]: UnpaidInfo }>({});
     const [loading, setLoading] = useState(true);
@@ -57,43 +57,43 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
             console.log('=== SMS Send Debug ===');
             console.log('Fetching members with IDs:', memberIds);
             console.log('Year:', year);
-            
+
             const membersRes = await axios.get(`/api/account/member-check?members=${encodeURIComponent(memberIds)}&year=${year}`);
-            
+
             console.log('API Response:', membersRes.data);
             console.log('Members data:', membersRes.data.members);
-            
+
             if (membersRes.data.success) {
                 const membersData = membersRes.data.members;
                 console.log('Members with phone numbers:', membersData.map((m: any) => ({ name: m.name, tel: m.tel })));
                 setMembers(membersData);
-                
+
                 console.log('Members data after setting state:', membersData);
                 console.log('Sample member phone numbers:', membersData.slice(0, 3).map((m: any) => ({ name: m.name, tel: m.tel })));
-                
+
                 // 2. 미납 정보 계산
                 const unpaidData: { [key: string]: UnpaidInfo } = {};
                 const passMap = membersRes.data.passMap;
                 const monthlyFees = membersRes.data.monthlyFees;
-                
+
                 membersData.forEach((member: Member) => {
                     const unpaidMonths: string[] = [];
                     let unpaidTotal = 0;
-                    
+
                     for (let m = 1; m <= 12; m++) {
                         // 미래 월은 제외
                         if (year === todayYear && m > todayMonth) continue;
                         if (year > todayYear) continue;
-                        
+
                         const isPaid = passMap[member._id]?.[m] === 1;
-                        
+
                         if (!isPaid) {
                             const fee = monthlyFees[m] || 20000;
                             unpaidMonths.push(`${m}월`);
                             unpaidTotal += fee;
                         }
                     }
-                    
+
                     unpaidData[member._id] = {
                         name: member.name,
                         tel: member.tel || '',
@@ -101,9 +101,9 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
                         total: unpaidTotal
                     };
                 });
-                
+
                 setUnpaidInfo(unpaidData);
-                
+
                 // 3. 기본적으로 미납자 선택
                 const defaultSelected = new Set<string>();
                 membersData.forEach((member: Member) => {
@@ -130,7 +130,7 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
         const memberDetails = Array.from(selectedMembers).map(memberId => {
             const member = members.find(m => m._id === memberId);
             const info = unpaidInfo[memberId];
-            
+
             if (!member || !info || info.total === 0) return null;
 
             return `[📩 직지황악회 발송] 미납금 안내문자 입니다.\n\n 💞[${member.name}]님이 ${year}년도 [${info.months}]분\n월회비(합계:${info.total.toLocaleString()}원)를 아직 미납중입니다.`;
@@ -142,7 +142,7 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
         }
 
         const messageBody = memberDetails.join('\n\n');
-        
+
         const footer = `\n이른 시일 내에 입금해주시면 감사하겠습니다.\n\n입금은행: ㅇㅇ은행\n예금주: ㅇㅇㅇ\n계좌번호: xxx-xxxx-xxxx-xxx`;
 
         setSmsMessage(messageBody + "\n" + footer);
@@ -160,6 +160,16 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
             newSelected.add(memberId);
         }
         setSelectedMembers(newSelected);
+    };
+
+    const toggleAll = () => {
+        if (members.length === 0) return;
+
+        if (selectedMembers.size === members.length) {
+            setSelectedMembers(new Set());
+        } else {
+            setSelectedMembers(new Set(members.map(m => m._id)));
+        }
     };
 
     const sendSMS = () => {
@@ -187,8 +197,8 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
         }
 
         const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-        const smsLink = isIOS 
-            ? `sms:${numbers.join(',')}&body=${encodeURIComponent(msg)}` 
+        const smsLink = isIOS
+            ? `sms:${numbers.join(',')}&body=${encodeURIComponent(msg)}`
             : `sms:${numbers.join(',')}?body=${encodeURIComponent(msg)}`;
 
         window.location.href = smsLink;
@@ -344,7 +354,24 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
                 <div className="content-section">
                     {/* 회원 선택 */}
                     <div className="card">
-                        <div className="card-header">문자 발송 대상 선택</div>
+                        <div className="card-header d-flex justify-content-between align-items-center">
+                            <span>문자 발송 대상 선택</span>
+                            {members.length > 0 && (
+                                <div className="form-check mb-0 bg-transparent p-0 d-flex align-items-center" style={{ minHeight: 'auto' }}>
+                                    <input
+                                        className="form-check-input"
+                                        type="checkbox"
+                                        id="selectAll"
+                                        checked={selectedMembers.size === members.length}
+                                        onChange={toggleAll}
+                                        style={{ width: '20px', height: '20px', margin: 0 }}
+                                    />
+                                    <label className="form-check-label text-white ms-2" htmlFor="selectAll" style={{ fontSize: '0.9rem', cursor: 'pointer' }}>
+                                        전체 선택
+                                    </label>
+                                </div>
+                            )}
+                        </div>
                         <div className="card-body">
                             {members.length === 0 ? (
                                 <div className="alert alert-warning text-center">
@@ -354,12 +381,12 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
                                 members.map(member => {
                                     const info = unpaidInfo[member._id];
                                     const isSelected = selectedMembers.has(member._id);
-                                    
+
                                     return (
                                         <div key={member._id} className="form-check">
-                                            <input 
-                                                className="form-check-input" 
-                                                type="checkbox" 
+                                            <input
+                                                className="form-check-input"
+                                                type="checkbox"
                                                 checked={isSelected}
                                                 onChange={() => toggleMember(member._id)}
                                                 id={`m${member._id}`}
@@ -382,8 +409,8 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
                     <div className="card">
                         <div className="card-header">문자 내용</div>
                         <div className="card-body">
-                            <textarea 
-                                className="form-control" 
+                            <textarea
+                                className="form-control"
                                 value={smsMessage}
                                 onChange={(e) => setSmsMessage(e.target.value)}
                                 placeholder="내용이 자동으로 생성됩니다."
