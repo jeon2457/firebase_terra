@@ -130,8 +130,13 @@ export default function ActivityDashboardModal({ onClose, theme }: ActivityDashb
                     </div>
                     <div className="d-flex align-items-center gap-2">
                         <select
-                            className="form-select w-auto bg-white bg-opacity-20 border-0 text-white fw-bold"
-                            style={{ cursor: 'pointer' }}
+                            className="form-select w-auto fw-bold"
+                            style={{
+                                cursor: 'pointer',
+                                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                color: 'white',
+                                border: 'none'
+                            }}
                             value={selectedYear}
                             onChange={(e) => setSelectedYear(Number(e.target.value))}
                         >
