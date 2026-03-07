@@ -21,7 +21,9 @@ import {
     LogOut,
     Palette,
     X,
-    TrendingUp
+    TrendingUp,
+    Activity,
+    BarChart2
 } from "lucide-react";
 import {
     Chart as ChartJS,
@@ -36,6 +38,7 @@ import {
 import { Bar, Doughnut } from 'react-chartjs-2';
 import axios from 'axios';
 import * as XLSX from 'xlsx-js-style';
+import ActivityDashboardModal from './ActivityDashboardModal';
 import StockDisclosureModal from './StockDisclosureModal';
 
 ChartJS.register(
@@ -60,6 +63,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
     const spaceCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
     const [showFinancial, setShowFinancial] = useState(false);
+    const [showActivity, setShowActivity] = useState(false); // 활동 대시보드 상태 추가
     const [financialData, setFinancialData] = useState<{ income: any[], expense: any[] } | null>(null);
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
@@ -323,10 +327,16 @@ export default function DashboardContent({ theme = "book" }: Props) {
             return;
         }
 
-        if (selected.path === "#financial") {
+        if (path === 'financial') {
             const success = await loadFinancialData();
             if (success) setShowFinancial(true);
-        } else if (selected.path === "#excel") {
+            return;
+        }
+        if (path === 'activity') {
+            setShowActivity(true);
+            return;
+        }
+        if (path === 'excel') {
             if (!financialData) {
                 const success = await loadFinancialData();
                 if (!success) {
@@ -335,11 +345,13 @@ export default function DashboardContent({ theme = "book" }: Props) {
                 }
             }
             setShowExcel(true);
-        } else if (selected.path === "#stock-disclosure") {
-            setShowStockDisclosure(true);
-        } else {
-            router.push(selected.path);
+            return;
         }
+        if (selected.path === "#stock-disclosure") {
+            setShowStockDisclosure(true);
+            return;
+        }
+        router.push(selected.path);
     };
 
     const handleGoNext = async () => {
@@ -553,8 +565,9 @@ export default function DashboardContent({ theme = "book" }: Props) {
         { title: "영수증 편집", icon: <Scissors />, color: "bg-scissors", path: "/receipt/edit" },
         { title: "영수증 열람", icon: <ImageIcon />, color: "bg-image", path: "/receipt/view" },
         { title: "월회비 입금현황", icon: <CreditCard />, color: "bg-card", path: "/fee/status" },
-        { title: "재무 대시보드", icon: <PieChart />, color: "bg-financial", path: "#financial" },
-        { title: "엑셀 리포트", icon: <FileSpreadsheet />, color: "bg-excel", path: "#excel" },
+        { title: "활동 대시보드", icon: <Activity />, color: "bg-danger", path: "activity" },
+        { title: "재무 대시보드", icon: <BarChart2 />, color: "bg-financial", path: "financial" },
+        { title: "엑셀 리포트", icon: <FileSpreadsheet />, color: "bg-excel", path: "excel" },
         { title: "다음 지도 만들기", icon: <MapIcon />, color: "bg-map", path: "/map/create" },
         { title: "실시간 위치공유", icon: <MapIcon />, color: "bg-location", path: "/map/location-share" },
         { title: "각종 모임 활동", icon: <Users />, color: "bg-activities", path: "/activities" },
@@ -1501,6 +1514,11 @@ export default function DashboardContent({ theme = "book" }: Props) {
                             </button>
                         </div>
                     </div>
+                )}
+
+                {/* 활동 대시보드 모달 */}
+                {showActivity && (
+                    <ActivityDashboardModal onClose={() => setShowActivity(false)} theme={theme} />
                 )}
 
                 {/* 주식공시 열람 모달 */}

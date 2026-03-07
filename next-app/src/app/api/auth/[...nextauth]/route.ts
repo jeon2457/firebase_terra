@@ -34,6 +34,11 @@ export const authOptions = {
                     throw new Error("아이디 또는 비밀번호가 일치하지 않습니다.");
                 }
 
+                // Update login count and last login time
+                user.login_count = (user.login_count || 0) + 1;
+                user.last_login_at = new Date();
+                await user.save();
+
                 return { id: user.id, name: user.name, user_level: user.user_level, remark: user.remark };
             }
         })

@@ -12,6 +12,8 @@ const UserSchema = new mongoose.Schema({
     email: { type: String },
     user_level: { type: Number, default: 1 },
     site_theme: { type: String, default: 'book' },
+    login_count: { type: Number, default: 0 },
+    last_login_at: { type: Date },
 }, {
     timestamps: true,
     collection: 'members' // Match existing PHP collection

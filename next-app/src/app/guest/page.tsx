@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./guest.module.css";
+import ActivityDashboardModal from '../dashboard/ActivityDashboardModal'; // Added import
 import "bootstrap-icons/font/bootstrap-icons.css";
 import axios from "axios";
 import * as XLSX from 'xlsx-js-style';
@@ -43,6 +44,7 @@ export default function GuestPage() {
     const [showFinancial, setShowFinancial] = useState(false);
     const [financialData, setFinancialData] = useState<{ income: any[], expense: any[] } | null>(null);
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+    const [showActivity, setShowActivity] = useState(false); // Added state for Activity Dashboard
 
     // 엑셀 리포트 관련 상태
     const [showExcel, setShowExcel] = useState(false);
@@ -103,6 +105,11 @@ export default function GuestPage() {
         if (success) setShowFinancial(true);
     };
 
+    // 활동 대시보드 클릭 핸들러
+    const handleActivityClick = () => {
+        setShowActivity(true);
+    };
+
     // 엑셀 리포트 클릭 핸들러
     const handleExcelClick = async (e: React.MouseEvent) => {
         e.preventDefault();
@@ -153,7 +160,7 @@ export default function GuestPage() {
     const { mInc, mExp, totalInc, totalExp } = getYearlyStats();
 
     const barData = {
-        labels: Array.from({ length: 12 }, (_, i) => `${i + 1}월`),
+        labels: Array.from({ length: 12 }, (_, i) => `${i + 1} 월`),
         datasets: [
             { label: '수입', data: mInc, backgroundColor: '#4CAF50' },
             { label: '지출', data: mExp, backgroundColor: '#f44336' }
@@ -330,48 +337,56 @@ export default function GuestPage() {
                 <div className={styles.optionBox}>
                     {/* 1. 연락망 보기 */}
                     <Link href="/members/view" className={styles.selectCard}>
-                        <div className={`${styles.bookSpine} ${styles.bgTel}`}>
-                            <i className={`bi bi-people-fill ${styles.bookIcon}`}></i>
+                        <div className={`${styles.bookSpine} ${styles.bgTel} `}>
+                            <i className={`bi bi - people - fill ${styles.bookIcon} `}></i>
                             <div className={styles.bookTitle}>연락망 보기</div>
                         </div>
                     </Link>
 
                     {/* 2. 사용내역 열람 */}
                     <Link href="/account/view" className={styles.selectCard}>
-                        <div className={`${styles.bookSpine} ${styles.bgView}`}>
-                            <i className={`bi bi-eye ${styles.bookIcon}`}></i>
+                        <div className={`${styles.bookSpine} ${styles.bgView} `}>
+                            <i className={`bi bi - eye ${styles.bookIcon} `}></i>
                             <div className={styles.bookTitle}>사용내역 열람</div>
                         </div>
                     </Link>
 
                     {/* 3. 영수증 열람 */}
                     <Link href="/receipt/view" className={styles.selectCard}>
-                        <div className={`${styles.bookSpine} ${styles.bgImage}`}>
-                            <i className={`bi bi-image ${styles.bookIcon}`}></i>
+                        <div className={`${styles.bookSpine} ${styles.bgImage} `}>
+                            <i className={`bi bi - image ${styles.bookIcon} `}></i>
                             <div className={styles.bookTitle}>영수증 열람</div>
                         </div>
                     </Link>
 
                     {/* 4. 월회비 납부현황 */}
                     <Link href="/guest/fee/status" className={styles.selectCard}>
-                        <div className={`${styles.bookSpine} ${styles.bgCard}`}>
-                            <i className={`bi bi-credit-card ${styles.bookIcon}`}></i>
+                        <div className={`${styles.bookSpine} ${styles.bgCard} `}>
+                            <i className={`bi bi - credit - card ${styles.bookIcon} `}></i>
                             <div className={styles.bookTitle}>월회비 납부현황</div>
                         </div>
                     </Link>
 
                     {/* 5. 재무 대시보드 */}
                     <div className={styles.selectCard} onClick={handleFinancialClick}>
-                        <div className={`${styles.bookSpine} ${styles.bgFinancial}`}>
-                            <i className={`bi bi-pie-chart-fill ${styles.bookIcon}`}></i>
+                        <div className={`${styles.bookSpine} ${styles.bgFinancial} `}>
+                            <i className={`bi bi - pie - chart - fill ${styles.bookIcon} `}></i>
                             <div className={styles.bookTitle}>재무 대시보드</div>
                         </div>
                     </div>
 
-                    {/* 6. 엑셀 리포트 */}
+                    {/* 6. 활동 대시보드 */}
+                    <div className={styles.selectCard} onClick={handleActivityClick}>
+                        <div className={`${styles.bookSpine} ${styles.bgActivity} `}> {/* Assuming bgActivity style exists or needs to be added */}
+                            <i className={`bi bi - activity ${styles.bookIcon} `}></i>
+                            <div className={styles.bookTitle}>활동 대시보드</div>
+                        </div>
+                    </div>
+
+                    {/* 7. 엑셀 리포트 */}
                     <div className={styles.selectCard} onClick={handleExcelClick}>
-                        <div className={`${styles.bookSpine} ${styles.bgExcel}`}>
-                            <i className={`bi bi-file-earmark-excel-fill ${styles.bookIcon}`}></i>
+                        <div className={`${styles.bookSpine} ${styles.bgExcel} `}>
+                            <i className={`bi bi - file - earmark - excel - fill ${styles.bookIcon} `}></i>
                             <div className={styles.bookTitle}>엑셀 리포트</div>
                         </div>
                     </div>
@@ -379,13 +394,18 @@ export default function GuestPage() {
 
                 <div className={styles.btnArea}>
                     <button
-                        className={`btn btn-outline-danger btn-lg ${styles.btnSame} shadow-sm`}
+                        className={`btn btn - outline - danger btn - lg ${styles.btnSame} shadow - sm`}
                         onClick={() => signOut({ callbackUrl: "/login" })}
                     >
                         서재 나가기
                     </button>
                 </div>
             </div>
+
+            {/* 활동 대시보드 모달 */}
+            {showActivity && (
+                <ActivityDashboardModal onClose={() => setShowActivity(false)} />
+            )}
 
             {/* 재무 대시보드 모달 */}
             {showFinancial && (
@@ -463,18 +483,18 @@ export default function GuestPage() {
                         </div>
 
                         <style jsx>{`
-                            @media (max-width: 768px) {
-                                .financial-summary {
-                                    flex-direction: column !important;
-                                }
-                                .financial-charts {
-                                    flex-direction: column !important;
-                                }
-                                .financial-charts div {
-                                    height: 250px !important;
-                                }
-                            }
-                        `}</style>
+@media(max - width: 768px) {
+                                .financial - summary {
+        flex - direction: column!important;
+    }
+                                .financial - charts {
+        flex - direction: column!important;
+    }
+                                .financial - charts div {
+        height: 250px!important;
+    }
+}
+`}</style>
                     </div>
                 </div>
             )}
