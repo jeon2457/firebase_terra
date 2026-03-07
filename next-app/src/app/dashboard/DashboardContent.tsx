@@ -1413,9 +1413,19 @@ export default function DashboardContent({ theme = "book" }: Props) {
                                     value={selectedYear}
                                     onChange={(e) => setSelectedYear(Number(e.target.value))}
                                 >
-                                    {[0, 1, 2, 3].map(i => (
-                                        <option key={i} value={new Date().getFullYear() - i}>{new Date().getFullYear() - i}년</option>
-                                    ))}
+                                    {(() => {
+                                        const years = [];
+                                        const currentYearVal = new Date().getFullYear();
+                                        for (let i = 5; i >= 0; i--) {
+                                            years.push(currentYearVal - i);
+                                        }
+                                        if (new Date().getMonth() === 11 && new Date().getDate() >= 1) {
+                                            years.push(currentYearVal + 1);
+                                        }
+                                        return [...new Set(years)].sort((a, b) => b - a).map(y => (
+                                            <option key={y} value={y}>{y}년</option>
+                                        ));
+                                    })()}
                                 </select>
                             </div>
 
@@ -1461,9 +1471,19 @@ export default function DashboardContent({ theme = "book" }: Props) {
                             <div className="mb-3">
                                 <label className="form-label fw-bold">대상 연도</label>
                                 <select className="form-select" value={excelConfig.year} onChange={e => setExcelConfig({ ...excelConfig, year: Number(e.target.value) })}>
-                                    {[0, 1, 2, 3].map(i => (
-                                        <option key={i} value={new Date().getFullYear() - i}>{new Date().getFullYear() - i}년</option>
-                                    ))}
+                                    {(() => {
+                                        const years = [];
+                                        const currentYearVal = new Date().getFullYear();
+                                        for (let i = 5; i >= 0; i--) {
+                                            years.push(currentYearVal - i);
+                                        }
+                                        if (new Date().getMonth() === 11 && new Date().getDate() >= 1) {
+                                            years.push(currentYearVal + 1);
+                                        }
+                                        return [...new Set(years)].sort((a, b) => b - a).map(y => (
+                                            <option key={y} value={y}>{y}년</option>
+                                        ));
+                                    })()}
                                 </select>
                             </div>
 
