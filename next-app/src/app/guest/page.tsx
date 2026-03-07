@@ -105,10 +105,6 @@ export default function GuestPage() {
         if (success) setShowFinancial(true);
     };
 
-    // 활동 대시보드 클릭 핸들러
-    const handleActivityClick = () => {
-        setShowActivity(true);
-    };
 
     // 엑셀 리포트 클릭 핸들러
     const handleExcelClick = async (e: React.MouseEvent) => {
@@ -375,13 +371,6 @@ export default function GuestPage() {
                         </div>
                     </div>
 
-                    {/* 6. 활동 대시보드 */}
-                    <div className={styles.selectCard} onClick={handleActivityClick}>
-                        <div className={`${styles.bookSpine} ${styles.bgActivity}`}>
-                            <i className={`bi bi-activity ${styles.bookIcon}`}></i>
-                            <div className={styles.bookTitle}>활동 대시보드</div>
-                        </div>
-                    </div>
 
                     {/* 7. 엑셀 리포트 */}
                     <div className={styles.selectCard} onClick={handleExcelClick}>
@@ -402,10 +391,6 @@ export default function GuestPage() {
                 </div>
             </div>
 
-            {/* 활동 대시보드 모달 */}
-            {showActivity && (
-                <ActivityDashboardModal onClose={() => setShowActivity(false)} />
-            )}
 
             {/* 재무 대시보드 모달 */}
             {showFinancial && (
