@@ -582,8 +582,9 @@ export default function DashboardContent({ theme = "book" }: Props) {
         "/receipt/view",
         "/fee/status",
         "/guest/fee/status",
-        "#financial",
-        "#excel",
+        "activity",
+        "financial",
+        "excel",
     ];
 
     // 관리자 전용 메뉴를 포함한 전체 메뉴 (관리자만 하단에股票공시 열람 추가)

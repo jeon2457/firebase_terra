@@ -337,56 +337,56 @@ export default function GuestPage() {
                 <div className={styles.optionBox}>
                     {/* 1. 연락망 보기 */}
                     <Link href="/members/view" className={styles.selectCard}>
-                        <div className={`${styles.bookSpine} ${styles.bgTel} `}>
-                            <i className={`bi bi - people - fill ${styles.bookIcon} `}></i>
+                        <div className={`${styles.bookSpine} ${styles.bgTel}`}>
+                            <i className={`bi bi-people-fill ${styles.bookIcon}`}></i>
                             <div className={styles.bookTitle}>연락망 보기</div>
                         </div>
                     </Link>
 
                     {/* 2. 사용내역 열람 */}
                     <Link href="/account/view" className={styles.selectCard}>
-                        <div className={`${styles.bookSpine} ${styles.bgView} `}>
-                            <i className={`bi bi - eye ${styles.bookIcon} `}></i>
+                        <div className={`${styles.bookSpine} ${styles.bgView}`}>
+                            <i className={`bi bi-eye ${styles.bookIcon}`}></i>
                             <div className={styles.bookTitle}>사용내역 열람</div>
                         </div>
                     </Link>
 
                     {/* 3. 영수증 열람 */}
                     <Link href="/receipt/view" className={styles.selectCard}>
-                        <div className={`${styles.bookSpine} ${styles.bgImage} `}>
-                            <i className={`bi bi - image ${styles.bookIcon} `}></i>
+                        <div className={`${styles.bookSpine} ${styles.bgImage}`}>
+                            <i className={`bi bi-image ${styles.bookIcon}`}></i>
                             <div className={styles.bookTitle}>영수증 열람</div>
                         </div>
                     </Link>
 
                     {/* 4. 월회비 납부현황 */}
                     <Link href="/guest/fee/status" className={styles.selectCard}>
-                        <div className={`${styles.bookSpine} ${styles.bgCard} `}>
-                            <i className={`bi bi - credit - card ${styles.bookIcon} `}></i>
+                        <div className={`${styles.bookSpine} ${styles.bgCard}`}>
+                            <i className={`bi bi-credit-card ${styles.bookIcon}`}></i>
                             <div className={styles.bookTitle}>월회비 납부현황</div>
                         </div>
                     </Link>
 
                     {/* 5. 재무 대시보드 */}
                     <div className={styles.selectCard} onClick={handleFinancialClick}>
-                        <div className={`${styles.bookSpine} ${styles.bgFinancial} `}>
-                            <i className={`bi bi - pie - chart - fill ${styles.bookIcon} `}></i>
+                        <div className={`${styles.bookSpine} ${styles.bgFinancial}`}>
+                            <i className={`bi bi-pie-chart-fill ${styles.bookIcon}`}></i>
                             <div className={styles.bookTitle}>재무 대시보드</div>
                         </div>
                     </div>
 
                     {/* 6. 활동 대시보드 */}
                     <div className={styles.selectCard} onClick={handleActivityClick}>
-                        <div className={`${styles.bookSpine} ${styles.bgActivity} `}> {/* Assuming bgActivity style exists or needs to be added */}
-                            <i className={`bi bi - activity ${styles.bookIcon} `}></i>
+                        <div className={`${styles.bookSpine} ${styles.bgActivity}`}>
+                            <i className={`bi bi-activity ${styles.bookIcon}`}></i>
                             <div className={styles.bookTitle}>활동 대시보드</div>
                         </div>
                     </div>
 
                     {/* 7. 엑셀 리포트 */}
                     <div className={styles.selectCard} onClick={handleExcelClick}>
-                        <div className={`${styles.bookSpine} ${styles.bgExcel} `}>
-                            <i className={`bi bi - file - earmark - excel - fill ${styles.bookIcon} `}></i>
+                        <div className={`${styles.bookSpine} ${styles.bgExcel}`}>
+                            <i className={`bi bi-file-earmark-excel-fill ${styles.bookIcon}`}></i>
                             <div className={styles.bookTitle}>엑셀 리포트</div>
                         </div>
                     </div>
