@@ -318,7 +318,7 @@ export default function FeeStatusPage() {
                 .m-ox.o { color: green; }
                 .m-ox.x { color: red; }
 
-                @media (max-width: 900px) {
+                @media (max-width: 768px) {
                     body { margin: 10px 3px; }
                     .header-box { display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; align-items: stretch; }
                     .header-box > div:nth-child(2) { order: 1; display: flex; justify-content: center; }
@@ -329,7 +329,7 @@ export default function FeeStatusPage() {
                     .mobile-card-view { display: block; }
                 }
 
-                @media (min-width: 901px) {
+                @media (min-width: 769px) {
                     .pc-table-view { display: block; }
                     .mobile-card-view { display: none; }
                 }
@@ -380,11 +380,11 @@ export default function FeeStatusPage() {
                         <table className="table table-bordered text-center">
                             <thead className="table-light">
                                 <tr>
-                                    {isAdmin && <th><input type="checkbox" checked={checkAll} onChange={handleCheckAll} /></th>}
-                                    <th>이름</th>
+                                    {isAdmin && <th rowSpan={2}><input type="checkbox" checked={checkAll} onChange={handleCheckAll} /></th>}
+                                    <th rowSpan={2}>이름</th>
                                     <th colSpan={6} style={{ background: '#e3f2fd' }}>상반기</th>
                                     <th colSpan={6} style={{ background: '#fff3e0' }}>하반기</th>
-                                    <th>입금합계</th><th>미납금</th>
+                                    <th rowSpan={2}>입금합계</th><th rowSpan={2}>미납금</th>
                                 </tr>
                                 <tr>
                                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => <th key={m}>{m}월</th>)}
