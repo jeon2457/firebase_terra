@@ -75,14 +75,16 @@ export default function MemberEditListPage() {
         }
         /* 반응형 스타일 */
         @media (max-width: 768px) {
-          .hide-mobile {
+          /* 모바일: 주소 숨기고 비고 표시 */
+          .addr-col-mobile {
             display: none !important;
           }
-          .remark-col {
+          .remark-col-mobile {
+            display: table-cell !important;
             width: 80px !important;
             min-width: 80px;
           }
-          /* 모바일에서 테이블 폰트 크기 조정 */
+          /* 테이블 폰트 크기 조정 */
           .table {
             font-size: 0.85rem;
           }
@@ -91,11 +93,14 @@ export default function MemberEditListPage() {
             vertical-align: middle;
           }
         }
-        /* PC용 열 너비 */
+        /* PC: 주소 표시, 비고 표시 */
         @media (min-width: 769px) {
           .remark-col {
             width: 100px;
             min-width: 80px;
+          }
+          .remark-col-mobile {
+            display: none !important;
           }
         }
       `}</style>
@@ -113,8 +118,8 @@ export default function MemberEditListPage() {
                             <th style={{ width: "50px" }} className="text-nowrap">선택</th>
                             <th>이름</th>
                             <th>전화번호</th>
-                            <th className="text-nowrap">주소</th>
-                            <th className="remark-col hide-mobile">비고</th>
+                            <th className="text-nowrap addr-col-mobile">주소</th>
+                            <th className="remark-col remark-col-mobile">비고</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -138,8 +143,8 @@ export default function MemberEditListPage() {
                                         )}
                                     </td>
                                     <td>{m.tel}</td>
-                                    <td>{m.addr}</td>
-                                    <td className="hide-mobile">{m.remark || "-"}</td>
+                                    <td className="addr-col-mobile">{m.addr}</td>
+                                    <td className="remark-col remark-col-mobile">{m.remark || "-"}</td>
                                 </tr>
                             ))
                         ) : (
