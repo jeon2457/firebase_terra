@@ -318,7 +318,7 @@ export default function FeeStatusPage() {
                 .m-ox.o { color: green; }
                 .m-ox.x { color: red; }
 
-                @media (max-width: 768px) {
+                @media (max-width: 900px) {
                     body { margin: 10px 3px; }
                     .header-box { display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; align-items: stretch; }
                     .header-box > div:nth-child(2) { order: 1; display: flex; justify-content: center; }
@@ -329,7 +329,7 @@ export default function FeeStatusPage() {
                     .mobile-card-view { display: block; }
                 }
 
-                @media (min-width: 769px) {
+                @media (min-width: 901px) {
                     .pc-table-view { display: block; }
                     .mobile-card-view { display: none; }
                 }
