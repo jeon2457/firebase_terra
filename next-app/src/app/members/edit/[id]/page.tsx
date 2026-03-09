@@ -339,8 +339,9 @@ export default function MemberEditFormPage() {
                     <div className="mb-4">
                         <label className="label-text asterisk">회원 등급(레벨)</label>
                         <select name="user_level" className="form-select" required value={formData.user_level} onChange={handleChange}>
-                            <option value="1">게스트 (1)</option>
-                            <option value="2">정회원 (2)</option>
+                            <option value="1">임시회원 (1)</option>
+                            <option value="2">회원 (2)</option>
+                            <option value="3">우수회원 (3)</option>
                             <option value="5">Premium (5)</option>
                             <option value="10">관리자 (10)</option>
                         </select>
