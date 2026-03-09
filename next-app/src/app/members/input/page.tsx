@@ -329,7 +329,7 @@ export default function MemberInputPage() {
                             type="text"
                             name="remark"
                             className="form-control"
-                            placeholder="회원, 총무, 회장 등"
+                            placeholder="회원,총무,회장,감사 등"
                             required
                             value={formData.remark}
                             onChange={handleChange}
