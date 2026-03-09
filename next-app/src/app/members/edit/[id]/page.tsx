@@ -316,7 +316,7 @@ export default function MemberEditFormPage() {
 
                     <div className="mb-4">
                         <label className="label-text">비고(직책)</label>
-                        <input type="text" name="remark" className="form-control" value={formData.remark} onChange={handleChange} />
+                        <input type="text" name="remark" className="form-control" placeholder="회원,총무,회장,감사 등" value={formData.remark} onChange={handleChange} />
                     </div>
 
                     <div className="mb-4">
