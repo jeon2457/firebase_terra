@@ -61,7 +61,7 @@ export default function MemberEditListPage() {
     if (status === "loading" || loading) return <div className="text-center mt-5">Loading...</div>;
 
     return (
-        <div className="container mt-4 mb-5" style={{ maxWidth: "800px" }}>
+        <div className="container mt-4 mb-5" style={{ maxWidth: "900px" }}>
             <style jsx>{`
          .section-title {
           text-align: center;
@@ -72,6 +72,31 @@ export default function MemberEditListPage() {
           background: #e9f3ff;
           border-radius: 10px;
           border: 1px solid #c9e3ff;
+        }
+        /* 반응형 스타일 */
+        @media (max-width: 768px) {
+          .hide-mobile {
+            display: none !important;
+          }
+          .remark-col {
+            width: 80px !important;
+            min-width: 80px;
+          }
+          /* 모바일에서 테이블 폰트 크기 조정 */
+          .table {
+            font-size: 0.85rem;
+          }
+          .table th, .table td {
+            padding: 0.4rem 0.2rem !important;
+            vertical-align: middle;
+          }
+        }
+        /* PC용 열 너비 */
+        @media (min-width: 769px) {
+          .remark-col {
+            width: 100px;
+            min-width: 80px;
+          }
         }
       `}</style>
 
@@ -85,10 +110,11 @@ export default function MemberEditListPage() {
                 <table className="table table-bordered table-hover text-center align-middle mb-0">
                     <thead className="table-light">
                         <tr>
-                            <th style={{ width: "50px" }}>선택</th>
+                            <th style={{ width: "50px" }} className="text-nowrap">선택</th>
                             <th>이름</th>
                             <th>전화번호</th>
-                            <th>주소</th>
+                            <th className="text-nowrap">주소</th>
+                            <th className="remark-col hide-mobile">비고</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -113,10 +139,11 @@ export default function MemberEditListPage() {
                                     </td>
                                     <td>{m.tel}</td>
                                     <td>{m.addr}</td>
+                                    <td className="hide-mobile">{m.remark || "-"}</td>
                                 </tr>
                             ))
                         ) : (
-                            <tr><td colSpan={4} className="p-3">등록된 회원이 없습니다.</td></tr>
+                            <tr><td colSpan={5} className="p-3">등록된 회원이 없습니다.</td></tr>
                         )}
                     </tbody>
                 </table>
