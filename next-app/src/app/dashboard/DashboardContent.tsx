@@ -73,18 +73,34 @@ export default function DashboardContent({ theme = "book" }: Props) {
     // 주식공시 열람 모달 상태
     const [showStockDisclosure, setShowStockDisclosure] = useState(false);
 
+    // 회원 등급 이름 변환 함수
+    const getLevelName = (level: number) => {
+        switch (level) {
+            case 1: return "임시회원";
+            case 2: return "회원";
+            case 3: return "우수회원";
+            case 5: return "Premium";
+            case 10: return "관리자";
+            default: return "회원";
+        }
+    };
+
     // Safe user display name computation
     const userDisplayName = (() => {
         if (!session?.user) return "사용자";
         const user = session.user as any;
         let name = user.name || "사용자";
-        const position = user.remark;
+        const remark = user.remark;
 
         if (user.user_level >= 10) {
+            // 관리자는 그대로 유지
             name += " (관리자)";
         } else {
-            if (position && (position.includes("회장") || position.includes("총무"))) {
-                name += ` ${position}`;
+            // 비고(직책) 데이터가 있으면 우선 표시, 없으면 회원 등급 표시
+            if (remark && remark.trim()) {
+                name += ` ${remark.trim()}`;
+            } else {
+                name += ` ${getLevelName(user.user_level)}`;
             }
             name += "님";
         }
