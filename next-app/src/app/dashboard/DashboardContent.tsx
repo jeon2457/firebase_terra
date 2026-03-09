@@ -96,8 +96,9 @@ export default function DashboardContent({ theme = "book" }: Props) {
             // 관리자는 그대로 유지
             name += " (관리자)";
         } else {
-            // 비고(직책) 데이터가 있으면 우선 표시, 없으면 회원 등급 표시
-            if (remark && remark.trim()) {
+            // 비고(직책) 데이터가 있으면 우선 표시하되, '회원'이라는 텍스트가 있으면 예외로 레벨 표시
+            const hasRemark = remark && remark.trim() && !remark.trim().includes('회원');
+            if (hasRemark) {
                 name += ` ${remark.trim()}`;
             } else {
                 name += ` ${getLevelName(user.user_level)}`;
