@@ -155,7 +155,7 @@ export default function ReceiptUploadPage() {
                 </div>
 
                 <div className="section-box">
-                    <h5 className="fw-bold mb-3">① 파일 직접 업로드 (Cloudinary)</h5>
+                    <h5 className="fw-bold mb-3">작업① 파일 직접 업로드 (Cloudinary)</h5>
                     <div className="mb-3">
                         <input type="file" className="form-control" onChange={handleFileChange} accept="image/*" disabled={uploading} />
                         {uploading && <div className="text-primary mt-2 small">업로드 중...</div>}
@@ -163,7 +163,7 @@ export default function ReceiptUploadPage() {
                 </div>
 
                 <div className="section-box">
-                    <h5 className="fw-bold mb-3">② 링크 및 상세 정보 입력</h5>
+                    <h5 className="fw-bold mb-3">작업② 링크 및 상세 정보 입력</h5>
                     <div className="mb-3">
                         <label className="small fw-bold mb-1">이미지 URL</label>
                         <div className="input-group">
