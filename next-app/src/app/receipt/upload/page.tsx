@@ -186,9 +186,9 @@ export default function ReceiptUploadPage() {
                     <div className="info-box">
                         <Info size={16} className="me-2 text-primary" />
                         <strong>안내:</strong><br />
-                        먼저 이미지를 Cloudinary에 업로드한 후 이미지 URL주소와 요약을 다시 2차로 MongoDB에 저장해야 '영수증 편집/열람' 페이지에서 확인이 가능합니다.실제로 이미지파일은 Cloudinary에 저장(보관창고)됩니다.<br />
+                        먼저 이미지를 Cloudinary에 업로드한 후, 이미지 URL주소와 요약을 다시 2차로 MongoDB에 저장해야 '영수증 편집/열람' 페이지에서 확인이 가능합니다.실제로 이미지파일은 Cloudinary에 저장(보관창고)됩니다.<br />
                         - Cloudinary파일크기 제한: 이미지 최대 10MB<br />
-                        - MongoDB Atlas 저장 용량: 최대 512MB
+                        - MongoDB Atlas 저장 용량: 최대 512MB 무료
 
                     </div>
 
