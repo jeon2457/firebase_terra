@@ -230,19 +230,19 @@ export default function ActivityDashboardModal({ onClose, theme }: ActivityDashb
                             <table className="table table-hover align-middle mb-0">
                                 <thead className="table-light">
                                     <tr>
-                                        <th className="px-4">No</th>
-                                        <th>이름</th>
+                                        <th className="px-4 col-no">No</th>
+                                        <th className="col-name">이름</th>
                                         <th>전화번호</th>
                                         <th style={{ width: '35%' }}>활동률 (납부)</th>
-                                        <th>로그인</th>
+                                        <th className="col-login">로그인</th>
                                         <th className="text-center px-4">상태</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {data?.allMembers.map((m: any, idx: number) => (
                                         <tr key={m.id}>
-                                            <td className="px-4 text-muted">{idx + 1}</td>
-                                            <td className="fw-bold">{m.name}</td>
+                                            <td className="px-4 text-muted col-no">{idx + 1}</td>
+                                            <td className="fw-bold col-name">{m.name}</td>
                                             <td className="text-muted small">{m.tel}</td>
                                             <td>
                                                 <div className="d-flex align-items-center gap-3">
@@ -255,7 +255,7 @@ export default function ActivityDashboardModal({ onClose, theme }: ActivityDashb
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="fw-bold">{m.loginCount}회</td>
+                                            <td className="fw-bold col-login">{m.loginCount}회</td>
                                             <td className="text-center px-4">
                                                 <span className={`badge rounded-pill ${m.paymentRate >= 100 ? 'bg-success' : 'bg-warning'} px-3 py-2`}>
                                                     {m.paymentRate >= 100 ? '우수' : '보통'}
@@ -280,6 +280,7 @@ export default function ActivityDashboardModal({ onClose, theme }: ActivityDashb
                     max-width: 1000px !important;
                     width: 95%;
                     border-radius: 24px;
+                    transition: all 0.3s ease;
                 }
                 .rank-badge {
                     display: flex;
@@ -292,6 +293,41 @@ export default function ActivityDashboardModal({ onClose, theme }: ActivityDashb
                 .ranking-list {
                     height: 300px;
                     overflow-y: auto;
+                }
+
+                @media (max-width: 768px) {
+                    .activity-dashboard-container {
+                        width: 100% !important;
+                        max-width: 100% !important;
+                        height: 100% !important;
+                        border-radius: 0;
+                    }
+                    
+                    .table th {
+                        font-size: calc(1rem - 2px);
+                        padding-left: 10px !important;
+                        padding-right: 10px !important;
+                    }
+                    
+                    .col-no {
+                        width: 1px;
+                        white-space: nowrap;
+                        padding-left: 10px !important;
+                        padding-right: 5px !important;
+                    }
+                    
+                    .col-name {
+                        font-size: calc(1rem - 2px);
+                    }
+                    
+                    .col-login {
+                        font-size: calc(1rem - 2px);
+                    }
+                    
+                    .px-4 {
+                        padding-left: 15px !important;
+                        padding-right: 15px !important;
+                    }
                 }
             `}</style>
         </div>
