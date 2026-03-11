@@ -413,12 +413,113 @@ export default function DashboardContent({ theme = "book" }: Props) {
 
     const { mInc, mExp, totalInc, totalExp } = getYearlyStats();
 
+    // --- Broken Bar Logic ---
+    const BROKEN_THRESHOLD_RATIO = 1.5; // Threshold ratio relative to the 2nd highest value
+    const GAP_RATIO = 0.8; // Where the gap appears (80% of the capped height)
+
+    // Determine if we need a broken bar and calculate visual data
+    const getVisualData = (data: number[]) => {
+        const sorted = [...data].sort((a, b) => b - a);
+        const max = sorted[0] || 0;
+        const secondMax = sorted[1] || 0;
+
+        // If the gap is significant (more than 1.5x the 2nd max), cap it
+        const threshold = secondMax * BROKEN_THRESHOLD_RATIO || 1000000; // default large value
+
+        const visualData = data.map(v => (v > threshold ? threshold : v));
+        const isBroken = data.map(v => v > threshold);
+
+        return { visualData, isBroken, threshold };
+    };
+
+    const { visualData: visualInc, isBroken: isBrokenInc, threshold: incThreshold } = getVisualData(mInc);
+    const { visualData: visualExp, isBroken: isBrokenExp, threshold: expThreshold } = getVisualData(mExp);
+
+    // Zigzag plugin for Chart.js
+    const zigzagPlugin = {
+        id: 'zigzagPlugin',
+        afterDatasetsDraw(chart: any) {
+            const { ctx, chartArea: { top, bottom, left, right } } = chart;
+            ctx.save();
+
+            chart.data.datasets.forEach((dataset: any, datasetIndex: number) => {
+                const meta = chart.getDatasetMeta(datasetIndex);
+                meta.data.forEach((bar: any, index: number) => {
+                    const isBroken = datasetIndex === 0 ? isBrokenInc[index] : isBrokenExp[index];
+                    if (isBroken) {
+                        const { x, y, width, base } = bar;
+                        const gapY = y + (base - y) * (1 - GAP_RATIO);
+
+                        // Draw horizontal white zigzag gap
+                        ctx.fillStyle = 'white';
+                        ctx.beginPath();
+                        const segments = 4;
+                        const segW = width / segments;
+                        const zigH = 8;
+
+                        ctx.moveTo(x - width / 2, gapY - zigH);
+                        for (let i = 0; i <= segments; i++) {
+                            const xi = (x - width / 2) + i * segW;
+                            const yi = gapY - zigH + (i % 2 === 0 ? 0 : zigH);
+                            ctx.lineTo(xi, yi);
+                        }
+                        for (let i = segments; i >= 0; i--) {
+                            const xi = (x - width / 2) + i * segW;
+                            const yi = gapY + (i % 2 === 0 ? 0 : zigH);
+                            ctx.lineTo(xi, yi);
+                        }
+                        ctx.closePath();
+                        ctx.fill();
+                    }
+                });
+            });
+            ctx.restore();
+        }
+    };
+
     const barData = {
         labels: Array.from({ length: 12 }, (_, i) => `${i + 1}월`),
         datasets: [
-            { label: '수입', data: mInc, backgroundColor: '#4CAF50' },
-            { label: '지출', data: mExp, backgroundColor: '#f44336' }
+            {
+                label: '수입',
+                data: visualInc,
+                backgroundColor: '#4CAF50',
+                realData: mInc // Keep original for tooltip
+            },
+            {
+                label: '지출',
+                data: visualExp,
+                backgroundColor: '#f44336',
+                realData: mExp // Keep original for tooltip
+            }
         ]
+    };
+
+    const barOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: (context: any) => {
+                        const label = context.dataset.label || '';
+                        const realValue = context.dataset.realData[context.dataIndex];
+                        return `${label}: ${realValue.toLocaleString()}원`;
+                    }
+                }
+            },
+            legend: {
+                position: 'top' as const,
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: (value: any) => value.toLocaleString()
+                }
+            }
+        }
     };
 
     const doughnutData = {
@@ -1477,7 +1578,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
                             <div className="row">
                                 <div className="col-lg-8 mb-4">
                                     <div className="p-3 border rounded shadow-sm bg-white" style={{ height: '350px' }}>
-                                        <Bar data={barData} options={{ responsive: true, maintainAspectRatio: false }} />
+                                        <Bar data={barData} options={barOptions} plugins={[zigzagPlugin]} />
                                     </div>
                                 </div>
                                 <div className="col-lg-4 mb-4">
