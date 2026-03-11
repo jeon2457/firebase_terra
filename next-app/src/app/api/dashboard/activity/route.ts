@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
-import Member from '@/models/Member';
+import User from '@/models/User';
 import AccountPass from '@/models/AccountPass';
 
 export async function GET(req: NextRequest) {
@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
         await dbConnect();
 
         // 1. 회원 목록 조회 (공용계정 제외)
-        const members = await Member.find({ name: { $ne: '공용계정' } }).sort({ name: 1 });
+        const members = await User.find({ name: { $ne: '공용계정' } }).sort({ name: 1 });
 
         // 2. 해당 연도의 모든 납부 현황 조회
         const passRecords = await AccountPass.find({ pay_year: year });

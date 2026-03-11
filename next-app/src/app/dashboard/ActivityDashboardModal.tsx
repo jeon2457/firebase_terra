@@ -232,10 +232,10 @@ export default function ActivityDashboardModal({ onClose, theme }: ActivityDashb
                                     <tr>
                                         <th className="px-4 col-no">No</th>
                                         <th className="col-name">이름</th>
-                                        <th>전화번호</th>
+                                        <th className="d-none d-md-table-cell">전화번호</th>
                                         <th style={{ width: '35%' }}>활동률 (납부)</th>
                                         <th className="col-login">로그인</th>
-                                        <th className="text-center px-4">상태</th>
+                                        <th className="text-center px-4 col-status">상태</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -243,7 +243,7 @@ export default function ActivityDashboardModal({ onClose, theme }: ActivityDashb
                                         <tr key={m.id}>
                                             <td className="px-4 text-muted col-no">{idx + 1}</td>
                                             <td className="fw-bold col-name">{m.name}</td>
-                                            <td className="text-muted small">{m.tel}</td>
+                                            <td className="text-muted small d-none d-md-table-cell">{m.tel}</td>
                                             <td>
                                                 <div className="d-flex align-items-center gap-3">
                                                     <span className="small fw-bold" style={{ width: '35px' }}>{m.paymentRate}%</span>
@@ -256,7 +256,7 @@ export default function ActivityDashboardModal({ onClose, theme }: ActivityDashb
                                                 </div>
                                             </td>
                                             <td className="fw-bold col-login">{m.loginCount}회</td>
-                                            <td className="text-center px-4">
+                                            <td className="text-center px-4 col-status">
                                                 <span className={`badge rounded-pill ${m.paymentRate >= 100 ? 'bg-success' : 'bg-warning'} px-3 py-2`}>
                                                     {m.paymentRate >= 100 ? '우수' : '보통'}
                                                 </span>
@@ -301,32 +301,46 @@ export default function ActivityDashboardModal({ onClose, theme }: ActivityDashb
                         max-width: 100% !important;
                         height: 100% !important;
                         border-radius: 0;
+                        margin: 0 !important;
                     }
                     
                     .table th {
                         font-size: calc(1rem - 2px);
-                        padding-left: 10px !important;
-                        padding-right: 10px !important;
+                        padding-left: 8px !important;
+                        padding-right: 8px !important;
                     }
                     
                     .col-no {
                         width: 1px;
                         white-space: nowrap;
-                        padding-left: 10px !important;
-                        padding-right: 5px !important;
+                        font-size: 8px !important;
+                        padding-left: 5px !important;
+                        padding-right: 2px !important;
                     }
                     
                     .col-name {
                         font-size: calc(1rem - 2px);
+                        padding-left: 5px !important;
                     }
                     
                     .col-login {
                         font-size: calc(1rem - 2px);
+                        padding-right: 5px !important;
+                    }
+
+                    .col-status {
+                        padding-left: 0 !important;
+                        padding-right: 5px !important;
+                    }
+
+                    .col-status .badge {
+                        font-size: 10px;
+                        padding: 5px 10px !important;
                     }
                     
                     .px-4 {
-                        padding-left: 15px !important;
-                        padding-right: 15px !important;
+                        padding-left: 10px !important;
+                        padding-right: 10px !important;
                     }
                 }
             `}</style>
