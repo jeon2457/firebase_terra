@@ -151,7 +151,7 @@ export default function ReceiptUploadPage() {
             <div className="upload-card">
                 <div className="page-header">
                     <h1 className="fw-bold m-0"><ImageIcon size={32} className="me-2" /> 영수증 업로드</h1>
-                    <p className="small opacity-75 mt-2" style={{ color: 'orange' }}>Cloudinary 및 DB 전송 시스템</p>
+                    <p className="small opacity-75 mt-2" style={{ color: 'orange' }}>Cloudinary 및 MongoDB 전송 시스템</p>
                 </div>
 
                 <div className="section-box">
