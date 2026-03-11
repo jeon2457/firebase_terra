@@ -315,7 +315,7 @@ export default function MemberInputPage() {
                             name="addr"
                             className="form-control"
                             required
-                            placeholder="예: 서울, 김천, 부산 ..."
+                            placeholder="예: 서울,김천,부산 등..."
                             value={formData.addr}
                             onChange={handleChange}
                         />
@@ -329,7 +329,7 @@ export default function MemberInputPage() {
                             type="text"
                             name="remark"
                             className="form-control"
-                            placeholder="회원,총무,회장,감사 등"
+                            placeholder="예: 임시,회원,총무,회장,감사 등"
                             required
                             value={formData.remark}
                             onChange={handleChange}
