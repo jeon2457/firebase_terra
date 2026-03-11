@@ -413,27 +413,23 @@ export default function DashboardContent({ theme = "book" }: Props) {
 
     const { mInc, mExp, totalInc, totalExp } = getYearlyStats();
 
-    // --- Broken Bar Logic ---
-    const BROKEN_THRESHOLD_RATIO = 1.5; // Threshold ratio relative to the 2nd highest value
-    const GAP_RATIO = 0.8; // Where the gap appears (80% of the capped height)
+    // --- Broken Bar Logic (Only for January Income) ---
+    const GAP_RATIO = 0.8;
 
-    // Determine if we need a broken bar and calculate visual data
-    const getVisualData = (data: number[]) => {
-        const sorted = [...data].sort((a, b) => b - a);
-        const max = sorted[0] || 0;
-        const secondMax = sorted[1] || 0;
+    // Find the maximum value among all other data points to determine if Jan income is an outlier
+    const maxOfOthers = Math.max(...mInc.slice(1), ...mExp, 100);
 
-        // If the gap is significant (more than 1.5x the 2nd max), cap it
-        const threshold = secondMax * BROKEN_THRESHOLD_RATIO || 1000000; // default large value
+    const visualInc = [...mInc];
+    const isBrokenInc = new Array(12).fill(false);
 
-        const visualData = data.map(v => (v > threshold ? threshold : v));
-        const isBroken = data.map(v => v > threshold);
+    // Apply truncation ONLY to January Income (index 0) if it's much larger than the rest
+    if (mInc[0] > maxOfOthers * 1.5) {
+        visualInc[0] = maxOfOthers * 1.2; // Visual height slightly above the highest normal point
+        isBrokenInc[0] = true;
+    }
 
-        return { visualData, isBroken, threshold };
-    };
-
-    const { visualData: visualInc, isBroken: isBrokenInc, threshold: incThreshold } = getVisualData(mInc);
-    const { visualData: visualExp, isBroken: isBrokenExp, threshold: expThreshold } = getVisualData(mExp);
+    const visualExp = [...mExp]; // Expenses are never truncated as per user request
+    const isBrokenExp = new Array(12).fill(false);
 
     // Zigzag plugin for Chart.js
     const zigzagPlugin = {
