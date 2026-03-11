@@ -30,13 +30,13 @@ interface ClientContentProps {
 export default function ClientContent({ memberIds, year }: ClientContentProps) {
     const { data: session, status } = useSession();
     const router = useRouter();
-    
+
     const [members, setMembers] = useState<Member[]>([]);
     const [passMap, setPassMap] = useState<PassMap>({});
     const [monthlyFees, setMonthlyFees] = useState<{ [month: number]: number }>({});
     const [loading, setLoading] = useState(true);
     const [imgUrl, setImgUrl] = useState<string | null>(null); // 캡처 이미지 URL
-    
+
     const captureRef = useRef<HTMLDivElement>(null); // 캡처 영역 참조
 
     const todayYear = new Date().getFullYear();
@@ -51,14 +51,7 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
     }, [status, memberIds, year]);
 
     const fetchData = async () => {
-        console.log('=== Client Fetch Debug ===');
-        console.log('memberIds:', memberIds);
-        console.log('year:', year);
-        console.log('memberIds type:', typeof memberIds);
-        console.log('memberIds.trim():', memberIds?.trim());
-
         if (!memberIds || memberIds.trim() === '') {
-            console.log('❌ No member IDs provided');
             setLoading(false);
             return;
         }
@@ -66,40 +59,14 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
         setLoading(true);
         try {
             const apiUrl = `/api/account/member-check?members=${encodeURIComponent(memberIds)}&year=${year}`;
-            console.log('🌐 API URL:', apiUrl);
-            
+
             const res = await axios.get(apiUrl);
-            
-            console.log('📡 API Response:', res.data);
-            console.log('Full response object:', JSON.stringify(res.data, null, 2));
-            console.log('Response status:', res.status);
-            
+
             if (res.data.success) {
-                console.log('✅ Data loaded successfully');
-                console.log('Members:', res.data.members);
-                console.log('PassMap:', res.data.passMap);
-                console.log('MonthlyFees:', res.data.monthlyFees);
-                
-                // 디버깅 정보 확인
-                if (res.data.debug) {
-                    console.log('🔍 Debug Info:');
-                    console.log('ObjectId count:', res.data.debug.objectIdCount);
-                    console.log('String IDs count:', res.data.debug.stringIdsCount);
-                    console.log('ObjectIds count:', res.data.debug.objectIdsCount);
-                    console.log('Alt field count:', res.data.debug.altFieldCount);
-                    console.log('Any year count:', res.data.debug.anyYearCount);
-                    console.log('Final data count:', res.data.debug.finalDataCount);
-                    console.log('Sample collection data:', res.data.debug.sampleCollectionData);
-                    console.log('Sample pass data:', res.data.debug.samplePassData);
-                } else {
-                    console.log('⚠️ No debug info in response - API may not be updated yet');
-                }
-                
                 setMembers(res.data.members);
                 setPassMap(res.data.passMap);
                 setMonthlyFees(res.data.monthlyFees);
             } else {
-                console.log('❌ API returned error:', res.data.message);
                 alert(res.data.message || '데이터 로드 실패');
             }
         } catch (error: any) {
@@ -119,7 +86,7 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
         for (let m = 1; m <= 12; m++) {
             const paid = passMap[memberId]?.[m] || 0;
             const monthFee = monthlyFees[m] || 20000;
-            
+
             const isFuture = year > todayYear || (year === todayYear && m > todayMonth);
 
             if (paid) {
@@ -144,7 +111,7 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
 
         members.forEach(member => {
             const { totalPaid, unpaidTotal } = calculateTotals(member._id);
-            
+
             wsData.push([`[${member.name}]`, "", "", ""]); // 회원 구분행
 
             for (let m = 1; m <= 12; m++) {
@@ -169,7 +136,7 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
                     statusText
                 ]);
             }
-            
+
             wsData.push(["합계", "입금액:", totalPaid, "미납액:", unpaidTotal]);
             wsData.push(["", "", "", ""]); // 공백
         });
@@ -184,7 +151,7 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
     // 이미지 캡처
     const captureToImage = async () => {
         if (!captureRef.current) return;
-        
+
         try {
             // 캡처 시 체크박스 등 숨길 요소 처리 (필요시)
             const canvas = await html2canvas(captureRef.current, {
@@ -192,10 +159,10 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
                 backgroundColor: "#f4f6f9",
                 useCORS: true
             });
-            
+
             const imgData = canvas.toDataURL("image/jpeg", 0.9);
             setImgUrl(imgData);
-            
+
             // 모달 띄우기 (Bootstrap Modal 방식)
             const modalEl = document.getElementById('imageModal');
             if (modalEl) {
@@ -318,13 +285,13 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
                                     <i className="bi bi-person-fill"></i>
                                     {member.name} 님 납부 현황
                                 </div>
-                                
+
                                 <div className="p-3">
                                     <div className="row g-2">
                                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(month => {
                                             const paid = passMap[member._id]?.[month] || 0;
                                             const fee = monthlyFees[month] || 20000;
-                                            
+
                                             // 미래/과거 판단 로직
                                             let isFuture = false;
                                             if (year > todayYear) isFuture = true;
@@ -353,7 +320,7 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
                                         })}
                                     </div>
                                 </div>
-                                
+
                                 <div className="summary-box">
                                     <div className="summary-item">
                                         <span className="text-secondary small me-2">입금합계:</span>
@@ -382,13 +349,13 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
                     </button>
                 </div>
             )}
-            
+
             <div className="text-center mt-2 mb-5 d-flex justify-content-center gap-2">
-                 {members.length > 0 && (
+                {members.length > 0 && (
                     <button className="btn btn-primary" onClick={captureToImage}>
                         🖼️ 데이터 ={">"} 이미지화
                     </button>
-                 )}
+                )}
                 <button className="btn btn-secondary" onClick={() => router.back()}>
                     ⏪ 돌아가기
                 </button>
@@ -415,7 +382,7 @@ export default function ClientContent({ memberIds, year }: ClientContentProps) {
                     </div>
                 </div>
             </div>
-            
+
             {/* Bootstrap JS 로드 (모달용) */}
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" async></script>
         </div>
