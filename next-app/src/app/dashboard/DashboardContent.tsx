@@ -686,7 +686,7 @@ export default function DashboardContent({ theme = "book" }: Props) {
         { title: "실시간 위치공유", icon: <MapIcon />, color: "bg-location", path: "/map/location-share" },
         { title: "각종 모임 활동", icon: <Users />, color: "bg-activities", path: "/activities" },
         { title: "데이터베이스 백업", icon: <Database />, color: "bg-activities", path: "/backup" },
-        { title: "시스템 매뉴얼", icon: <BookOpen />, color: "bg-manual", path: "/manual" },
+        { title: "시스템 메뉴얼", icon: <BookOpen />, color: "bg-manual", path: "/manual" },
         { title: "학습하기", icon: <BookOpen />, color: "bg-activities", path: "/learn" },
     ];
 
