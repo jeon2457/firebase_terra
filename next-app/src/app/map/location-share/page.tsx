@@ -258,7 +258,8 @@ export default function LocationSharePage() {
             <div className="control-panel">
                 <div className="mb-3">
                     <div style={{ fontSize: '11px', color: '#d32f2f', marginBottom: '2px' }}>
-                        ※ 이 지도맵을 활용하려면 반드시 GPS가 켜져있어야 합니다
+                        ※ 이 지도맵을 활용하려면 반드시 GPS가 켜져있어야 합니다.<br />
+                        ☞ 위치공유를 시작하면 90분후에는 자동으로 공유가 강제종료됩니다.(데이타 절약차원!)<br></br><br />
                     </div>
                     <label className="form-label small text-muted mb-1">닉네임 (필수)</label>
                     <div className="input-group">
